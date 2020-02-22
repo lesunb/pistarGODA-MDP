@@ -17,20 +17,18 @@ import br.unb.cic.goda.model.Goal;
 import br.unb.cic.goda.rtgoretoprism.generator.CodeGenerationException;
 import br.unb.cic.goda.rtgoretoprism.generator.goda.parser.CostParser;
 import br.unb.cic.goda.rtgoretoprism.generator.goda.writer.ManageWriter;
-import br.unb.cic.goda.rtgoretoprism.generator.goda.writer.ParamWriter;
 import br.unb.cic.goda.rtgoretoprism.generator.kl.AgentDefinition;
 import br.unb.cic.goda.rtgoretoprism.model.kl.Const;
 import br.unb.cic.goda.rtgoretoprism.model.kl.GoalContainer;
 import br.unb.cic.goda.rtgoretoprism.model.kl.PlanContainer;
 import br.unb.cic.goda.rtgoretoprism.model.kl.RTContainer;
 import br.unb.cic.goda.rtgoretoprism.paramformula.SymbolicParamGenerator;
-import br.unb.cic.goda.rtgoretoprism.paramwrapper.ParamWrapper;
 
 public class PARAMProducer {
 
 	private String sourceFolder;
 	private String targetFolder;
-	private String toolsFolder;
+	//private String toolsFolder;
 	private Set<Actor> allActors;
 	private Set<Goal> allGoals;
 	private AgentDefinition ad;
@@ -58,7 +56,7 @@ public class PARAMProducer {
 
 		this.sourceFolder = in;
 		this.targetFolder = out;
-		this.toolsFolder = tools;
+		//this.toolsFolder = tools;
 		this.allActors = allActors;
 		this.allGoals = allGoals;
 		this.isParam = isParam;
@@ -68,7 +66,7 @@ public class PARAMProducer {
 			String targetFolder, String toolsFolder) {
 		this.sourceFolder = sourceFolder;
 		this.targetFolder = targetFolder;
-		this.toolsFolder = toolsFolder;
+		//this.toolsFolder = toolsFolder;
 		this.allActors = selectedActors;
 		this.allGoals = selectedGoals;
 		this.ad = ad;
@@ -258,18 +256,17 @@ public class PARAMProducer {
 
 			if (reliability) {
 				// Create DTMC model (param)
-				ParamWriter writer = new ParamWriter(sourceFolder, nodeId);
-				String model = writer.writeModel();
+				//ParamWriter writer = new ParamWriter(sourceFolder, nodeId);
+				//String model = writer.writeModel();
 
 				// Call to param (reliability)
-				ParamWrapper paramWrapper = new ParamWrapper(toolsFolder, nodeId);
-				nodeForm = paramWrapper.getFormula(model);
-				if(nodeForm.length()> 0) {
-					nodeForm = nodeForm.replaceFirst("1\\*", "");
-				} else {
-					nodeForm = nodeId;
-					System.err.println("Formula for node " + nodeId + " was not resolved. Using nodeId");
-				}
+				//nodeForm = paramWrapper.getFormula(model);
+				//if(nodeForm.length()> 0) {
+				//	nodeForm = nodeForm.replaceFirst("1\\*", "");
+				//} else {
+				//	nodeForm = nodeId;
+				//	System.err.println("Formula for node " + nodeId + " was not resolved. Using nodeId");
+				//}
 					
 
 				this.varReliabilityInformation.put(nodeId, "//R_" + nodeId + " = reliability of node " + nodeId + "\n");
@@ -292,17 +289,17 @@ public class PARAMProducer {
 
 	private String getNodeForm(Const decType, String rtAnnot, String nodeId, boolean reliability, RTContainer rootNode)
 			throws Exception {
-
-		if (rtAnnot == null) {
-			return nodeId;
-		}
-
+		
 		StringBuilder formula = new StringBuilder();
 		SymbolicParamGenerator symbolic = new SymbolicParamGenerator();
-
-		if (rtAnnot.contains(";")) { // Sequential
-			String[] ids = getChildrenId(rootNode);
-
+		String[] ids = getChildrenId(rootNode);
+		
+		if (ids == null) {
+			return nodeId;
+		}
+		
+		if (rtAnnot == null || rtAnnot.contains(";")) { // Sequential
+					
 			if (reliability) {
 				// Reliability formula
 				if (decType.equals(Const.AND) || decType.equals(Const.ME)) { // Sequential AND
@@ -321,7 +318,6 @@ public class PARAMProducer {
 
 			return formula.toString();
 		} else if (rtAnnot.contains("#")) { // Parallel
-			String[] ids = getChildrenId(rootNode);
 
 			if (reliability) {
 				// Reliability formula
@@ -341,14 +337,12 @@ public class PARAMProducer {
 
 			return formula.toString();
 		} else if (rtAnnot.contains("DM")) {
-			String[] ids = getChildrenId(rootNode);
 			if (reliability) {
 				formula = symbolic.getDMReliability(ids, this.ctxInformation);
 			} else {
 				formula = symbolic.getDMCost(ids, ctxInformation, this.isParam);
 			}
 		} else if (rtAnnot.contains("@")) {
-			String[] ids = getChildrenId(rootNode);
 			int retryNum = Integer.parseInt(rtAnnot.substring(rtAnnot.indexOf("@") + 1));
 
 			if (reliability) {
@@ -358,8 +352,6 @@ public class PARAMProducer {
 			}
 			return formula.toString();
 		} else if (rtAnnot.contains("try")) {
-			String[] ids = getChildrenId(rootNode);
-			
 			if(rtAnnot.contains("?skip:")) { //try(a)?b:skip
 				ids = new String[] {ids[0], "skip", ids[1]};
 			}else if(rtAnnot.contains(":skip")) {//try(a)?skip:b
