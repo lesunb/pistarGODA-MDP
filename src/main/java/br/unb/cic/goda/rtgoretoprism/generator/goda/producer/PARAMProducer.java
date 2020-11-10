@@ -241,6 +241,7 @@ public class PARAMProducer {
 		for (GoalContainer subNode : decompGoal) {
 			String subNodeId = subNode.getClearUId();
 			String subNodeForm = composeNodeForm(subNode, reliability);
+			subNode.setFormula(subNodeForm);
 			nodeForm = replaceSubForm(nodeForm, subNodeForm, nodeId, subNodeId, reliability);
 		}
 
@@ -248,6 +249,7 @@ public class PARAMProducer {
 		for (PlanContainer subNode : decompPlans) {
 			String subNodeId = subNode.getClearElId();
 			String subNodeForm = composeNodeForm(subNode, reliability);
+			subNode.setFormula(subNodeForm);
 			nodeForm = replaceSubForm(nodeForm, subNodeForm, nodeId, subNodeId, reliability);
 		}
 

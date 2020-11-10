@@ -11,6 +11,7 @@ public class PlanContainer extends RTContainer {
 	private String costRegex;
 	private String costValue;
 	private String costVariable;
+	private String formula;
 
     public PlanContainer(Plan p) {
         super(p);
@@ -104,4 +105,8 @@ public class PlanContainer extends RTContainer {
 	public void setCostVariable(String costVariable) {
 		this.costVariable = costVariable;
 	}
+
+	public String getFormula() { return this.formula; }
+
+	public void setFormula(String formula) { this.formula = formula; }
 }
