@@ -205,12 +205,12 @@ public class PARAMProducer {
 			reliabilityJson = objectMapper.writeValueAsString(this.reliabilityFormulaTreeNode);
 			costJson = objectMapper.writeValueAsString(this.costFormulaTreeNode);
 		} catch (Exception e) {
-			System.out.println(e);
+			System.out.println("Was not possible to parse reliability json or cost json. Exception " + e);
 			return;
 		}
 
 		ManageWriter.printModel(reliabilityFormulaTree, reliabilityJson);
-		ManageWriter.printModel(reliabilityFormulaTree, costJson);
+		ManageWriter.printModel(costFormulaTree, costJson);
 		ManageWriter.printModel(reliabiltyFormula, reliabilityForm);
 		ManageWriter.printModel(costFormula, costForm);
 		ManageWriter.printModel(evalBashFile, evalForm);
