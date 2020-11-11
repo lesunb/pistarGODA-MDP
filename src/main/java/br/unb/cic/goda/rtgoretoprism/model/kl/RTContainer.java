@@ -35,6 +35,8 @@ public abstract class RTContainer extends ElementContainer /*implements Comparab
 	private boolean optional;
 	private List<String> fulfillmentConditions;
 	private List<String> adoptionConditions;
+	private String formula;
+
 	/**
 	 * Creates a standard achieve goal with request plan.
 	 */
@@ -420,6 +422,10 @@ public abstract class RTContainer extends ElementContainer /*implements Comparab
 		}
 		return (GoalContainer) root;
 	}
+
+	public String getFormula() { return this.formula; }
+
+	public void setFormula(String formula) { this.formula = formula; }
 
 	/*@Override
 	public int compareTo(RTContainer gc) {

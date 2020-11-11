@@ -9,7 +9,6 @@ public class GoalContainer extends RTContainer {
     public Const request;
     private ArrayList<String[]> dependencies;
     private ArrayList<GoalContainer> parentlist;
-    private String formula;
 
     public GoalContainer(Goal goal, Const achieve) {
         super(goal);
@@ -73,8 +72,4 @@ public class GoalContainer extends RTContainer {
         super.setRoot(root);
         setUid(super.getElId());
     }
-
-    public String getFormula() { return this.formula; }
-
-    public void setFormula(String formula) { this.formula = formula; }
 }

@@ -2,13 +2,8 @@ package br.unb.cic.goda.rtgoretoprism.generator.goda.producer;
 
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.text.Normalizer;
+import java.util.*;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
@@ -25,6 +20,9 @@ import br.unb.cic.goda.rtgoretoprism.model.kl.PlanContainer;
 import br.unb.cic.goda.rtgoretoprism.model.kl.RTContainer;
 import br.unb.cic.goda.rtgoretoprism.paramformula.SymbolicParamGenerator;
 import br.unb.cic.goda.rtgoretoprism.paramwrapper.ParamWrapper;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.google.gson.Gson;
+import com.google.gson.JsonObject;
 
 public class PARAMProducer {
 
@@ -42,6 +40,8 @@ public class PARAMProducer {
 	private Map<String, String> varReliabilityInformation = new HashMap<String, String>();
 	private Map<String, String> varCostInformation = new HashMap<String, String>();
 	private Map<String, String> reliabilityByNode = new HashMap<String, String>();
+	private FormulaTreeNode reliabilityFormulaTreeNode;
+	private FormulaTreeNode costFormulaTreeNode;
 
 	public class Formulas {
 		public Formulas(String reliability, String cost) {
@@ -51,6 +51,12 @@ public class PARAMProducer {
 		}
 		public String reliability;
 		public String cost;
+	}
+
+	public class FormulaTreeNode {
+		public String id;
+		public String formula;
+		public List<FormulaTreeNode> subNodes = new LinkedList<FormulaTreeNode>();
 	}
 	
 	public PARAMProducer(Set<Actor> allActors, Set<Goal> allGoals, boolean isParam, String in, String out,
@@ -92,6 +98,33 @@ public class PARAMProducer {
 			System.out.println("Parametric formulas created in " + (new Date().getTime() - startTime) + "ms.");
 		}
 	}
+
+	private FormulaTreeNode generateFormulaTree(RTContainer rootNode) {
+		FormulaTreeNode node = new FormulaTreeNode();
+		LinkedList<GoalContainer> decompGoal = removeDuplicates(rootNode.getDecompGoals());
+		LinkedList<PlanContainer> decompPlans = removeDuplicates(rootNode.getDecompPlans());
+
+		if (rootNode instanceof GoalContainer) {
+			node.id = rootNode.getClearUId();
+		} else {
+			node.id = rootNode.getClearElId();
+		}
+
+		node.formula = rootNode.getFormula();
+
+		for (GoalContainer subNode : decompGoal) {
+			FormulaTreeNode sn = generateFormulaTree(subNode);
+			node.subNodes.add(sn);
+		}
+
+		/* Run for sub tasks */
+		for (PlanContainer subNode : decompPlans) {
+			FormulaTreeNode sn = generateFormulaTree(subNode);
+			node.subNodes.add(sn);
+		}
+
+		return node;
+	}
 	
 	public Formulas generateFormulas(Actor actor) throws Exception {
 		
@@ -105,7 +138,12 @@ public class PARAMProducer {
 
 		
 		String reliabilityForm = composeNodeForm(ad.rootlist.getFirst(), true);
+		ad.rootlist.getFirst().setFormula(reliabilityForm);
+		reliabilityFormulaTreeNode = generateFormulaTree(this.ad.rootlist.getFirst());
+
 		String costForm = composeNodeForm(ad.rootlist.getFirst(), false);
+		ad.rootlist.getFirst().setFormula(costForm);
+		costFormulaTreeNode = generateFormulaTree(this.ad.rootlist.getFirst());
 
 		reliabilityForm = cleanNodeForm(reliabilityForm, true);
 		costForm = cleanNodeForm(costForm, false);
@@ -156,11 +194,26 @@ public class PARAMProducer {
 		PrintWriter reliabiltyFormula = ManageWriter.createFile("reliability.out", output);
 		PrintWriter costFormula = ManageWriter.createFile("cost.out", output);
 		PrintWriter evalBashFile = ManageWriter.createFile("eval_formula.sh", output);
+		PrintWriter reliabilityFormulaTree = ManageWriter.createFile("reliability_tree.json", output);
+		PrintWriter costFormulaTree = ManageWriter.createFile("cost_tree.json", output);
 
+		String reliabilityJson = "";
+		String costJson = "";
+
+		try {
+			ObjectMapper objectMapper = new ObjectMapper();
+			reliabilityJson = objectMapper.writeValueAsString(this.reliabilityFormulaTreeNode);
+			costJson = objectMapper.writeValueAsString(this.costFormulaTreeNode);
+		} catch (Exception e) {
+			System.out.println(e);
+			return;
+		}
+
+		ManageWriter.printModel(reliabilityFormulaTree, reliabilityJson);
+		ManageWriter.printModel(reliabilityFormulaTree, costJson);
 		ManageWriter.printModel(reliabiltyFormula, reliabilityForm);
 		ManageWriter.printModel(costFormula, costForm);
 		ManageWriter.printModel(evalBashFile, evalForm);
-
 	}
 
 	private String composeEvalFormula() throws CodeGenerationException {
@@ -242,6 +295,7 @@ public class PARAMProducer {
 			String subNodeId = subNode.getClearUId();
 			String subNodeForm = composeNodeForm(subNode, reliability);
 			subNode.setFormula(subNodeForm);
+
 			nodeForm = replaceSubForm(nodeForm, subNodeForm, nodeId, subNodeId, reliability);
 		}
 
