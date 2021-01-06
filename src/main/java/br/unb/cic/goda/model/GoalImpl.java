@@ -7,6 +7,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class GoalImpl implements Goal, Serializable {
+	private static final long serialVersionUID = 1L;
 
     private String mode;
     private String attribute;
@@ -16,10 +17,14 @@ public class GoalImpl implements Goal, Serializable {
     private boolean isRootGoal = true;
     private List<Goal> decompositionList = new ArrayList<>();
     private List<Plan> meansToAnEndPlans = new ArrayList<>();
-    private boolean isAndDecomposition;
-    private boolean isOrDecomposition;
     private String name;
     private boolean selected;
+    private boolean isAndDecomposition = false;
+    private boolean isOrDecomposition = false;
+    private boolean isAndParalelDecomposition = false;
+    private boolean isOrParalelDecomposition = false;
+    private boolean isTryDecomposition = false;
+    private boolean isRetryDecomposition = false;
 
     public GoalImpl(PistarNode pistarGoal) {
         super();
@@ -132,26 +137,6 @@ public class GoalImpl implements Goal, Serializable {
     }
 
     @Override
-    public boolean isAndDecomposition() {
-        return isAndDecomposition;
-    }
-
-    @Override
-    public void setAndDecomposition(boolean andDecomposition) {
-        isAndDecomposition = andDecomposition;
-    }
-
-    @Override
-    public boolean isOrDecomposition() {
-        return isOrDecomposition;
-    }
-
-    @Override
-    public void setOrDecomposition(boolean orDecomposition) {
-        isOrDecomposition = orDecomposition;
-    }
-
-    @Override
     public String getNamePrefix() {
         return "HardGoal ";
     }
@@ -170,4 +155,64 @@ public class GoalImpl implements Goal, Serializable {
     public boolean isSelected() {
         return selected;
     }
+
+	@Override
+	public boolean isAndDecomposition() {
+		return this.isAndDecomposition;
+	}
+
+	@Override
+	public boolean isOrDecomposition() {
+		return this.isOrDecomposition;
+	}
+
+	@Override
+	public boolean isAndParalelDecomposition() {
+		return this.isAndParalelDecomposition;
+	}
+
+	@Override
+	public boolean isOrParalelDecomposition() {
+		return this.isOrParalelDecomposition;
+	}
+
+	@Override
+	public boolean isTryDecomposition() {
+		return this.isTryDecomposition;
+	}
+
+	@Override
+	public boolean isRetryDecomposition() {
+		return this.isRetryDecomposition;
+	}
+
+	@Override
+	public void setAndDecomposition(boolean andDecomposition) {
+		this.isAndDecomposition = andDecomposition;
+	}
+
+	@Override
+	public void setOrDecomposition(boolean orDecomposition) {
+		this.isOrDecomposition = orDecomposition;
+	}
+
+	@Override
+	public void setAndParalelDecomposition(boolean andPDecomposition) {
+		this.isAndParalelDecomposition = andPDecomposition;
+	}
+
+	@Override
+	public void setOrParalelDecomposition(boolean orPDecomposition) {
+		this.isOrParalelDecomposition = orPDecomposition;
+	}
+
+	@Override
+	public void setTryDecomposition(boolean tryDecomposition) {
+		this.isTryDecomposition = tryDecomposition;
+	}
+
+	@Override
+	public void setRetryDecomposition(boolean retryDecomposition) {
+		this.isRetryDecomposition = retryDecomposition;
+	}
 }
