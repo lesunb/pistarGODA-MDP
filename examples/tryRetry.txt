@@ -1,0 +1,123 @@
+{
+  "actors": [
+    {
+      "id": "df2fe78a-3a51-41df-8198-cc303146e475",
+      "text": "Actor",
+      "type": "istar.Actor",
+      "x": 227,
+      "y": 86,
+      "nodes": [
+        {
+          "id": "020f3e3c-55db-4279-abbf-8d2e06ca8492",
+          "text": "G1:Root",
+          "type": "istar.Goal",
+          "x": 505,
+          "y": 112,
+          "customProperties": {
+            "selected": "true"
+          }
+        },
+        {
+          "id": "e2ac9695-890f-49d0-8b7f-a1640565c4a4",
+          "text": "G2:Goal[try(T2@2)?T2:T1]",
+          "type": "istar.Goal",
+          "x": 433,
+          "y": 182,
+          "customProperties": {
+            "creationProperty": "assertion condition ctx = true"
+          }
+        },
+        {
+          "id": "0e29e117-28dd-4432-9048-bcbc30a39af6",
+          "text": "G3:Goal",
+          "type": "istar.Goal",
+          "x": 591,
+          "y": 177,
+          "customProperties": {
+            "creationProperty": "assertion condition ctx = true"
+          }
+        },
+        {
+          "id": "b28e08bd-5378-49a9-b168-cbcc6f1d5072",
+          "text": "T2:Task",
+          "type": "istar.Task",
+          "x": 474,
+          "y": 288,
+          "customProperties": {
+            "creationProperty": "assertion trigger ctx = true"
+          }
+        },
+        {
+          "id": "58961d75-ac06-4896-b357-927eac2f1eb0",
+          "text": "T1:Task",
+          "type": "istar.Task",
+          "x": 286,
+          "y": 277,
+          "customProperties": {
+            "creationProperty": "assertion trigger ctx = true"
+          }
+        },
+        {
+          "id": "f0f39d4f-42cd-4328-908e-190436698e5f",
+          "text": "T3:Task",
+          "type": "istar.Task",
+          "x": 618,
+          "y": 271,
+          "customProperties": {
+            "creationProperty": "assertion trigger ctx = true"
+          }
+        }
+      ]
+    }
+  ],
+  "orphans": [],
+  "dependencies": [],
+  "links": [
+    {
+      "id": "c6df3e8f-03b4-4afa-95ff-cd1c404e29ca",
+      "type": "istar.AndRefinementLink",
+      "source": "e2ac9695-890f-49d0-8b7f-a1640565c4a4",
+      "target": "020f3e3c-55db-4279-abbf-8d2e06ca8492"
+    },
+    {
+      "id": "7da69f6b-117c-4967-a609-8f44e1207b0c",
+      "type": "istar.AndRefinementLink",
+      "source": "0e29e117-28dd-4432-9048-bcbc30a39af6",
+      "target": "020f3e3c-55db-4279-abbf-8d2e06ca8492"
+    },
+    {
+      "id": "73267c8a-9139-407b-ba6d-241dc6a5a59c",
+      "type": "istar.AndRefinementLink",
+      "source": "b28e08bd-5378-49a9-b168-cbcc6f1d5072",
+      "target": "e2ac9695-890f-49d0-8b7f-a1640565c4a4"
+    },
+    {
+      "id": "960b765b-cc33-4d24-b0c0-9857b17e76cb",
+      "type": "istar.AndRefinementLink",
+      "source": "58961d75-ac06-4896-b357-927eac2f1eb0",
+      "target": "e2ac9695-890f-49d0-8b7f-a1640565c4a4"
+    },
+    {
+      "id": "4f102d3f-ba71-4184-b7a0-507680a54299",
+      "type": "istar.AndRefinementLink",
+      "source": "f0f39d4f-42cd-4328-908e-190436698e5f",
+      "target": "0e29e117-28dd-4432-9048-bcbc30a39af6"
+    }
+  ],
+  "display": {
+    "58961d75-ac06-4896-b357-927eac2f1eb0": {
+      "width": 160.203125,
+      "height": 44
+    }
+  },
+  "tool": "pistar.2.0.0",
+  "istar": "2.0",
+  "saveDate": "Sun, 08 Nov 2020 17:14:13 GMT",
+  "diagram": {
+    "width": 2112,
+    "height": 1172,
+    "customProperties": {
+      "Description": ""
+    }
+  }
+}

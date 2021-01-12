@@ -34,6 +34,7 @@ public class PARAMProducer {
 	private AgentDefinition ad;
 	private boolean isParam;
 
+	private String typeModel;
 	private String agentName;
 	private List<String> leavesId = new ArrayList<String>();
 	private Map<String, String> ctxInformation = new HashMap<String, String>();
@@ -60,7 +61,7 @@ public class PARAMProducer {
 	}
 	
 	public PARAMProducer(Set<Actor> allActors, Set<Goal> allGoals, boolean isParam, String in, String out,
-			String tools) {
+			String tools, String typeModel) {
 
 		this.sourceFolder = in;
 		this.targetFolder = out;
@@ -68,10 +69,11 @@ public class PARAMProducer {
 		this.allActors = allActors;
 		this.allGoals = allGoals;
 		this.isParam = isParam;
+		this.typeModel = typeModel;
 	}
 
 	public PARAMProducer(AgentDefinition ad, Set<Actor> selectedActors, Set<Goal> selectedGoals, String sourceFolder,
-			String targetFolder, String toolsFolder) {
+			String targetFolder, String toolsFolder, String typeModel) {
 		this.sourceFolder = sourceFolder;
 		this.targetFolder = targetFolder;
 		this.toolsFolder = toolsFolder;
@@ -79,6 +81,7 @@ public class PARAMProducer {
 		this.allGoals = selectedGoals;
 		this.ad = ad;
 		this.agentName = "EvaluationActor";
+		this.typeModel = typeModel;
 	}
 
 	public void run() throws Exception {
@@ -129,7 +132,7 @@ public class PARAMProducer {
 	public Formulas generateFormulas(Actor actor) throws Exception {
 		
 		if (this.ad == null) {
-			RTGoreProducer producer = new RTGoreProducer(allActors, allGoals, sourceFolder, targetFolder);
+			RTGoreProducer producer = new RTGoreProducer(allActors, allGoals, sourceFolder, targetFolder, this.typeModel);
 			AgentDefinition ad = producer.run();
 
 			this.ad = ad;
@@ -314,6 +317,7 @@ public class PARAMProducer {
 
 			if (reliability) {
 				// Create DTMC model (param)
+				//Comentando esse trecho baseado no codigo da branch master do Gabriel Rodrigues
 				ParamWriter writer = new ParamWriter(sourceFolder, nodeId);
 				String model = writer.writeModel();
 

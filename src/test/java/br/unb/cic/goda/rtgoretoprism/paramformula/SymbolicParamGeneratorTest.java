@@ -17,7 +17,7 @@ public class SymbolicParamGeneratorTest {
 
 	@Before
 	public void setup() {
-		ctxInformation = new HashMap<>();
+		ctxInformation = new HashMap<String, String>();
 	}
 
 	
