@@ -21,6 +21,8 @@ import br.unb.cic.goda.rtgoretoprism.model.kl.RTContainer;
 import br.unb.cic.goda.rtgoretoprism.paramformula.SymbolicParamGenerator;
 import br.unb.cic.goda.rtgoretoprism.paramwrapper.ParamWrapper;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.SerializationConfig;
+import com.fasterxml.jackson.databind.SerializationFeature;
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 
@@ -205,6 +207,7 @@ public class PARAMProducer {
 
 		try {
 			ObjectMapper objectMapper = new ObjectMapper();
+			objectMapper.enable(SerializationFeature.INDENT_OUTPUT);
 			reliabilityJson = objectMapper.writeValueAsString(this.reliabilityFormulaTreeNode);
 			costJson = objectMapper.writeValueAsString(this.costFormulaTreeNode);
 		} catch (Exception e) {
