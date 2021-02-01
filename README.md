@@ -114,15 +114,20 @@ Body Sensor Network contextual goal model augmented with uncertainty used to eva
 </p>
 
 ## Development
-
-### Installation 
 To run the source code locally:
 * Clone this repo: $ git clone https://github.com/lesunb/pistarGODA-MDP.git
+
+### Installation with IDE import
 * Import it as a *Maven project* in your IDE.
 * Run as *java application*, selecting *Application* from *br.unb.cic.integration*. <img src="docs/images/JavaApplication.png" width="500">
 * In your browser: *localhost:8080* to use the framework.
 
 These are the steps when using the Eclipse IDE. Adaptation may be needed when using a different IDE.
+
+### Installation using maven commands
+* Open a terminal on root folder and type: mvn install -Dmaven.text.skip=true
+* On root folder, use mvn package -e -Dmaven.test.skip=true
+* Run the application on root folder with java -jar target/pistarGODA-MDP-0.1.0.jar
 
 ### Updating an ANTLR grammar
 
