@@ -2,6 +2,7 @@ package br.unb.cic.goda.rtgoretoprism.generator.goda.producer;
 
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.sql.Timestamp;
 import java.text.Normalizer;
 import java.util.*;
 import java.util.regex.Pattern;
@@ -196,11 +197,21 @@ public class PARAMProducer {
 
 		String output = targetFolder + "/";
 
-		PrintWriter reliabiltyFormula = ManageWriter.createFile("reliability.out", output);
+		Timestamp timestamp = new Timestamp(System.currentTimeMillis());
+		long id = timestamp.getTime();
+
+		PrintWriter reliabilityFormulaWriter = ManageWriter
+				.createFile(agentName + "_" + id + "_reliability.json", "resources/reliability/");
+
+		PrintWriter costFormulaWriter = ManageWriter
+				.createFile(agentName + "_" + id + "_cost.json", "resources/cost/");
+
+		PrintWriter reliabilityFormula = ManageWriter.createFile("reliability.out", output);
 		PrintWriter costFormula = ManageWriter.createFile("cost.out", output);
 		PrintWriter evalBashFile = ManageWriter.createFile("eval_formula.sh", output);
 		PrintWriter reliabilityFormulaTree = ManageWriter.createFile("reliability_tree.json", output);
 		PrintWriter costFormulaTree = ManageWriter.createFile("cost_tree.json", output);
+		PrintWriter formulasId = ManageWriter.createFile("formulas_id.out", output);
 
 		String reliabilityJson = "";
 		String costJson = "";
@@ -217,9 +228,12 @@ public class PARAMProducer {
 
 		ManageWriter.printModel(reliabilityFormulaTree, reliabilityJson);
 		ManageWriter.printModel(costFormulaTree, costJson);
-		ManageWriter.printModel(reliabiltyFormula, reliabilityForm);
+		ManageWriter.printModel(reliabilityFormula, reliabilityForm);
 		ManageWriter.printModel(costFormula, costForm);
 		ManageWriter.printModel(evalBashFile, evalForm);
+		ManageWriter.printModel(reliabilityFormulaWriter, reliabilityJson);
+		ManageWriter.printModel(costFormulaWriter, costJson);
+		ManageWriter.printModel(formulasId, agentName + "_" + id);
 	}
 
 	private String composeEvalFormula() throws CodeGenerationException {
