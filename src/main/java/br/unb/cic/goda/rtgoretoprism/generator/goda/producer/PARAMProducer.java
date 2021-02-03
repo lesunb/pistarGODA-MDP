@@ -9,6 +9,7 @@ import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 import br.unb.cic.goda.model.Actor;
+import br.unb.cic.goda.model.FormulaTreeNode;
 import br.unb.cic.goda.model.Goal;
 import br.unb.cic.goda.rtgoretoprism.generator.CodeGenerationException;
 import br.unb.cic.goda.rtgoretoprism.generator.goda.parser.CostParser;
@@ -55,12 +56,6 @@ public class PARAMProducer {
 		}
 		public String reliability;
 		public String cost;
-	}
-
-	public class FormulaTreeNode {
-		public String id;
-		public String formula;
-		public List<FormulaTreeNode> subNodes = new LinkedList<FormulaTreeNode>();
 	}
 	
 	public PARAMProducer(Set<Actor> allActors, Set<Goal> allGoals, boolean isParam, String in, String out,

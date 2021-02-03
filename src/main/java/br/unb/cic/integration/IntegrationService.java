@@ -9,28 +9,25 @@ import java.nio.file.FileVisitOption;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.text.Normalizer;
+import java.util.*;
 import java.util.stream.Collectors;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 
 import javax.management.RuntimeErrorException;
 
+import br.unb.cic.goda.model.*;
+import br.unb.cic.goda.rtgoretoprism.generator.CodeGenerationException;
+import br.unb.cic.goda.rtgoretoprism.generator.goda.producer.PARAMProducer;
+import br.unb.cic.goda.rtgoretoprism.generator.goda.writer.ManageWriter;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.google.gson.JsonParser;
 import org.springframework.stereotype.Service;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
-import br.unb.cic.goda.model.Actor;
-import br.unb.cic.goda.model.ActorImpl;
-import br.unb.cic.goda.model.Goal;
-import br.unb.cic.goda.model.GoalImpl;
-import br.unb.cic.goda.model.Plan;
-import br.unb.cic.goda.model.PlanImpl;
 import br.unb.cic.goda.rtgoretoprism.action.PRISMCodeGenerationAction;
 import br.unb.cic.goda.rtgoretoprism.action.RunParamAction;
 import br.unb.cic.pistar.model.PistarActor;
@@ -336,6 +333,59 @@ public class IntegrationService {
 	private static String handlerNameNode(String text) {
 		int tam = (text.indexOf(":") > 0 ? text.indexOf(":") : text.length());
 		return text.substring(0, tam);
+	}
+
+	public String getReliabilityFormulaTree(String id, String goal) {
+		return loadFormulaTreeFromJson(id, goal, true);
+	}
+
+	public String getCostFormulaTree(String id, String goal) {
+		return loadFormulaTreeFromJson(id, goal, false);
+	}
+
+	public String loadFormulaTreeFromJson(String id, String goal, boolean isReliability) {
+		String content;
+		try {
+			if (isReliability) {
+				content = ManageWriter.readFileAsString("resources/reliability/" + id + "_reliability.json");
+			} else {
+				content = ManageWriter.readFileAsString("resources/cost/" + id + "_cost.json");
+			}
+
+			ObjectMapper objectMapper = new ObjectMapper();
+			FormulaTreeNode formulaTree = objectMapper.readValue(content, FormulaTreeNode.class);
+			formulaTree = getFormulaSubTree(formulaTree, goal);
+
+			String json = objectMapper.writeValueAsString(formulaTree);
+			return json;
+		} catch(Exception e) {
+			return "";
+		}
+	}
+
+	private FormulaTreeNode getFormulaSubTree(FormulaTreeNode formulaTreeNode, String goal) {
+		Queue<FormulaTreeNode> formulaTreeNodeQueue = new LinkedList<>();
+		Set<String> visited = new HashSet<>();
+		FormulaTreeNode node = null;
+
+		formulaTreeNodeQueue.add(formulaTreeNode);
+		visited.add(formulaTreeNode.id);
+
+		while (!formulaTreeNodeQueue.isEmpty()) {
+			node = formulaTreeNodeQueue.remove();
+			if (node.id.equals(goal)) {
+				break;
+			} else {
+				node.subNodes.forEach(subNode -> {
+					if (!visited.contains(subNode.id)) {
+						visited.add(subNode.id);
+						formulaTreeNodeQueue.add((subNode));
+					}
+				});
+			}
+		}
+
+		return node;
 	}
 
 }
