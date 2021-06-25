@@ -213,19 +213,22 @@ var ui = function() {
 				var propVal = ui.getPropertyCell(id);
 				if(propVal){
 					properties[i].value = propVal;	
-				 	checked = "checked";
+					properties[i].checked = true;	
 				}
 				
 				if(isChildren){
 					typeInput = "radio";
+					if(properties[i].type == "CHECKBOX"){
+						typeInput = "checkbox";
+					}
 				}else{
 					nameFather = "";
 					typeInput = "checkbox";
 					div.className = "element_property";
 				}
 				
-				if(properties[i].type == "CHECKBOX"){
-				 	checked = (properties[i].value == "true" ? "checked" : "");
+				if(properties[i].checked){
+					checked = "checked";
 				}
 				
 				var parentInputs = properties[i].name + "_parent_inputs";
@@ -281,10 +284,12 @@ var ui = function() {
 				//el.setAttribute("checked", true);
 				ui.generateByTypeProperty(el, inputsEl);
 			}else{
-				el.value = "";
-				display = "none";
-				inputsEl.innerHTML = "";
-				//el.setAttribute("checked", false);
+				if(!el.value){
+					el.value = "";
+					display = "none";
+					inputsEl.innerHTML = "";
+					//el.setAttribute("checked", false);
+				}
 			}
 			
 			if(childrensEl){
@@ -370,6 +375,9 @@ var ui = function() {
 								ui.setInputProperty(nameElement, input.checked, input.id);
 								break;
 							}
+							else if(input.type == "radio"){
+								ui.setInputProperty(nameElement, true, input.id);
+						    }
 						}
 						ui.generateProperties(childrens);
 					}else{
@@ -392,7 +400,11 @@ var ui = function() {
 			if(checked){
 				ui.setPropertyCell(nameElement, value);
 			}else{
-				ui.removePropertyCell(nameElement);
+				if(value == "false"){
+					ui.setPropertyCell(nameElement, value);
+				}else{
+					ui.removePropertyCell(nameElement);
+				}
 			}
 		},
 		selectDMCheckbox: function() {

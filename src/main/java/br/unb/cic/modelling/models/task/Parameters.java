@@ -7,6 +7,6 @@ public class Parameters extends PropertyModel{
 
 	public Parameters() {
 		this.setName("Parameters");
-		this.setType(TypesAttributesEnum.LIST);
+		this.setType(TypesAttributesEnum.TEXT);
 	}
 }

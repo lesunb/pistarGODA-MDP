@@ -2,6 +2,7 @@ package br.unb.cic.modelling.enums;
 
 public enum TypesAttributesEnum {
 	CHECKBOX("CHECKBOX"),
+	RADIO_BUTTON("RADIO_BUTTON"),
 	EXPRESSION("EXPRESSION"),
 	LIST("LIST"),
 	OBJECT("OBJECT"),

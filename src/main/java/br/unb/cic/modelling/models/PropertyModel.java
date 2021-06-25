@@ -8,6 +8,7 @@ import br.unb.cic.modelling.enums.TypesAttributesEnum;
 public class PropertyModel {
 	private String name;
 	private String value = "";
+	private boolean checked = false;
 	private TypesAttributesEnum type;
 	private List<PropertyModel> childrens = new ArrayList<PropertyModel>();
 	
@@ -38,6 +39,12 @@ public class PropertyModel {
 	}
 	public void setValue(String value) {
 		this.value = value;
+	}
+	public boolean getChecked() {
+		return checked;
+	}
+	public void setChecked(boolean checked) {
+		this.checked = checked;
 	}
 	
 }
