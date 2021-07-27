@@ -1,7 +1,7 @@
 package br.unb.cic.modelling.enums;
 
 public enum TypesAttributesEnum {
-	CHECKBOX("CHECKBOX"),
+	BOOLEAN("BOOLEAN"),
 	RADIO_BUTTON("RADIO_BUTTON"),
 	EXPRESSION("EXPRESSION"),
 	LIST("LIST"),

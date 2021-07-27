@@ -11,12 +11,12 @@ public  class Properties {
 	public  static List<PropertyModel> getGoalsProperties(){
 		 List<PropertyModel> properties = new ArrayList<PropertyModel>();
 
-		// properties.add(new Divisible());
+		 properties.add(new Divisible());
 		 properties.add(new GoalType());
+		 properties.add(new Context());
 		 properties.add(new Monitors());
 		 properties.add(new Controls());
-		 properties.add(new Context());
-		 properties.add(new Group());
+		// properties.add(new Group());
 		 
 		 return properties;
 	}

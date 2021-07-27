@@ -28,7 +28,7 @@ public class Query extends PropertyModel {
 	
 	public Query() {
 		this.setName("Query");
-		this.setType(TypesAttributesEnum.CHECKBOX);
+		this.setType(TypesAttributesEnum.BOOLEAN);
 		
 		PropertyModel query = new QueriedProperty();
 		this.getChildrens().add(query);

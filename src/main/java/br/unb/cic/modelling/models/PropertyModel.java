@@ -30,7 +30,7 @@ public class PropertyModel {
 	public void setType(TypesAttributesEnum type) {
 		this.type = type;
 		// o padrao para checkbox vai ser falso
-		if(this.type.equals(TypesAttributesEnum.CHECKBOX)) {
+		if(this.type.equals(TypesAttributesEnum.BOOLEAN)) {
 			this.value = "false";
 		}
 	}
