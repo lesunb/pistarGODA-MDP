@@ -22,6 +22,7 @@ const TypesAttributesEnum = {
 var ui = function() {
 	'use strict';
 
+	var lastSelectedCell = null;
 	var selectedCell = null;
 	var selectedProperties = null;
 
@@ -156,15 +157,19 @@ var ui = function() {
 			return '!checked';
 		},
 		setNameCell: function(name) {
+			event.preventDefault();
 			this.getSelectedCells()[0].prop('name', name);
 		},
 		removePropertyCell: function(key) {
+			event.preventDefault();
 			this.getSelectedCells()[0].removeProp('customProperties/' + key);
 		},
 		setPropertyCell: function(key, name) {
+			event.preventDefault();
 			this.getSelectedCells()[0].prop('customProperties/' + key, name);
 		},
 		getPropertyCell: function(key) {
+			event.preventDefault();
 			return this.getSelectedCells()[0].prop('customProperties/' + key);
 		},
 		removeBlankSpacesInNotation: function(cell) {
@@ -203,25 +208,70 @@ var ui = function() {
 		
 			});
 		},
-		generatePropertiesJson(elementsProp) {
-			var name = elementsProp.id;
-			var valueInp = elementsProp.value;
-			var type = elementsProp.getAttribute("propertyType");
+		loadPropertiesJson() {
+			var elements = document.querySelectorAll("div[propertyElement=true]");
+			for(var i = 0; i < elements.length; i++){
+				var input = elements[i].querySelector("input[propertyInput=true]");
+				ui.removePropObject(input.id);
+				ui.setPropObject(input);
+			}/**/
+		},
+		setPropObject(input){
+			var type = input.getAttribute("propertyType");
+			var nameChild = "#" + input.id + "_childrens";
+			var objChild = $(nameChild);
+			
 			if(TypesAttributesEnum.BOOLEAN == type){	
-				valueInp = ui.invertBoolean(valueInp);
-				ui.setPropertyCell(name, valueInp);
-				elementsProp.value = valueInp;
-			}
-			else if(TypesAttributesEnum.OBJECT == type){	
-				var childrens = document.getElementById(name + "_childrens");
-				var inputs = childrens.getElementsByTagName("input");
-				
-				for(var i = 0; i < inputs.length; i++){
-					if(inputs[i].name == name && inputs[i].checked){
-						ui.setPropertyCell(name, valueInp);
+				ui.setPropertyCell(input.id, input.checked);
+				input.value = input.checked;
+			}else if (TypesAttributesEnum.OBJECT == type || TypesAttributesEnum.RADIO_BUTTON == type){
+				if(input.checked){
+					objChild.show();
+					var childrensDivAux = document.querySelectorAll("input[name=" + input.id + "]");
+					if(childrensDivAux.length > 0){
+						for(var i = 0; i < childrensDivAux.length; i++){
+							if(childrensDivAux[i].checked && childrensDivAux[i].value){
+								ui.setPropertyCell(input.id, childrensDivAux[i].id);
+								input.value = childrensDivAux[i].id;
+							}
+							ui.setPropObject(childrensDivAux[i]);
+						}
+					}else{
+						ui.setPropertyCell(input.id, input.value);
+					}
+				}else{
+					ui.removePropObject(input.id);
+					objChild.hide();
+				}
+			}else if(TypesAttributesEnum.LIST == type || TypesAttributesEnum.TEXT == type || TypesAttributesEnum.EXPRESSION == type){
+				nameChild = "#" + input.id + "_text";
+				objChild = $(nameChild);
+				if(input.value){
+					if(input.type == "radio"){
+						if(input.checked){
+							if(objChild.length > 0){
+								objChild.show();
+								ui.setPropertyCell(input.id, objChild[0].value);
+								input.value = objChild[0].value;
+							}
+						}else{
+							ui.removePropObject(input.id);
+							objChild.hide();
+						}
+					}else{
+						ui.setPropertyCell(input.id, input.value);
 					}
 				}
 			}
+		},
+		removePropObject(name){
+			// remover objeto e filhos do objeto
+			var propVal = ui.getPropertyCell(name);
+			while(propVal){
+				ui.removePropertyCell(propVal);
+				propVal = ui.getPropertyCell(propVal);
+			}
+			ui.removePropertyCell(name);
 		},
 		invertBoolean(bool){
 			if(bool == true || bool == "true"){
@@ -242,6 +292,7 @@ var ui = function() {
 				var br = document.createElement("br"); 
 				var id = properties[i].name;
 				var valueP = properties[i].value;
+				var inputText;
 				
 				// recuperar properties ja settadas 
 				var propVal = ui.getPropertyCell(id);
@@ -250,28 +301,13 @@ var ui = function() {
 					properties[i].checked = true;	
 				}
 				
-				if(isChildren){
-					input.type = "radio";	
-				}else{
-					if(TypesAttributesEnum.BOOLEAN == properties[i].type ||
-						TypesAttributesEnum.OBJECT == properties[i].type){
-						input.type = "checkbox";	
-					}else if(TypesAttributesEnum.RADIO_BUTTON == properties[i].type){
-						input.type = "radio";	
-					}
-					if(TypesAttributesEnum.TEXT == properties[i].type ||
-						TypesAttributesEnum.EXPRESSION == properties[i].type || 
-						TypesAttributesEnum.LIST == properties[i].type){
-						input.type = "text";	
-					}
-				}
-				
 				input.id = id;
 				input.value = valueP;	
 				input.name = nameFather;
 				input.className ='form-check-input';
 				input.checked = properties[i].checked;
 				input.setAttribute("propertyType", properties[i].type);
+				input.setAttribute("propertyInput", true);
 				
 				label.className ='form-check-label';
 				label.style = 'margin-left: 5px';
@@ -280,20 +316,46 @@ var ui = function() {
 				
 				//divInput.className = "form-group";
 				if(isChildren){
+					input.type = "radio";	
 					divInput.appendChild(input);
 					divInput.appendChild(label);
-				}else{
+					
 					if(TypesAttributesEnum.TEXT == properties[i].type ||
 						TypesAttributesEnum.EXPRESSION == properties[i].type || 
 						TypesAttributesEnum.LIST == properties[i].type){
+						inputText = document.createElement("input");
+						inputText.style = "margin-left: 20px;";
+						input.className ='form-check-input';
+						inputText.id = input.id + "_text";
+						inputText.placeholder = input.value;
+						inputText.value = input.value;	
+						inputText.name = input.id;
+						inputText.type = "text";	
+						inputText.setAttribute("propertyType", properties[i].type);
+						divInput.appendChild(br);
+						divInput.appendChild(inputText);
+					}
+				}else{
+					if(TypesAttributesEnum.BOOLEAN == properties[i].type ||
+						TypesAttributesEnum.OBJECT == properties[i].type){
+						input.type = "checkbox";
+						divInput.appendChild(input);
+						divInput.appendChild(label);
+					}else if(TypesAttributesEnum.RADIO_BUTTON == properties[i].type){
+						input.type = "radio";
+						divInput.appendChild(input);
+						divInput.appendChild(label);	
+					}
+					else if(TypesAttributesEnum.TEXT == properties[i].type ||
+						TypesAttributesEnum.EXPRESSION == properties[i].type || 
+						TypesAttributesEnum.LIST == properties[i].type){
+						input.type = "text";	
 						divInput.appendChild(label);
 						divInput.appendChild(br);
 						divInput.appendChild(input);
-					}else{
-						divInput.appendChild(input);
-						divInput.appendChild(label);
 					}
 				}
+				
 				
 				if(properties[i].childrens.length > 0){
 					var divChildrens = document.createElement("div"); 
@@ -303,87 +365,23 @@ var ui = function() {
 					ui.generatePropertiesModalHtml(divChildrens, properties[i].childrens, true, properties[i].name);
 					divInput.appendChild(divChildrens);
 				}else{
-					divInput.setAttribute("hasChildren", false);	
+					divInput.setAttribute("hasChildren", false);
+				}
+				
+				if(nameFather == null || nameFather == ""){
+					divInput.setAttribute("propertyElement", true);
+				}else{
+					divInput.setAttribute("propertyElement", false);
 				}
 				
 				htmlEl.append(divInput);		
-				ui.generatePropertiesJson(divInput);
-				input.addEventListener("click", function(){ui.generatePropertiesJson(this)}, false);	
-			}
-			
-		},
-		showChildrens(el){
-			var display = "";
-			var childrens = el.id + "_childrens";
-			var parentInputs = el.id + "_parent_inputs";
-			var childrensEl = document.getElementById(childrens);
-			var inputsEl = document.getElementById(parentInputs);
-			
-			if( el.checked){
-				display = "block";
-				//el.setAttribute("checked", true);
-				ui.generateByTypeProperty(el, inputsEl);
-			}else{
-				if(!el.value){
-					el.value = "";
-					display = "none";
-					inputsEl.innerHTML = "";
-					//el.setAttribute("checked", false);
+				//input.addEventListener((input.type == "text" ? "keyup" : "change"), function(){ui.loadPropertiesJson()}, false);
+				
+				if(inputText){
+				//	inputText.addEventListener("keyup", function(){ui.loadPropertiesJson()}, false);	
 				}
 			}
-			
-			if(childrensEl){
-				childrensEl.style.display = display;
-			}
-			
-			ui.clearPropertiesUnused(el);
-			var elementsProp = document.getElementsByClassName("element_property");
-			ui.generateProperties(elementsProp);
-		},
-		clearPropertiesUnused(el){
-			var childrens = el.name + "_childrens";
-			var childrensEl = document.getElementById(childrens);
-			
-			if(childrensEl){
-				childrensEl = childrensEl.children[0].children;
-				for(var i = 0; i < childrensEl.length; i++){
-					var input = childrensEl[i].firstElementChild.children[0];
-					var inputsDiv = childrensEl[i].firstElementChild.children[2];
-					if(!input.checked){
-						var childrensProp = input.id + "_childrens";
-						var childrensPropEl = document.getElementById(childrensProp);
-						inputsDiv.innerHTML = "";
-						
-						if(childrensPropEl){
-							childrensPropEl.style.display = "none";
-						}
-					}
-				}
-			}
-		},
-		generateByTypeProperty(el, inputsEl){
-			var propertytype = el.getAttribute("propertytype");
-			var value = el.value;
-			
-			if(el.checked ){
-				if(propertytype == "TEXT"){
-					inputsEl.innerHTML = "<input style='width: 80%; margin-left: 20px' type='text' class='form-check-input' " +
-					"placeholder='" + el.id + "' onkeyup='ui.updateProperty(this)' value='" + value + "'>";
-				}
-				if(propertytype == "EXPRESSION"){
-					var found;
-			        while(value.search(regexExpression) >= 0){
-				        found = value.match(regexExpression);
-				        found = found[0].replaceAll("$", "");
-	
-						value = value.replace(regexExpression, "");
-						inputsEl.innerHTML = "<input id='"+ el.id + "_" +found +"' style='width: 80%; margin-left: 20px' type='text' class='form-check-input' " +
-						"placeholder='" + found + "' onkeyup='ui.applyExpression(this)' value='" + found + "'>";
-			        }
-				}
-			}else{
-				inputsEl.innerHTML = "";
-			}
+			ui.loadPropertiesJson();
 		},
 		applyExpression(input) {
 			var id = input.id.replace("_"+ input.placeholder, "");

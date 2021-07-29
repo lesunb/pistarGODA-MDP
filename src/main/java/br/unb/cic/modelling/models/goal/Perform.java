@@ -6,7 +6,7 @@ import br.unb.cic.modelling.models.PropertyModel;
 public class Perform extends PropertyModel {
 	
 	public Perform() {
-		this.setType(TypesAttributesEnum.RADIO_BUTTON);
+		this.setType(TypesAttributesEnum.BOOLEAN);
 		this.setName("Perform");
 		this.setValue("true");
 		this.setChecked(true);

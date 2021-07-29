@@ -28,11 +28,11 @@ public class Query extends PropertyModel {
 	
 	public Query() {
 		this.setName("Query");
-		this.setType(TypesAttributesEnum.BOOLEAN);
+		this.setType(TypesAttributesEnum.RADIO_BUTTON);
 		
 		PropertyModel query = new QueriedProperty();
 		this.getChildrens().add(query);
 
-		this.setValue("true");
+		this.setValue(query.getName());
 	}
 }
