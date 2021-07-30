@@ -2,10 +2,12 @@ package br.unb.cic.modelling.enums;
 
 public enum TypesAttributesEnum {
 	BOOLEAN("BOOLEAN"),
+	CHECKBOX("CHECKBOX"),
 	RADIO_BUTTON("RADIO_BUTTON"),
 	EXPRESSION("EXPRESSION"),
 	LIST("LIST"),
 	OBJECT("OBJECT"),
+	OBJECT_SELECTABLE("OBJECT_SELECTABLE"),
 	TEXT("TEXT");
 	
 	private String attr;

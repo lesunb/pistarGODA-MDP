@@ -13,10 +13,10 @@ public  class Properties {
 
 		// properties.add(new Divisible());
 		 properties.add(new GoalType());
-		// properties.add(new Context());
+		 properties.add(new Context());
+		 properties.add(new Group());
 		 properties.add(new Monitors());
-		// properties.add(new Controls());
-		// properties.add(new Group());
+		 properties.add(new Controls());
 		 
 		 return properties;
 	}

@@ -41,12 +41,12 @@ public class AchieveCondition extends PropertyModel {
 
 		StringBuilder expression = new StringBuilder();
 		expression.append("$Iterated Var$->forAll($Iterated Var$ | $condition$)");
-		universal.setValue(expression.toString());
+		universal.setPlaceholder(expression.toString());
 		
 		PropertyModel nonUniversal = new PropertyModel();
 		nonUniversal.setType(TypesAttributesEnum.EXPRESSION);
 		nonUniversal.setName("NonUniversal");
-		nonUniversal.setValue("Iterated Var");
+		nonUniversal.setPlaceholder("Iterated Var");
 		nonUniversal.setChecked(false);
 		
 		

@@ -12,10 +12,12 @@ const regexBrackets = /\[.*?\]/g;
 const regexExpression = /\$.*?\$/g;
 const TypesAttributesEnum = {
 	BOOLEAN: "BOOLEAN",
+	CHECKBOX: "CHECKBOX",
 	RADIO_BUTTON: "RADIO_BUTTON",
 	EXPRESSION: "EXPRESSION",
 	LIST: "LIST",
 	OBJECT: "OBJECT",
+	OBJECT_SELECTABLE: "OBJECT_SELECTABLE",
 	TEXT: "TEXT"
 }
 
@@ -212,7 +214,6 @@ var ui = function() {
 			var elements = document.querySelectorAll("div[propertyElement=true]");
 			for(var i = 0; i < elements.length; i++){
 				var input = elements[i].querySelector("input[propertyInput=true]");
-				ui.removePropObject(input.id);
 				ui.setPropObject(input);
 			}/**/
 		},
@@ -221,17 +222,21 @@ var ui = function() {
 			var nameChild = "#" + input.id + "_childrens";
 			var objChild = $(nameChild);
 			
-			if(TypesAttributesEnum.BOOLEAN == type){	
+			if(TypesAttributesEnum.BOOLEAN == type || TypesAttributesEnum.CHECKBOX == type){	
 				ui.setPropertyCell(input.id, input.checked);
 				input.value = input.checked;
-			}else if (TypesAttributesEnum.OBJECT == type || TypesAttributesEnum.RADIO_BUTTON == type){
+			}else if (TypesAttributesEnum.OBJECT_SELECTABLE == type || TypesAttributesEnum.OBJECT == type || TypesAttributesEnum.RADIO_BUTTON == type){
 				if(input.checked){
 					objChild.show();
 					var childrensDivAux = document.querySelectorAll("input[name=" + input.id + "]");
 					if(childrensDivAux.length > 0){
 						for(var i = 0; i < childrensDivAux.length; i++){
 							if(childrensDivAux[i].checked && childrensDivAux[i].value){
-								ui.setPropertyCell(input.id, childrensDivAux[i].id);
+								//if(TypesAttributesEnum.OBJECT_SELECTABLE == type){
+								//	ui.setPropertyCell(input.id, input.checked);
+								//}else{
+									ui.setPropertyCell(input.id, childrensDivAux[i].id);
+								//}
 								input.value = childrensDivAux[i].id;
 							}
 							ui.setPropObject(childrensDivAux[i]);
@@ -240,27 +245,32 @@ var ui = function() {
 						ui.setPropertyCell(input.id, input.value);
 					}
 				}else{
-					ui.removePropObject(input.id);
 					objChild.hide();
+					ui.removePropObject(input.id);
+					if(TypesAttributesEnum.OBJECT_SELECTABLE == type){
+						ui.setPropertyCell(input.id, input.checked);
+					}
 				}
 			}else if(TypesAttributesEnum.LIST == type || TypesAttributesEnum.TEXT == type || TypesAttributesEnum.EXPRESSION == type){
 				nameChild = "#" + input.id + "_text";
 				objChild = $(nameChild);
-				if(input.value){
-					if(input.type == "radio"){
-						if(input.checked){
-							if(objChild.length > 0){
-								objChild.show();
-								ui.setPropertyCell(input.id, objChild[0].value);
-								input.value = objChild[0].value;
-							}
-						}else{
-							ui.removePropObject(input.id);
-							objChild.hide();
+				if(input.type == "radio"){
+					if(input.checked){
+						if(objChild.length > 0){
+							objChild.show();
+							ui.setPropertyCell(input.id, objChild[0].value);
+							input.value = objChild[0].value;
 						}
 					}else{
-						ui.setPropertyCell(input.id, input.value);
+						objChild.hide();
+						ui.removePropObject(input.id);
 					}
+				}else{
+					ui.setPropertyCell(input.id,input.value);
+				}
+				
+				if(!input.value){
+					ui.removePropObject(input.id);
 				}
 			}
 		},
@@ -268,9 +278,11 @@ var ui = function() {
 			// remover objeto e filhos do objeto
 			var propVal = ui.getPropertyCell(name);
 			while(propVal){
-				ui.removePropertyCell(propVal);
-				propVal = ui.getPropertyCell(propVal);
+				var auxPropVal = propVal;
+				propVal = ui.getPropertyCell(auxPropVal);
+				ui.removePropertyCell(auxPropVal);
 			}
+			
 			ui.removePropertyCell(name);
 		},
 		invertBoolean(bool){
@@ -316,10 +328,14 @@ var ui = function() {
 				
 				//divInput.className = "form-group";
 				if(isChildren){
-					input.type = "radio";	
+					if(TypesAttributesEnum.CHECKBOX == properties[i].type){
+						input.type = "checkbox";	
+					}else{
+						input.type = "radio";	
+					}
+					
 					divInput.appendChild(input);
 					divInput.appendChild(label);
-					
 					if(TypesAttributesEnum.TEXT == properties[i].type ||
 						TypesAttributesEnum.EXPRESSION == properties[i].type || 
 						TypesAttributesEnum.LIST == properties[i].type){
@@ -327,7 +343,7 @@ var ui = function() {
 						inputText.style = "margin-left: 20px;";
 						input.className ='form-check-input';
 						inputText.id = input.id + "_text";
-						inputText.placeholder = input.value;
+						inputText.placeholder = properties[i].placeholder;
 						inputText.value = input.value;	
 						inputText.name = input.id;
 						inputText.type = "text";	
@@ -337,6 +353,8 @@ var ui = function() {
 					}
 				}else{
 					if(TypesAttributesEnum.BOOLEAN == properties[i].type ||
+						TypesAttributesEnum.CHECKBOX == properties[i].type ||
+						TypesAttributesEnum.OBJECT_SELECTABLE == properties[i].type ||
 						TypesAttributesEnum.OBJECT == properties[i].type){
 						input.type = "checkbox";
 						divInput.appendChild(input);
@@ -375,10 +393,10 @@ var ui = function() {
 				}
 				
 				htmlEl.append(divInput);		
-				//input.addEventListener((input.type == "text" ? "keyup" : "change"), function(){ui.loadPropertiesJson()}, false);
+					input.addEventListener((input.type == "text" ? "keyup" : "change"), function(){ui.loadPropertiesJson()}, false);
 				
 				if(inputText){
-				//	inputText.addEventListener("keyup", function(){ui.loadPropertiesJson()}, false);	
+					inputText.addEventListener("keyup", function(){ui.loadPropertiesJson()}, false);	
 				}
 			}
 			ui.loadPropertiesJson();
@@ -1595,13 +1613,16 @@ $(document).keyup(function(e) {
 
 	if (ui.getSelectedCells()[0] !== null) {
 		if (ui.states.editor.isViewing()) {
-			if (e.which === 8 || e.which === 46) {
-				// 8: backspace
-				// 46: delete
-				// The use of the 'backspace' key, in addition to the 'delete', key aims to improve support for Mac users,
-				//    since in that system the key named 'delete' actually is a 'backspace' key
-				ui.getSelectedCells()[0].remove();
-				ui.selectPaper();
+			var modalEdition = $('#modalNodeEdition');
+			if(modalEdition.css('display') == "none"){
+				if (e.which === 8 || e.which === 46) {
+					// 8: backspace
+					// 46: delete
+					// The use of the 'backspace' key, in addition to the 'delete', key aims to improve support for Mac users,
+					//    since in that system the key named 'delete' actually is a 'backspace' key
+					ui.getSelectedCells()[0].remove();
+					ui.selectPaper();
+				}
 			}
 			if (e.which === 27) {  //esc
 				ui.selectPaper();

@@ -16,8 +16,9 @@ public class Group extends PropertyModel {
 	public Group() {
 		this.setChecked(true);
 		this.setName("Group");
-		this.setType(TypesAttributesEnum.CHECKBOX);
+		this.setType(TypesAttributesEnum.OBJECT_SELECTABLE);
 		this.setValue("true");
+		this.setChecked(true);
 		this.setChildrens();
 		
 	}
@@ -25,9 +26,10 @@ public class Group extends PropertyModel {
 	private void setChildrens() {
 		List<PropertyModel> childrens = new ArrayList<PropertyModel>();
 		PropertyModel div = new Divisible();
+		div.setType(TypesAttributesEnum.CHECKBOX);
+		div.setChecked(true);
 		div.setValue("true");
 		childrens.add(div);
-		
 		
 		super.setChildrens(childrens);
 	}
