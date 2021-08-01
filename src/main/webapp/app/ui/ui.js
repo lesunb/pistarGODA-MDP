@@ -213,7 +213,7 @@ var ui = function() {
 		loadPropertiesJson() {
 			var elements = document.querySelectorAll("div[propertyElement=true]");
 			for(var i = 0; i < elements.length; i++){
-				var input = elements[i].querySelector("input[propertyInput=true]");
+				var input = elements[i].querySelector("input[propertyInput=true],textarea[propertyInput=true]");
 				ui.setPropObject(input);
 			}/**/
 		},
@@ -339,14 +339,16 @@ var ui = function() {
 					if(TypesAttributesEnum.TEXT == properties[i].type ||
 						TypesAttributesEnum.EXPRESSION == properties[i].type || 
 						TypesAttributesEnum.LIST == properties[i].type){
-						inputText = document.createElement("input");
-						inputText.style = "margin-left: 20px;";
+						inputText = document.createElement("textarea");
+						inputText.style = "margin-left: 20px; width: 90%";
 						input.className ='form-check-input';
 						inputText.id = input.id + "_text";
 						inputText.placeholder = properties[i].placeholder;
+						//inputText.value = input.value;	
+						//inputText.type = "text";
+						
 						inputText.value = input.value;	
-						inputText.name = input.id;
-						inputText.type = "text";	
+						inputText.name = input.id;	
 						inputText.setAttribute("propertyType", properties[i].type);
 						divInput.appendChild(br);
 						divInput.appendChild(inputText);
@@ -367,10 +369,21 @@ var ui = function() {
 					else if(TypesAttributesEnum.TEXT == properties[i].type ||
 						TypesAttributesEnum.EXPRESSION == properties[i].type || 
 						TypesAttributesEnum.LIST == properties[i].type){
-						input.type = "text";	
+							
+						inputText = document.createElement("textarea");
+						inputText.style = "margin-left: 20px; width: 90%";
+						input.className ='form-check-input';
+						inputText.id = input.id;
+						inputText.value = input.value;	
+						inputText.name = nameFather;
+						inputText.placeholder = input.placeholder;	
+						inputText.setAttribute("propertyType", properties[i].type);
+						inputText.setAttribute("propertyInput", true);
+						
+						//input.type = "text";	
 						divInput.appendChild(label);
 						divInput.appendChild(br);
-						divInput.appendChild(input);
+						divInput.appendChild(inputText);
 					}
 				}
 				

@@ -32,7 +32,7 @@ public class QueriedProperty extends PropertyModel {
 		this.setChecked(true);
 
 		StringBuilder expression = new StringBuilder();
-		expression.append("[Queried Var]->select([Query Var]:[Query var Type] | [condition])");
+		expression.append("$[Queried Var]$->select($[Query Var]$:$[Query var Type]$ | $[condition]$)");
 		this.setPlaceholder(expression.toString());
 	}
 }
