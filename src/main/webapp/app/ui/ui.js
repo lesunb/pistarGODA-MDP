@@ -225,6 +225,11 @@ var ui = function() {
 			if(TypesAttributesEnum.BOOLEAN == type || TypesAttributesEnum.CHECKBOX == type){	
 				ui.setPropertyCell(input.id, input.checked);
 				input.value = input.checked;
+				if(input.name){
+					if(!ui.getPropertyCell(input.name)){
+						ui.removePropObject(input.id);
+					}
+				}
 			}else if (TypesAttributesEnum.OBJECT_SELECTABLE == type || TypesAttributesEnum.OBJECT == type || TypesAttributesEnum.RADIO_BUTTON == type){
 				if(input.checked){
 					objChild.show();
