@@ -219,19 +219,26 @@ var ui = function() {
 		},
 		setPropObject(input){
 			var type = input.getAttribute("propertyType");
+			var hide = input.getAttribute("propertyHide");
 			var nameChild = "#" + input.id + "_childrens";
 			var objChild = $(nameChild);
 			
 			if(TypesAttributesEnum.BOOLEAN == type || TypesAttributesEnum.CHECKBOX == type){	
-				ui.setPropertyCell(input.id, input.checked);
+				if(hide == "false" || hide == false){
+					ui.setPropertyCell(input.id, input.checked);
+				}
+				
 				input.value = input.checked;
-				if(input.name){
+				if(input.name != "undefined" && input.name != "null" && input.name != null && input.name != "" && input.name != undefined){
+					console.log(input.name)
+					console.log(input.id)
+					console.log("Ha um erro aqui")
 					if(!ui.getPropertyCell(input.name)){
 						ui.removePropObject(input.id);
 					}
 				}
 			}else if (TypesAttributesEnum.OBJECT_SELECTABLE == type || TypesAttributesEnum.OBJECT == type || TypesAttributesEnum.RADIO_BUTTON == type){
-				if(input.checked){
+				if(input.checked == "true" || input.checked == true ){
 					objChild.show();
 					var childrensDivAux = document.querySelectorAll("input[name=" + input.id + "]");
 					if(childrensDivAux.length > 0){
@@ -240,30 +247,38 @@ var ui = function() {
 								//if(TypesAttributesEnum.OBJECT_SELECTABLE == type){
 								//	ui.setPropertyCell(input.id, input.checked);
 								//}else{
+								if(hide == "false" || hide == false){
 									ui.setPropertyCell(input.id, childrensDivAux[i].id);
+								}
 								//}
 								input.value = childrensDivAux[i].id;
 							}
 							ui.setPropObject(childrensDivAux[i]);
 						}
 					}else{
-						ui.setPropertyCell(input.id, input.value);
+						if(hide == "false" || hide == false){
+							ui.setPropertyCell(input.id, input.value);
+						}
 					}
 				}else{
 					objChild.hide();
 					ui.removePropObject(input.id);
 					if(TypesAttributesEnum.OBJECT_SELECTABLE == type){
-						ui.setPropertyCell(input.id, input.checked);
+						if(hide == "false" || hide == false){
+							ui.setPropertyCell(input.id, input.checked);
+						}
 					}
 				}
 			}else if(TypesAttributesEnum.LIST == type || TypesAttributesEnum.TEXT == type || TypesAttributesEnum.EXPRESSION == type){
 				nameChild = "#" + input.id + "_text";
 				objChild = $(nameChild);
 				if(input.type == "radio"){
-					if(input.checked){
+					if(input.checked == "true" || input.checked == true){
 						if(objChild.length > 0){
 							objChild.show();
-							ui.setPropertyCell(input.id, objChild[0].value);
+							if(hide == "false" || hide == false){
+								ui.setPropertyCell(input.id, objChild[0].value);
+							}
 							input.value = objChild[0].value;
 						}
 					}else{
@@ -271,7 +286,9 @@ var ui = function() {
 						ui.removePropObject(input.id);
 					}
 				}else{
-					ui.setPropertyCell(input.id,input.value);
+					if(hide == "false" || hide == false){
+						ui.setPropertyCell(input.id,input.value);
+					}
 				}
 				
 				if(!input.value){
@@ -325,6 +342,7 @@ var ui = function() {
 				input.checked = properties[i].checked;
 				input.setAttribute("propertyType", properties[i].type);
 				input.setAttribute("propertyInput", true);
+				input.setAttribute("propertyHide", properties[i].hide);
 				
 				label.className ='form-check-label';
 				label.style = 'margin-left: 5px';
@@ -333,6 +351,7 @@ var ui = function() {
 				
 				//divInput.className = "form-group";
 				if(isChildren){
+					input.setAttribute("propertyHide", properties[i].hide);
 					if(TypesAttributesEnum.CHECKBOX == properties[i].type){
 						input.type = "checkbox";	
 					}else{
@@ -355,6 +374,7 @@ var ui = function() {
 						inputText.value = input.value;	
 						inputText.name = input.id;	
 						inputText.setAttribute("propertyType", properties[i].type);
+						inputText.setAttribute("propertyHide", properties[i].hide);
 						divInput.appendChild(br);
 						divInput.appendChild(inputText);
 					}
@@ -363,11 +383,13 @@ var ui = function() {
 						TypesAttributesEnum.CHECKBOX == properties[i].type ||
 						TypesAttributesEnum.OBJECT_SELECTABLE == properties[i].type ||
 						TypesAttributesEnum.OBJECT == properties[i].type){
+						input.setAttribute("propertyHide", properties[i].hide);
 						input.type = "checkbox";
 						divInput.appendChild(input);
 						divInput.appendChild(label);
 					}else if(TypesAttributesEnum.RADIO_BUTTON == properties[i].type){
 						input.type = "radio";
+						input.setAttribute("propertyHide", properties[i].hide);
 						divInput.appendChild(input);
 						divInput.appendChild(label);	
 					}
@@ -383,6 +405,7 @@ var ui = function() {
 						inputText.name = nameFather;
 						inputText.placeholder = input.placeholder;	
 						inputText.setAttribute("propertyType", properties[i].type);
+						inputText.setAttribute("propertyHide", properties[i].hide);
 						inputText.setAttribute("propertyInput", true);
 						
 						//input.type = "text";	

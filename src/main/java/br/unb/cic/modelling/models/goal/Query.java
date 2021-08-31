@@ -29,6 +29,7 @@ public class Query extends PropertyModel {
 	public Query() {
 		this.setName("Query");
 		this.setType(TypesAttributesEnum.RADIO_BUTTON);
+		this.setHide(true);
 		
 		PropertyModel query = new QueriedProperty();
 		this.getChildrens().add(query);
