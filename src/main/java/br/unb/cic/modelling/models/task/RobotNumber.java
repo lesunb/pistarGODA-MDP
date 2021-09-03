@@ -23,7 +23,7 @@ public class RobotNumber extends PropertyModel{
 		fixed.setName("Fixed");
 		
 		PropertyModel range = new PropertyModel();
-		range.setType(TypesAttributesEnum.LIST);
+		range.setType(TypesAttributesEnum.TEXT);
 		range.setName("range");
 		range.setChecked(false);
 		
@@ -31,7 +31,7 @@ public class RobotNumber extends PropertyModel{
 		List<String> list = new ArrayList<String>();
 		list.add("min");
 		list.add("max");
-		range.setList(list);
+//		range.setList(list);
 		
 		
 		childrens.add(fixed);

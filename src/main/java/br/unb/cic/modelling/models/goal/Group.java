@@ -16,21 +16,10 @@ public class Group extends PropertyModel {
 	public Group() {
 		this.setChecked(true);
 		this.setName("Group");
-		this.setType(TypesAttributesEnum.OBJECT_NULLABLE);
+		this.setType(TypesAttributesEnum.CHECKBOX);
 		this.setValue("true");
-		this.setChecked(true);
-		this.setChildrens();
+	//	this.setChildrens();
 		
 	}
 	
-	private void setChildrens() {
-		List<PropertyModel> childrens = new ArrayList<PropertyModel>();
-		PropertyModel div = new Divisible();
-		div.setType(TypesAttributesEnum.CHECKBOX);
-		div.setChecked(true);
-		div.setValue("true");
-		childrens.add(div);
-		
-		super.setChildrens(childrens);
-	}
 }

@@ -13,8 +13,8 @@ public class Divisible extends PropertyModel {
 	public Divisible() {
 		this.setChecked(true);
 		this.setName("Divisible");
-		this.setType(TypesAttributesEnum.BOOLEAN);
+		this.setType(TypesAttributesEnum.CHECKBOX);
 		this.setValue("true");
-		
+		this.setHide(false);
 	}
 }

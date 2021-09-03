@@ -10,6 +10,7 @@ public class Perform extends PropertyModel {
 		this.setName("Perform");
 		this.setValue("true");
 		this.setChecked(true);
+		this.setHide(true);
 	}
 
 }

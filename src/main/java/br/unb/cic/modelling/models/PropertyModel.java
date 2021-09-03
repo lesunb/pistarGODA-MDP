@@ -11,6 +11,7 @@ public class PropertyModel {
 	private String placeholder = "";
 	private List<String> list = new ArrayList<String>(); 
 	private boolean checked = false;
+	private boolean hide = false;
 	private TypesAttributesEnum type;
 	private List<PropertyModel> childrens = new ArrayList<PropertyModel>();
 	
@@ -28,6 +29,12 @@ public class PropertyModel {
 	}
 	public TypesAttributesEnum getType() {
 		return type;
+	}
+	public boolean isHide() {
+		return hide;
+	}
+	public void setHide(boolean hide) {
+		this.hide = hide;
 	}
 	public void setType(TypesAttributesEnum type) {
 		this.type = type;
