@@ -336,13 +336,16 @@ var ui = function() {
 				if(propVal){
 					var inp = document.getElementById(id);
 					var inpChild = document.getElementById(propVal);
-					inp.value = propVal;	
-					
-					if(inp.type == "radio" || inp.type == "checkbox"){
-						inp.checked = true;	
+					if(inp){
+						inp.value = propVal;	
+						if(inp.type == "radio" || inp.type == "checkbox"){
+							inp.checked = true;	
+						}
 					}
-					if(inpChild.type == "radio" || inpChild.type == "checkbox"){
-						inpChild.checked = true;	
+					if(inpChild){
+						if(inpChild.type == "radio" || inpChild.type == "checkbox"){
+							inpChild.checked = true;	
+						}
 					}
 				}
 			}
