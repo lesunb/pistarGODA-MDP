@@ -19,12 +19,15 @@ $(document).ready(function () {
         setTimeout(function () {
             istar.fileManager.loadModel(istar.models.processModelParameter());
             ui.selectPaper();//clear selection
-            }, 5);
+        }, 5);
     });
 
     // ui.alert('Hi there, this is a beta version of the tool, currently under testing. Please send us your feedback at <a href="https://goo.gl/forms/SaJlelSfkTkp819t2">https://goo.gl/forms/SaJlelSfkTkp819t2</a>',
     //     'Beta version');
 });
 
+$(window).bind('beforeunload', function () {
+    return 'Are you sure you want to leave?';
+})
 /*definition of globals to prevent undue JSHint warnings*/
 /*globals istar:false, ui:false, console:false, $:false */

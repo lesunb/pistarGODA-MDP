@@ -53,7 +53,6 @@ public class IntegrationService {
 
  		return properties;
 	}
-
 	public void executePrism(String content, String typeModel, String output) {
 		Gson gson = new GsonBuilder().create();
 		PistarModel model = gson.fromJson(content, PistarModel.class);
