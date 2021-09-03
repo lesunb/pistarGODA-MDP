@@ -16,7 +16,7 @@ public class Group extends PropertyModel {
 	public Group() {
 		this.setChecked(true);
 		this.setName("Group");
-		this.setType(TypesAttributesEnum.OBJECT_SELECTABLE);
+		this.setType(TypesAttributesEnum.OBJECT_NULLABLE);
 		this.setValue("true");
 		this.setChecked(true);
 		this.setChildrens();

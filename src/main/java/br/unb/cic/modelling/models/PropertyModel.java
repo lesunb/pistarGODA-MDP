@@ -9,6 +9,7 @@ public class PropertyModel {
 	private String name;
 	private String value = "";
 	private String placeholder = "";
+	private List<String> list = new ArrayList<String>(); 
 	private boolean checked = false;
 	private TypesAttributesEnum type;
 	private List<PropertyModel> childrens = new ArrayList<PropertyModel>();
@@ -55,6 +56,12 @@ public class PropertyModel {
 	}
 	public void setPlaceholder(String placeholder) {
 		this.placeholder = placeholder;
+	}
+	public List<String> getList() {
+		return list;
+	}
+	public void setList(List<String> list) {
+		this.list = list;
 	}
 	
 }
