@@ -37,19 +37,23 @@ public class AchieveCondition extends PropertyModel {
 		PropertyModel universal = new PropertyModel();
 		universal.setType(TypesAttributesEnum.TEXT);
 		universal.setName("Universal");
+		universal.setChecked(false);
+
+		StringBuilder expression = new StringBuilder();
+		expression.append("$Iterated Var$->forAll($Iterated Var$ | $condition$)");
+		universal.setPlaceholder(expression.toString());
 		
 		PropertyModel nonUniversal = new PropertyModel();
 		nonUniversal.setType(TypesAttributesEnum.EXPRESSION);
 		nonUniversal.setName("NonUniversal");
-
-		StringBuilder expression = new StringBuilder();
-		expression.append("$Iterated Var$->forAll($Iterated Var$ | $condition$)");
-		nonUniversal.setValue(expression.toString());
+		nonUniversal.setPlaceholder("Condition");
+		nonUniversal.setChecked(true);
 		
 		
 		childrens.add(universal);
 		childrens.add(nonUniversal);
 		
+		this.setValue(universal.getName());
 		super.setChildrens(childrens);
 	}
 }

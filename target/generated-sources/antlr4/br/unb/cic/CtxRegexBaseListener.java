@@ -1,4 +1,4 @@
-// Generated from br\u005Cunb\cic\CtxRegex.g4 by ANTLR 4.3
+// Generated from br/unb/cic/CtxRegex.g4 by ANTLR 4.3
 package br.unb.cic;
 
 import org.antlr.v4.runtime.ParserRuleContext;

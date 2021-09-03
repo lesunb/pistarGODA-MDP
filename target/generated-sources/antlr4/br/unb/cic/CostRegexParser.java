@@ -1,4 +1,4 @@
-// Generated from br\u005Cunb\cic\CostRegex.g4 by ANTLR 4.3
+// Generated from br/unb/cic/CostRegex.g4 by ANTLR 4.3
 package br.unb.cic;
 import org.antlr.v4.runtime.atn.*;
 import org.antlr.v4.runtime.dfa.DFA;

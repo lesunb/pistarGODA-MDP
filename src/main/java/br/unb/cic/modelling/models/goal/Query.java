@@ -24,15 +24,16 @@ import br.unb.cic.modelling.models.PropertyModel;
 //“QueriedVarType” e “QueriedCondition”. Talvez o QueriedVarType possa ser
 //um sub-atributo do atributo “QueriedVar”, o que é possível desde que no
 //JSON tenhamos algo no formato [VAR] : [TYPE]
-public class QueriedProperty extends PropertyModel {
+public class Query extends PropertyModel {
 	
-	public QueriedProperty() {
-		this.setName("QueriedProperty");
-		this.setType(TypesAttributesEnum.TEXT);
-		this.setChecked(true);
+	public Query() {
+		this.setName("Query");
+		this.setType(TypesAttributesEnum.RADIO_BUTTON);
+		this.setHide(true);
+		
+		PropertyModel query = new QueriedProperty();
+		this.getChildrens().add(query);
 
-		StringBuilder expression = new StringBuilder();
-		expression.append("$[Queried Var]$->select($[Query Var]$:$[Query var Type]$ | $[condition]$)");
-		this.setPlaceholder(expression.toString());
+		this.setValue(query.getName());
 	}
 }

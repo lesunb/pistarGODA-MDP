@@ -30,6 +30,7 @@ public class Context extends PropertyModel{
 		PropertyModel trigger = new PropertyModel();
 		trigger.setType(TypesAttributesEnum.TEXT);
 		trigger.setName("Trigger");
+		trigger.setChecked(true);
 
 		PropertyModel condition = new PropertyModel();
 		condition.setType(TypesAttributesEnum.TEXT);
@@ -37,6 +38,7 @@ public class Context extends PropertyModel{
 
 		childrens.add(trigger);
 		childrens.add(condition);
+		this.setValue(trigger.getName());
 		
 		super.setChildrens(childrens);
 	}

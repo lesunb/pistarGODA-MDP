@@ -1,5 +1,8 @@
 package br.unb.cic.modelling.models.goal;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import br.unb.cic.modelling.enums.TypesAttributesEnum;
 import br.unb.cic.modelling.models.PropertyModel;
 
@@ -11,9 +14,12 @@ import br.unb.cic.modelling.models.PropertyModel;
 public class Group extends PropertyModel {
 
 	public Group() {
+		this.setChecked(true);
 		this.setName("Group");
 		this.setType(TypesAttributesEnum.CHECKBOX);
 		this.setValue("true");
+	//	this.setChildrens();
 		
 	}
+	
 }

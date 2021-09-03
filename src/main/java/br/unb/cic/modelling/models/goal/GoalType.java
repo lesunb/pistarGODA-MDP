@@ -18,6 +18,7 @@ import br.unb.cic.modelling.models.PropertyModel;
 public class GoalType extends PropertyModel {
 	
 	public GoalType() {
+		this.setChecked(true);
 		this.setName("GoalType");
 		this.setType(TypesAttributesEnum.OBJECT);
 		this.setChildrens();
@@ -28,9 +29,9 @@ public class GoalType extends PropertyModel {
 		List<PropertyModel> childrens = new ArrayList<PropertyModel>();
 		
 		PropertyModel achieve = new AchieveCondition();
-		PropertyModel query = new QueriedProperty();
+		PropertyModel query = new Query();
 		PropertyModel perform = new Perform();
-		perform.setValue("true");
+		this.setValue(perform.getName());
 
 		childrens.add(query);
 		childrens.add(achieve);

@@ -10,10 +10,22 @@
 const regexDM = /\[DM\(.*?\)\]/g;
 const regexBrackets = /\[.*?\]/g;
 const regexExpression = /\$.*?\$/g;
+const TypesAttributesEnum = {
+	BOOLEAN: "BOOLEAN",
+	CHECKBOX: "CHECKBOX",
+	RADIO_BUTTON: "RADIO_BUTTON",
+	EXPRESSION: "EXPRESSION",
+	LIST: "LIST",
+	OBJECT: "OBJECT",
+	OBJECT_NULLABLE: "OBJECT_NULLABLE",
+	OBJECT_SELECTABLE: "OBJECT_SELECTABLE",
+	TEXT: "TEXT"
+}
 
 var ui = function() {
 	'use strict';
 
+	var lastSelectedCell = null;
 	var selectedCell = null;
 	var selectedProperties = null;
 
@@ -148,15 +160,19 @@ var ui = function() {
 			return '!checked';
 		},
 		setNameCell: function(name) {
+			event.preventDefault();
 			this.getSelectedCells()[0].prop('name', name);
 		},
 		removePropertyCell: function(key) {
+			event.preventDefault();
 			this.getSelectedCells()[0].removeProp('customProperties/' + key);
 		},
 		setPropertyCell: function(key, name) {
+			event.preventDefault();
 			this.getSelectedCells()[0].prop('customProperties/' + key, name);
 		},
 		getPropertyCell: function(key) {
+			event.preventDefault();
 			return this.getSelectedCells()[0].prop('customProperties/' + key);
 		},
 		removeBlankSpacesInNotation: function(cell) {
@@ -185,12 +201,10 @@ var ui = function() {
 				type: "GET",
 				url: "/getProperties?attribute=" + type,
 				success: function(properties) {
-					$( "#MNE_properties" ).empty();
-					var htmlGen = ui.generatePropertiesModalHtml(properties, false, null);
-					$( "#MNE_properties").append($(htmlGen));
-					
-					var elementsProp = document.getElementsByClassName("element_property");
-					ui.generateProperties(elementsProp);
+					var htmlGen = $( "#MNE_properties");
+					htmlGen.empty();
+					ui.generatePropertiesModalHtml(htmlGen, properties, false, null);
+					ui.setValuesProp(properties);
 				},
 				error: function(request) {
 					ui.handleException(request.responseText);
@@ -198,147 +212,288 @@ var ui = function() {
 		
 			});
 		},
-		generatePropertiesModalHtml(properties, isChildren, nameFather) {
-			var html = "";
-			this.selectedProperties = properties;
-			for(var i = 0; i < properties.length; i++){
-				var div = document.createElement("div"); 
-				var div1 = document.createElement("div"); 
-				var div2 = document.createElement("div"); 
-				var id = properties[i].name;
-				var typeInput ="";
-				var checked = "";
-				
-				// recuperar properties ja settadas 
-				var propVal = ui.getPropertyCell(id);
-				if(propVal){
-					properties[i].value = propVal;	
-				 	checked = "checked";
+		loadPropertiesJson() {
+			var elements = document.querySelectorAll("div[propertyElement=true]");
+			for(var i = 0; i < elements.length; i++){
+				var input = elements[i].querySelector("input[propertyInput=true],textarea[propertyInput=true]");
+				//ui.removePropObject(input.id);
+				ui.setPropObject(input);
+			}/**/
+		},
+		setPropObject(input){
+			var type = input.getAttribute("propertyType");
+			var hide = input.getAttribute("propertyHide");
+			var nameChild = "#" + input.id + "_childrens";
+			var objChild = $(nameChild);
+			
+			if(TypesAttributesEnum.BOOLEAN == type || TypesAttributesEnum.CHECKBOX == type){	
+				if(hide == "false" || hide == false){
+					ui.setPropertyCell(input.id, input.checked);
 				}
 				
-				if(isChildren){
-					typeInput = "radio";
-				}else{
-					nameFather = "";
-					typeInput = "checkbox";
-					div.className = "element_property";
-				}
-				
-				if(properties[i].type == "CHECKBOX"){
-				 	checked = (properties[i].value == "true" ? "checked" : "");
-				}
-				
-				var parentInputs = properties[i].name + "_parent_inputs";
-				div1.innerHTML = "<input id='" + id  + "' type='" + typeInput + "'" +
-						"class='form-check-input' " + checked +  " name='" + nameFather + "' " + 
-						"onclick='ui.showChildrens(this)' value='" + properties[i].value + "'>" +
-						"<label class='form-check-label' for='" + id  + "'>" + properties[i].name + "</label>" +
-						"<div id='"+ parentInputs + "'></div>" ;
-						
-				div1.id = properties[i].name + "_parent";
-				
-				var input = div1.children[0];
-				var elInputs = div1.children[2];
-				input.setAttribute("propertyType", properties[i].type);
-				ui.generateByTypeProperty(input, elInputs);	
-				
-				if(properties[i].childrens.length > 0){
-					var htmlChildrens = ""; 
-					htmlChildrens += "<div style='margin-left: 20px;'>";
-					htmlChildrens += ui.generatePropertiesModalHtml(properties[i].childrens, true, properties[i].name);
-					htmlChildrens += "</div>";
-					
-					div2.innerHTML = htmlChildrens;
-					div2.id = properties[i].name + "_childrens";
-					if( checked ){
-						div2.style.display = "block";
-					}else{
-						div2.style.display = "none";
+				input.value = input.checked;
+				if(input.name != "undefined" && input.name != "null" && input.name != null && input.name != "" && input.name != undefined){
+					if(!ui.getPropertyCell(input.name)){
+						ui.removePropObject(input.id);
 					}
-					div.setAttribute("hasChildren", true);	
-				}else{
-					div.setAttribute("hasChildren", false);	
 				}
-				
-				div.setAttribute("element_property", id);
-				div.id = properties[i].name + "_group";
-				div.appendChild(div1);
-				div.appendChild(div2);
-				html += div.outerHTML;
-			}
-			
-			return html;
-		},
-		showChildrens(el){
-			var display = "";
-			var childrens = el.id + "_childrens";
-			var parentInputs = el.id + "_parent_inputs";
-			var childrensEl = document.getElementById(childrens);
-			var inputsEl = document.getElementById(parentInputs);
-			
-			if( el.checked){
-				display = "block";
-				//el.setAttribute("checked", true);
-				ui.generateByTypeProperty(el, inputsEl);
-			}else{
-				el.value = "";
-				display = "none";
-				inputsEl.innerHTML = "";
-				//el.setAttribute("checked", false);
-			}
-			
-			if(childrensEl){
-				childrensEl.style.display = display;
-			}
-			
-			ui.clearPropertiesUnused(el);
-			var elementsProp = document.getElementsByClassName("element_property");
-			ui.generateProperties(elementsProp);
-		},
-		clearPropertiesUnused(el){
-			var childrens = el.name + "_childrens";
-			var childrensEl = document.getElementById(childrens);
-			
-			if(childrensEl){
-				childrensEl = childrensEl.children[0].children;
-				for(var i = 0; i < childrensEl.length; i++){
-					var input = childrensEl[i].firstElementChild.children[0];
-					var inputsDiv = childrensEl[i].firstElementChild.children[2];
-					if(!input.checked){
-						var childrensProp = input.id + "_childrens";
-						var childrensPropEl = document.getElementById(childrensProp);
-						inputsDiv.innerHTML = "";
-						
-						if(childrensPropEl){
-							childrensPropEl.style.display = "none";
+			}else if (TypesAttributesEnum.OBJECT_SELECTABLE == type || TypesAttributesEnum.OBJECT_NULLABLE == type || TypesAttributesEnum.OBJECT == type || TypesAttributesEnum.RADIO_BUTTON == type){
+				if(input.checked == "true" || input.checked == true ){
+					objChild.show();
+					var childrensDivAux = document.querySelectorAll("input[name=" + input.id + "]");
+					if(childrensDivAux.length > 0){
+						for(var i = 0; i < childrensDivAux.length; i++){
+							if(childrensDivAux[i].checked && childrensDivAux[i].value){
+								//if(TypesAttributesEnum.OBJECT_SELECTABLE == type){
+								//	ui.setPropertyCell(input.id, input.checked);
+								//}else{
+								if(hide == "false" || hide == false){
+									ui.setPropertyCell(input.id, childrensDivAux[i].id);
+								}
+								//}
+								input.value = childrensDivAux[i].id;
+							}
+							ui.setPropObject(childrensDivAux[i]);
+						}
+					}else{
+						if(hide == "false" || hide == false){
+							ui.setPropertyCell(input.id, input.value);
 						}
 					}
+				}else{
+					objChild.hide();
+					ui.removePropObject(input.id);
+					if(TypesAttributesEnum.OBJECT_SELECTABLE == type){
+						if(hide == "false" || hide == false){
+							ui.setPropertyCell(input.id, input.checked);
+						}
+					}else if (TypesAttributesEnum.OBJECT_NULLABLE == type){
+						if(hide == "false" || hide == false){
+						    ui.setPropertyCell(input.id, "");
+                        }
+					}
+				}
+			}else if(TypesAttributesEnum.LIST == type || TypesAttributesEnum.TEXT == type || TypesAttributesEnum.EXPRESSION == type){
+				nameChild = "#" + input.id + "_text";
+				objChild = $(nameChild);
+				if(input.type == "radio"){
+					if(input.checked == "true" || input.checked == true){
+						if(objChild.length > 0){
+							objChild.show();
+							if(hide == "false" || hide == false){
+								ui.setPropertyCell(input.id, objChild[0].value);
+							}
+							input.value = objChild[0].value;
+						}
+					}else{
+						objChild.hide();
+						ui.removePropObject(input.id);
+					}
+				}else{
+					if(hide == "false" || hide == false){
+						ui.setPropertyCell(input.id,input.value);
+					}
+				}
+				
+				if(!input.value){
+					ui.removePropObject(input.id);
 				}
 			}
 		},
-		generateByTypeProperty(el, inputsEl){
-			var propertytype = el.getAttribute("propertytype");
-			var value = el.value;
-			
-			if(el.checked ){
-				if(propertytype == "TEXT"){
-					inputsEl.innerHTML = "<input style='width: 80%; margin-left: 20px' type='text' class='form-check-input' " +
-					"placeholder='" + el.id + "' onkeyup='ui.updateProperty(this)' value='" + value + "'>";
-				}
-				if(propertytype == "EXPRESSION"){
-					var found;
-			        while(value.search(regexExpression) >= 0){
-				        found = value.match(regexExpression);
-				        found = found[0].replaceAll("$", "");
-	
-						value = value.replace(regexExpression, "");
-						inputsEl.innerHTML = "<input id='"+ el.id + "_" +found +"' style='width: 80%; margin-left: 20px' type='text' class='form-check-input' " +
-						"placeholder='" + found + "' onkeyup='ui.applyExpression(this)' value='" + found + "'>";
-			        }
-				}
+		removePropObject(name){
+			var elements = document.getElementById(name+"_childrens");
+			if(elements){
+				var childrens = elements.querySelectorAll("input[propertyInput=true],textarea[propertyInput=true]");
+				for(var i = 0; i < childrens.length; i++){
+					ui.removePropertyCell(childrens[i].id);
+				}/**/
 			}else{
-				inputsEl.innerHTML = "";
+				var propVal = ui.getPropertyCell(name);
+				while(propVal){
+					var auxPropVal = propVal;
+					propVal = ui.getPropertyCell(auxPropVal);
+					ui.removePropertyCell(auxPropVal);
+				}
 			}
+				
+			ui.removePropertyCell(name);
+		},
+		invertBoolean(bool){
+			if(bool == true || bool == "true"){
+				return "false";
+			}
+			if(bool == false || bool == "false"){
+				return "true";
+			}
+			
+			return bool;
+		},
+		setValuesProp(properties){
+			
+			for(var i = 0; i < properties.length; i++){
+				var id = properties[i].name;
+				var propVal = ui.getPropertyCell(id);
+				if(propVal){
+					var inp = document.getElementById(id);
+					var inpChild = document.getElementById(propVal);
+					inp.value = propVal;	
+					
+					if(inp.type == "radio" || inp.type == "checkbox"){
+						inp.checked = true;	
+					}
+					if(inpChild.type == "radio" || inpChild.type == "checkbox"){
+						inpChild.checked = true;	
+					}
+				}
+			}
+		},
+		generatePropertiesModalHtml(htmlEl, properties, isChildren, nameFather) {
+			this.selectedProperties = properties;
+			for(var i = 0; i < properties.length; i++){
+				var divInput = document.createElement("div"); 
+				var input = document.createElement("input"); 
+				var label = document.createElement("label"); 
+				var br = document.createElement("br"); 
+				var id = properties[i].name;
+				var valueP = properties[i].value;
+				var inputText;
+				
+				var propVal = ui.getPropertyCell(id);
+				if(propVal){
+					properties[i].value = propVal;
+					properties[i].checked = true;
+				}
+				
+				input.id = id;
+				input.value = valueP;	
+				input.name = nameFather;
+				input.className ='form-check-input';
+				input.checked = properties[i].checked;
+				input.setAttribute("propertyType", properties[i].type);
+				input.setAttribute("propertyInput", true);
+				input.setAttribute("propertyHide", properties[i].hide);
+				
+				label.className ='form-check-label';
+				label.style = 'margin-left: 5px';
+				label.for = id;
+				label.textContent = id;
+				
+				//divInput.className = "form-group";
+				if(isChildren){
+					input.setAttribute("propertyHide", properties[i].hide);
+					if(TypesAttributesEnum.CHECKBOX == properties[i].type){
+						input.type = "checkbox";	
+					}else{
+						input.type = "radio";	
+					}
+					
+					divInput.appendChild(input);
+					divInput.appendChild(label);
+					if(TypesAttributesEnum.TEXT == properties[i].type ||
+						TypesAttributesEnum.EXPRESSION == properties[i].type || 
+						TypesAttributesEnum.LIST == properties[i].type){
+							
+						var listProp = properties[i].list;
+						if(listProp && listProp.length > 0 ){
+							var newDiv = document.createElement("div");
+							newDiv.style ='width: 90%; display: flex; flex-direction: row;';
+							for(var m = 0; m < listProp.length; m++){
+								inputText = document.createElement("input");
+								inputText.style = "margin-left: 20px; width: 90%";
+								input.className ='form-check-input';
+								inputText.className ='col';
+								inputText.id = input.id + "_text";
+								inputText.placeholder = listProp[m].placeholder;
+								//inputText.value = input.value;	
+								//inputText.type = "text";
+								
+								inputText.value = input.value;	
+								inputText.name = input.id;	
+								inputText.setAttribute("propertyType", properties[i].type);
+								newDiv.appendChild(br);
+								newDiv.appendChild(inputText);
+							}
+							divInput.appendChild(newDiv);
+						}else{
+							inputText = document.createElement("textarea");
+							inputText.style = "margin-left: 20px; width: 90%";
+							input.className ='form-check-input';
+							inputText.id = input.id + "_text";
+							inputText.placeholder = properties[i].placeholder;
+							//inputText.value = input.value;	
+							//inputText.type = "text";
+							
+							inputText.value = input.value;	
+							inputText.name = input.id;	
+							inputText.setAttribute("propertyType", properties[i].type);
+							divInput.appendChild(br);
+							divInput.appendChild(inputText);
+						}
+					}
+				}else{
+					if(TypesAttributesEnum.BOOLEAN == properties[i].type ||
+						TypesAttributesEnum.CHECKBOX == properties[i].type ||
+						TypesAttributesEnum.OBJECT_SELECTABLE == properties[i].type ||
+						TypesAttributesEnum.OBJECT_NULLABLE == properties[i].type ||
+						TypesAttributesEnum.OBJECT == properties[i].type){
+						input.setAttribute("propertyHide", properties[i].hide);
+						input.type = "checkbox";
+						divInput.appendChild(input);
+						divInput.appendChild(label);
+					}else if(TypesAttributesEnum.RADIO_BUTTON == properties[i].type){
+						input.type = "radio";
+						input.setAttribute("propertyHide", properties[i].hide);
+						divInput.appendChild(input);
+						divInput.appendChild(label);	
+					}
+					else if(TypesAttributesEnum.TEXT == properties[i].type ||
+						TypesAttributesEnum.EXPRESSION == properties[i].type || 
+						TypesAttributesEnum.LIST == properties[i].type){
+							
+						inputText = document.createElement("textarea");
+						inputText.style = "margin-left: 20px; width: 90%";
+						input.className ='form-check-input';
+						inputText.id = input.id;
+						inputText.value = input.value;	
+						inputText.name = nameFather;
+						inputText.placeholder = input.placeholder;	
+						inputText.setAttribute("propertyType", properties[i].type);
+						inputText.setAttribute("propertyHide", properties[i].hide);
+						inputText.setAttribute("propertyInput", true);
+						
+						//input.type = "text";	
+						divInput.appendChild(label);
+						divInput.appendChild(br);
+						divInput.appendChild(inputText);
+					}
+				}
+				
+				
+				if(properties[i].childrens.length > 0){
+					var divChildrens = document.createElement("div"); 
+					divChildrens.style = "margin-left: 20px;";
+					divChildrens.id = properties[i].name + "_childrens";
+					divInput.setAttribute("hasChildren", true);	
+					ui.generatePropertiesModalHtml(divChildrens, properties[i].childrens, true, properties[i].name);
+					divInput.appendChild(divChildrens);
+				}else{
+					divInput.setAttribute("hasChildren", false);
+				}
+				
+				if(nameFather == null || nameFather == ""){
+					divInput.setAttribute("propertyElement", true);
+				}else{
+					divInput.setAttribute("propertyElement", false);
+				}
+				
+				htmlEl.append(divInput);		
+					input.addEventListener((input.type == "text" ? "keyup" : "change"), function(){ui.loadPropertiesJson()}, false);
+				
+				if(inputText){
+					inputText.addEventListener("keyup", function(){ui.loadPropertiesJson()}, false);	
+				}
+			}
+			ui.loadPropertiesJson();
 		},
 		applyExpression(input) {
 			var id = input.id.replace("_"+ input.placeholder, "");
@@ -347,53 +502,6 @@ var ui = function() {
 			
 			element.value = element.value.replace(regexExpression, input.value);
 			ui.generateProperties(elementsProp);
-		},
-		updateProperty(input){
-			var element = document.getElementById(input.placeholder);
-			element.value = input.value;
-			
-			var elementsProp = document.getElementsByClassName("element_property");
-			ui.generateProperties(elementsProp);
-		},
-		generateProperties(elementsProp){
-			for(var i = 0; i < elementsProp.length; i++){
-				var nameElement = elementsProp[i].getAttribute("element_property");
-				var input = null;
-				
-				if(elementsProp[i].getAttribute("hasChildren") == "true"){
-					input = elementsProp[i].children[0].firstElementChild;
-					if(input.checked){
-						var childrens = elementsProp[i].children[1].firstElementChild.children;
-						for(var j = 0; j < childrens.length; j++){
-							input = childrens[j].firstElementChild.firstElementChild;
-							if(input.checked){
-								ui.setInputProperty(nameElement, input.checked, input.id);
-								break;
-							}
-						}
-						ui.generateProperties(childrens);
-					}else{
-						var childrens = elementsProp[i].children[1].firstElementChild.children;
-						for(var j = 0; j < childrens.length; j++){
-							input = childrens[j].firstElementChild.firstElementChild;
-							input.checked = false;
-							ui.setInputProperty(nameElement, input.checked, input.id);
-						}
-						ui.removePropertyCell(nameElement);
-						ui.generateProperties(childrens);
-					}
-				}else{
-					input = elementsProp[i].children[0].firstElementChild;
-					ui.setInputProperty(nameElement, input.checked, input.value);
-				}
-			}
-		},
-		setInputProperty(nameElement, checked, value){
-			if(checked){
-				ui.setPropertyCell(nameElement, value);
-			}else{
-				ui.removePropertyCell(nameElement);
-			}
 		},
 		selectDMCheckbox: function() {
 			var cell = this.getSelectedCells()[0];
@@ -1599,13 +1707,16 @@ $(document).keyup(function(e) {
 
 	if (ui.getSelectedCells()[0] !== null) {
 		if (ui.states.editor.isViewing()) {
-			if (e.which === 8 || e.which === 46) {
-				// 8: backspace
-				// 46: delete
-				// The use of the 'backspace' key, in addition to the 'delete', key aims to improve support for Mac users,
-				//    since in that system the key named 'delete' actually is a 'backspace' key
-				ui.getSelectedCells()[0].remove();
-				ui.selectPaper();
+			var modalEdition = $('#modalNodeEdition');
+			if(modalEdition.css('display') == "none"){
+				if (e.which === 8 || e.which === 46) {
+					// 8: backspace
+					// 46: delete
+					// The use of the 'backspace' key, in addition to the 'delete', key aims to improve support for Mac users,
+					//    since in that system the key named 'delete' actually is a 'backspace' key
+					ui.getSelectedCells()[0].remove();
+					ui.selectPaper();
+				}
 			}
 			if (e.which === 27) {  //esc
 				ui.selectPaper();
