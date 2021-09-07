@@ -108,6 +108,13 @@ https://github.com/jhcp/pistar
 							Save Image
 						</a>
 
+						<a class="btn btn-default button-vertical ml-2"
+							id="menu-button-save-hddl"
+							title="Save (download) model as HDDL file"
+							data-toggle="modal" data-target="#modal-load-hddl"> <span
+							class="glyphicon glyphicon-file" aria-hidden="true"></span><br>
+							Save DLL
+						</a>
 					</div>
 				</div>
 			</div>
@@ -473,6 +480,37 @@ https://github.com/jhcp/pistar
 			</div>
 		</div>
 
+		<div class="modal fade" id="modal-load-hddl" tabindex="-1"
+			role="dialog" aria-labelledby="label-load-dll-modal">
+			<div class="modal-dialog" role="document">
+				<div class="modal-content">
+					<div class="modal-header">
+						<button type="button" class="close" data-dismiss="modal"
+							aria-label="Close">
+							<span aria-hidden="true">×</span>
+						</button>
+						<h4 class="modal-title" id="label-load-model-modal">Load HDDL from file</h4>
+					</div>
+					<div class="modal-body">
+						<label>Model</label>
+						<input type="file" id="input-multrose-model" name="model_file" accept=".json, .txt" /> <br>
+						<label>HDDL</label>
+						<input type="file" id="input-multrose-hddl" name="hddl_file" accept=".hddl, .txt" /> <br>
+						<label>Configuration</label>
+						<input type="file" id="input-multrose-config" name="config_file" accept="*" /> <br>
+						<label>World Knowledge</label>
+						<input type="file" id="input-multrose-world" name="wk_file" accept=".xml, .txt" /> <br>
+					</div>
+					<div class="modal-footer">
+						<button id="modal-button-multrose-save" type="button"
+							class="btn btn-primary" data-loading-text="Loading...">Save</button>
+						<button id="modal-button-close-load-model" type="button"
+							class="btn" data-dismiss="modal">Close</button>
+					</div>
+				</div>
+			</div>
+		</div>
+		
 		<div class="modal fade" id="modal-load-model" tabindex="-1"
 			role="dialog" aria-labelledby="label-load-model-modal">
 			<div class="modal-dialog" role="document">

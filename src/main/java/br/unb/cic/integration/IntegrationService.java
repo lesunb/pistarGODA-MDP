@@ -34,6 +34,7 @@ import br.unb.cic.goda.rtgoretoprism.action.RunParamAction;
 import br.unb.cic.modelling.Properties;
 import br.unb.cic.modelling.enums.AttributesEnum;
 import br.unb.cic.modelling.models.PropertyModel;
+import br.unb.cic.pistar.model.MultRoSe;
 import br.unb.cic.pistar.model.PistarActor;
 import br.unb.cic.pistar.model.PistarLink;
 import br.unb.cic.pistar.model.PistarModel;
@@ -41,6 +42,12 @@ import br.unb.cic.pistar.model.PistarNode;
 
 @Service
 public class IntegrationService {
+	
+	public void generateBinMultRoSe(MultRoSe content) {
+		Gson gson = new GsonBuilder().create();
+		PistarModel model = gson.fromJson(content.getModel(), PistarModel.class);
+		
+	}
 
 	public List<PropertyModel> getProperties(String typeAttr) {
 		List<PropertyModel> properties = new ArrayList<PropertyModel>();
