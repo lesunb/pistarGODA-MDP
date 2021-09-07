@@ -1292,14 +1292,14 @@ ui.getFileInput = function(fileInput, callback){
 	else {
 		//else, load model from file
 		var file = fileInput.files[0];
-		if (file.type === 'text/plain') {
+		//if (file.type === 'text/plain') {
 			var fileReader = new FileReader();
 			fileReader.onload = function(e) {
   				callback(e.target.result);
 			};
 			fileReader.readAsText(file);
 
-		}
+		//}
 	}
 }
 
@@ -1391,6 +1391,7 @@ $('#modal-button-multrose-save').click(function() {
 	
 	if(!fileInputModel.val() || !fileInputHddl.val() || !fileInputConfig.val() || !fileInputWorld.val()){
 		ui.alert('You must select all a input file to load', 'No file(s) selected');
+		$('#modal-load-hddl').modal('hide');
 		return;
 	}
 	
@@ -1431,7 +1432,7 @@ $('#modal-button-multrose-save').click(function() {
 		fileInputHddl.val(null);
 		fileInputConfig.val(null);
 		fileInputWorld.val(null);
-		$('#modal-button-multrose-save').button('reset');
+		$('#modal-load-hddl').modal('hide');
 		ui.alert('Sorry, the input model is not valid.', 'Error loading file');
 	}
 });
