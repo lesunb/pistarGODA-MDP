@@ -1389,6 +1389,11 @@ $('#modal-button-multrose-save').click(function() {
 	var fileInputConfig = $('#input-multrose-config');
 	var fileInputWorld = $('#input-multrose-world');
 	
+	if(!fileInputModel.val() || !fileInputHddl.val() || !fileInputConfig.val() || !fileInputWorld.val()){
+		ui.alert('You must select all a input file to load', 'No file(s) selected');
+		return;
+	}
+	
 	try {
 		ui.getFileInput(fileInputModel[0], function(resultModel){
 			ui.getFileInput(fileInputHddl[0], function(resultHddl){
@@ -1405,6 +1410,11 @@ $('#modal-button-multrose-save').click(function() {
 							},
 							success: function() {
 								/*window.location.href = 'prism.zip';*/
+								$('#modal-load-hddl').modal('hide');
+								fileInputModel.val(null);
+								fileInputHddl.val(null);
+								fileInputConfig.val(null);
+								fileInputWorld.val(null);
 							},
 							error: function(request, status, error) {
 								ui.handleException(request.responseText);
@@ -1417,10 +1427,11 @@ $('#modal-button-multrose-save').click(function() {
 		});
 	}		
 	catch (error) {
-		fileInputModel.button('reset');
-		fileInputHddl.button('reset');
-		fileInputConfig.button('reset');
-		fileInputWorld.button('reset');
+		fileInputModel.val(null);
+		fileInputHddl.val(null);
+		fileInputConfig.val(null);
+		fileInputWorld.val(null);
+		$('#modal-button-multrose-save').button('reset');
 		ui.alert('Sorry, the input model is not valid.', 'Error loading file');
 	}
 });
