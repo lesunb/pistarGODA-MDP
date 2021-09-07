@@ -8,8 +8,13 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+
 import br.unb.cic.goda.model.ModelTypeEnum;
 import br.unb.cic.modelling.models.PropertyModel;
+import br.unb.cic.pistar.model.MultRoSe;
+import br.unb.cic.pistar.model.PistarModel;
 
 @RestController
 public class IntegrationController {
@@ -49,6 +54,11 @@ public class IntegrationController {
     @RequestMapping(value = "/getProperties", method = RequestMethod.GET)
     public  List<PropertyModel> getProperties(@RequestParam(value = "attribute") String attribute) {
     	return this.service.getProperties(attribute);
+    }
+    
+    @RequestMapping(value = "/load/multrose", method = RequestMethod.POST)
+    public  void loadMultRoSe( MultRoSe content) {
+    	 this.service.generateBinMultRoSe(content);
     }
     
 }
