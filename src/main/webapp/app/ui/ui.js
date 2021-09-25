@@ -1285,6 +1285,24 @@ ui.connectLinksToShape = function() {
 	}, 100);
 };
 
+ui.getFileInput = function(fileInput, callback){
+	if (fileInput.files.length === 0) {
+		ui.alert('You must select a file to load', 'No file selected');
+	}
+	else {
+		//else, load model from file
+		var file = fileInput.files[0];
+		//if (file.type === 'text/plain') {
+			var fileReader = new FileReader();
+			fileReader.onload = function(e) {
+  				callback(e.target.result);
+			};
+			fileReader.readAsText(file);
+
+		//}
+	}
+}
+
 $('#runPrismMDPButton').click(function() {
 	var model = istar.fileManager.saveModel();
 	$.ajax({
@@ -1360,6 +1378,63 @@ $('#menu-button-save-model').click(function() {
 	var model = istar.fileManager.saveModel();
 	var csvData = 'data:text/json;charset=utf-8,' + (encodeURI(model));
 	joint.util.downloadDataUri(csvData, 'goalModel.txt');
+});
+
+
+
+$('#modal-button-multrose-save').click(function() {
+	'use strict';
+	var fileInputModel = $('#input-multrose-model');
+	var fileInputHddl = $('#input-multrose-hddl');
+	var fileInputConfig = $('#input-multrose-config');
+	var fileInputWorld = $('#input-multrose-world');
+	
+	if(!fileInputModel.val() || !fileInputHddl.val() || !fileInputConfig.val() || !fileInputWorld.val()){
+		ui.alert('You must select all a input file to load', 'No file(s) selected');
+		$('#modal-load-hddl').modal('hide');
+		return;
+	}
+	
+	try {
+		ui.getFileInput(fileInputModel[0], function(resultModel){
+			ui.getFileInput(fileInputHddl[0], function(resultHddl){
+				ui.getFileInput(fileInputConfig[0], function(resultConfig){
+					ui.getFileInput(fileInputWorld[0], function(resultWorld){
+						$.ajax({
+							type: "POST",
+							url: '/load/multrose',
+							data: {
+								model: resultModel,
+								hddl: resultHddl,
+								config: resultConfig,
+								world: resultWorld
+							},
+							success: function() {
+								/*window.location.href = 'prism.zip';*/
+								$('#modal-load-hddl').modal('hide');
+								fileInputModel.val(null);
+								fileInputHddl.val(null);
+								fileInputConfig.val(null);
+								fileInputWorld.val(null);
+							},
+							error: function(request, status, error) {
+								ui.handleException(request.responseText);
+							}
+						});
+						
+					});
+				});
+			});
+		});
+	}		
+	catch (error) {
+		fileInputModel.val(null);
+		fileInputHddl.val(null);
+		fileInputConfig.val(null);
+		fileInputWorld.val(null);
+		$('#modal-load-hddl').modal('hide');
+		ui.alert('Sorry, the input model is not valid.', 'Error loading file');
+	}
 });
 
 $('#modal-button-load-model').click(function() {
