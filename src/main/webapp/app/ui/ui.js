@@ -165,15 +165,21 @@ var ui = function() {
 		},
 		removePropertyCell: function(key) {
 			event.preventDefault();
-			this.getSelectedCells()[0].removeProp('customProperties/' + key);
+			if(this.getPropertyCell(key)){
+				this.getSelectedCells()[0].removeProp('customProperties/' + key);
+			}
 		},
 		setPropertyCell: function(key, name) {
 			event.preventDefault();
-			this.getSelectedCells()[0].prop('customProperties/' + key, name);
+			if(this.getPropertyCell(key)){
+				this.getSelectedCells()[0].prop('customProperties/' + key, name);
+			}
 		},
 		getPropertyCell: function(key) {
 			event.preventDefault();
-			return this.getSelectedCells()[0].prop('customProperties/' + key);
+			if(this.getSelectedCells() && this.getSelectedCells()[0]){
+				return this.getSelectedCells()[0].prop('customProperties/' + key);
+			}
 		},
 		removeBlankSpacesInNotation: function(cell) {
 			var mainName = cell.prop('name');
@@ -1384,19 +1390,22 @@ $('#menu-button-save-model').click(function() {
 
 $('#modal-button-multrose-save').click(function() {
 	'use strict';
-	var fileInputModel = $('#input-multrose-model');
+	/*var fileInputModel = $('#input-multrose-model');*/
+	var fileInputModel = $('#input-file-to-load');
 	var fileInputHddl = $('#input-multrose-hddl');
 	var fileInputConfig = $('#input-multrose-config');
 	var fileInputWorld = $('#input-multrose-world');
 	
-	if(!fileInputModel.val() || !fileInputHddl.val() || !fileInputConfig.val() || !fileInputWorld.val()){
+	
+	var resultModel = istar.fileManager.saveModel();
+	if(/*!fileInputModel.val()*/ !resultModel || !fileInputHddl.val() || !fileInputConfig.val() || !fileInputWorld.val()){
 		ui.alert('You must select all a input file to load', 'No file(s) selected');
 		$('#modal-load-hddl').modal('hide');
 		return;
 	}
 	
 	try {
-		ui.getFileInput(fileInputModel[0], function(resultModel){
+		//ui.getFileInput(fileInputModel[0], function(resultModel){
 			ui.getFileInput(fileInputHddl[0], function(resultHddl){
 				ui.getFileInput(fileInputConfig[0], function(resultConfig){
 					ui.getFileInput(fileInputWorld[0], function(resultWorld){
@@ -1412,7 +1421,7 @@ $('#modal-button-multrose-save').click(function() {
 							success: function() {
 								/*window.location.href = 'prism.zip';*/
 								$('#modal-load-hddl').modal('hide');
-								fileInputModel.val(null);
+								//fileInputModel.val(null);
 								fileInputHddl.val(null);
 								fileInputConfig.val(null);
 								fileInputWorld.val(null);
@@ -1425,10 +1434,10 @@ $('#modal-button-multrose-save').click(function() {
 					});
 				});
 			});
-		});
+		//});
 	}		
 	catch (error) {
-		fileInputModel.val(null);
+		//fileInputModel.val(null);
 		fileInputHddl.val(null);
 		fileInputConfig.val(null);
 		fileInputWorld.val(null);
