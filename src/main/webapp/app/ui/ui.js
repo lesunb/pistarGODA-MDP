@@ -147,7 +147,7 @@ var ui = function() {
 		verifyIfTaskIsIncludedInNameCell: function(name, nameTask) {
 			var start = name.indexOf(nameTask);
 			var regex = /\,|\;|\(|\)/;
-			if (start > 0)  {
+			if (start > 0) {
 				//Verificar se os caracteres anterior e posterior ao nome encontrado corresponde a um caracter de limitaçao
 				if (name[start - 1] != null && name[start - 1].search(regex) >= 0) {
 					var end = start + nameTask.length;
@@ -165,7 +165,9 @@ var ui = function() {
 		},
 		removePropertyCell: function(key) {
 			event.preventDefault();
-			this.getSelectedCells()[0].removeProp('customProperties/' + key);
+			if (this.getPropertyCell(key)) {
+				this.getSelectedCells()[0].removeProp('customProperties/' + key);
+			}
 		},
 		setPropertyCell: function(key, name) {
 			event.preventDefault();
@@ -173,7 +175,9 @@ var ui = function() {
 		},
 		getPropertyCell: function(key) {
 			event.preventDefault();
-			return this.getSelectedCells()[0].prop('customProperties/' + key);
+			if (this.getSelectedCells() && this.getSelectedCells()[0]) {
+				return this.getSelectedCells()[0].prop('customProperties/' + key);
+			}
 		},
 		removeBlankSpacesInNotation: function(cell) {
 			var mainName = cell.prop('name');
@@ -195,59 +199,90 @@ var ui = function() {
 			ui.verifyIsRootCell(cellView);
 			ui.verifyIsDMCell(cellView);
 		},
+		//Essa funcao recupera os valores salvos no model e atualiza a property que irá gerar o html de configuracao do ROS dentro da modal de ediçao
+		setValuesPropByCell(props, properties, value = null) {
+			for (var j = 0; j < properties.length; j++) {
+				var name = properties[j].name;
+				var childrens = properties[j].childrens;
+				if (props[name] != null && props[name] != "" && props[name] != undefined) {
+					properties[j].value = props[name];
+					if (props[name] == "true" || props[name] == true) {
+						properties[j].checked = true;
+					}
+					if (props[name] == "false" || props[name] == false) {
+						properties[j].checked = false;
+					}
+				}
+
+				if (value != null && value != "" && value != undefined) {
+					if (value == properties[j].name) {
+						properties[j].checked = true;
+					} else {
+						properties[j].checked = false;
+					}
+				}
+
+				if (childrens && childrens.length > 0) {
+					ui.setValuesPropByCell(props, childrens, properties[j].value);
+				}
+			}
+		},
 		getProperties() {
 			var type = this.selectedCell.prop('type').toUpperCase();
 			$.ajax({
 				type: "GET",
 				url: "/getProperties?attribute=" + type,
 				success: function(properties) {
-					var htmlGen = $( "#MNE_properties");
+					var htmlGen = $("#MNE_properties");
 					htmlGen.empty();
+
+
+					var propsCell = ui.getSelectedCells()[0].attributes.customProperties;
+					ui.setValuesPropByCell(propsCell, properties);
 					ui.generatePropertiesModalHtml(htmlGen, properties, false, null);
-					ui.setValuesProp(properties);
 				},
 				error: function(request) {
 					ui.handleException(request.responseText);
 				}
-		
+
 			});
 		},
 		loadPropertiesJson() {
 			var elements = document.querySelectorAll("div[propertyElement=true]");
-			for(var i = 0; i < elements.length; i++){
+			for (var i = 0; i < elements.length; i++) {
 				var input = elements[i].querySelector("input[propertyInput=true],textarea[propertyInput=true]");
 				//ui.removePropObject(input.id);
 				ui.setPropObject(input);
 			}/**/
 		},
-		setPropObject(input){
+		setPropObject(input) {
 			var type = input.getAttribute("propertyType");
 			var hide = input.getAttribute("propertyHide");
 			var nameChild = "#" + input.id + "_childrens";
 			var objChild = $(nameChild);
-			
-			if(TypesAttributesEnum.BOOLEAN == type || TypesAttributesEnum.CHECKBOX == type){	
-				if(hide == "false" || hide == false){
+
+			if (TypesAttributesEnum.BOOLEAN == type || TypesAttributesEnum.CHECKBOX == type) {
+				if (hide == "false" || hide == false) {
 					ui.setPropertyCell(input.id, input.checked);
 				}
-				
+
 				input.value = input.checked;
-				if(input.name != "undefined" && input.name != "null" && input.name != null && input.name != "" && input.name != undefined){
-					if(!ui.getPropertyCell(input.name)){
+				if (input.name != "undefined" && input.name != "null" && input.name != null && input.name != "" && input.name != undefined) {
+					if (!ui.getPropertyCell(input.name)) {
 						ui.removePropObject(input.id);
 					}
 				}
-			}else if (TypesAttributesEnum.OBJECT_SELECTABLE == type || TypesAttributesEnum.OBJECT_NULLABLE == type || TypesAttributesEnum.OBJECT == type || TypesAttributesEnum.RADIO_BUTTON == type){
-				if(input.checked == "true" || input.checked == true ){
+			} else if (TypesAttributesEnum.OBJECT_SELECTABLE == type || TypesAttributesEnum.OBJECT_NULLABLE == type || TypesAttributesEnum.OBJECT == type || TypesAttributesEnum.RADIO_BUTTON == type) {
+				if (input.checked == "true" || input.checked == true) {
 					objChild.show();
 					var childrensDivAux = document.querySelectorAll("input[name=" + input.id + "]");
-					if(childrensDivAux.length > 0){
-						for(var i = 0; i < childrensDivAux.length; i++){
-							if(childrensDivAux[i].checked && childrensDivAux[i].value){
+					if (childrensDivAux.length > 0) {
+						for (var i = 0; i < childrensDivAux.length; i++) {
+							if (childrensDivAux[i].checked && childrensDivAux[i].value) {
 								//if(TypesAttributesEnum.OBJECT_SELECTABLE == type){
 								//	ui.setPropertyCell(input.id, input.checked);
 								//}else{
-								if(hide == "false" || hide == false){
+								if (hide == "false" || hide == false) {
 									ui.setPropertyCell(input.id, childrensDivAux[i].id);
 								}
 								//}
@@ -255,96 +290,124 @@ var ui = function() {
 							}
 							ui.setPropObject(childrensDivAux[i]);
 						}
-					}else{
-						if(hide == "false" || hide == false){
+					} else{
+						if (hide == "false" || hide == false) {
 							ui.setPropertyCell(input.id, input.value);
 						}
 					}
-				}else{
+				} else {
 					objChild.hide();
 					ui.removePropObject(input.id);
-					if(TypesAttributesEnum.OBJECT_SELECTABLE == type){
-						if(hide == "false" || hide == false){
+					if (TypesAttributesEnum.OBJECT_SELECTABLE == type) {
+						if (hide == "false" || hide == false) {
 							ui.setPropertyCell(input.id, input.checked);
 						}
-					}else if (TypesAttributesEnum.OBJECT_NULLABLE == type){
-						if(hide == "false" || hide == false){
-						    ui.setPropertyCell(input.id, "");
-                        }
+					} else if (TypesAttributesEnum.OBJECT_NULLABLE == type) {
+						if (hide == "false" || hide == false) {
+							ui.setPropertyCell(input.id, "");
+						}
 					}
 				}
-			}else if(TypesAttributesEnum.LIST == type || TypesAttributesEnum.TEXT == type || TypesAttributesEnum.EXPRESSION == type){
+			} else if (TypesAttributesEnum.LIST == type || TypesAttributesEnum.TEXT == type || TypesAttributesEnum.EXPRESSION == type) {
 				nameChild = "#" + input.id + "_text";
 				objChild = $(nameChild);
-				if(input.type == "radio"){
-					if(input.checked == "true" || input.checked == true){
-						if(objChild.length > 0){
+				if (input.type == "radio") {
+					if (input.checked == "true" || input.checked == true) {
+						if (objChild.length > 0) {
 							objChild.show();
-							if(hide == "false" || hide == false){
+							if (hide == "false" || hide == false) {
 								ui.setPropertyCell(input.id, objChild[0].value);
 							}
 							input.value = objChild[0].value;
 						}
-					}else{
+					} else {
 						objChild.hide();
 						ui.removePropObject(input.id);
 					}
-				}else{
-					if(hide == "false" || hide == false){
-						ui.setPropertyCell(input.id,input.value);
+				} else {
+					if (hide == "false" || hide == false) {
+						ui.setPropertyCell(input.id, input.value);
 					}
 				}
-				
-				if(!input.value){
+
+				if (!input.value) {
 					ui.removePropObject(input.id);
 				}
 			}
 		},
-		removePropObject(name){
-			var elements = document.getElementById(name+"_childrens");
-			if(elements){
+		removePropObject(name) {
+			var elements = document.getElementById(name + "_childrens");
+			if (elements) {
 				var childrens = elements.querySelectorAll("input[propertyInput=true],textarea[propertyInput=true]");
-				for(var i = 0; i < childrens.length; i++){
+				for (var i = 0; i < childrens.length; i++) {
 					ui.removePropertyCell(childrens[i].id);
 				}/**/
-			}else{
+			} else {
 				var propVal = ui.getPropertyCell(name);
-				while(propVal){
+				while (propVal) {
 					var auxPropVal = propVal;
 					propVal = ui.getPropertyCell(auxPropVal);
 					ui.removePropertyCell(auxPropVal);
 				}
 			}
-				
+
 			ui.removePropertyCell(name);
 		},
-		invertBoolean(bool){
-			if(bool == true || bool == "true"){
+		invertBoolean(bool) {
+			if (bool == true || bool == "true") {
 				return "false";
 			}
-			if(bool == false || bool == "false"){
+			if (bool == false || bool == "false") {
 				return "true";
 			}
-			
+
 			return bool;
 		},
-		setValuesProp(properties){
-			
-			for(var i = 0; i < properties.length; i++){
+		//Essa funcao recupera os valores salvos no model e atualiza a property que irá gerar o html de configuracao do ROS dentro da modal de ediçao
+		setValuesPropByCell(props, properties, value = null) {
+			for (var j = 0; j < properties.length; j++) {
+				var name = properties[j].name;
+				var childrens = properties[j].childrens;
+				if (props[name] != null && props[name] != "" && props[name] != undefined) {
+					properties[j].value = props[name];
+					if (props[name] == "true" || props[name] == true) {
+						properties[j].checked = true;
+					}
+					if (props[name] == "false" || props[name] == false) {
+						properties[j].checked = false;
+					}
+				}
+
+				if (value != null && value != "" && value != undefined) {
+					if (value == properties[j].name) {
+						properties[j].checked = true;
+					} else {
+						properties[j].checked = false;
+					}
+				}
+
+				if (childrens && childrens.length > 0) {
+					ui.setValuesPropByCell(props, childrens, properties[j].value);
+				}
+			}
+		},
+		setValuesProp(properties) {
+
+			for (var i = 0; i < properties.length; i++) {
 				var id = properties[i].name;
 				var propVal = ui.getPropertyCell(id);
-				if(propVal){
+				if (propVal) {
 					var inp = document.getElementById(id);
 					var inpChild = document.getElementById(propVal);
-					if(inp){
-						inp.value = propVal;	
-						if(inp.type == "radio" || inp.type == "checkbox"){
-							inp.checked = true;	
+					if (inp) {
+						inp.value = propVal;
+						if (inp.type == "radio" || inp.type == "checkbox") {
+							inp.checked = true;
 						}
 					}
-					if(inpChild){
-						if(inpChild.type == "radio" || inpChild.type == "checkbox"){
-							inpChild.checked = true;	
+					if (inpChild) {
+						if (inpChild.type == "radio" || inpChild.type == "checkbox") {
+							inpChild.checked = true;
 						}
 					}
 				}
@@ -352,157 +415,164 @@ var ui = function() {
 		},
 		generatePropertiesModalHtml(htmlEl, properties, isChildren, nameFather) {
 			this.selectedProperties = properties;
-			for(var i = 0; i < properties.length; i++){
-				var divInput = document.createElement("div"); 
-				var input = document.createElement("input"); 
-				var label = document.createElement("label"); 
-				var br = document.createElement("br"); 
+			for (var i = 0; i < properties.length; i++) {
+				var divInput = document.createElement("div");
+				var input = document.createElement("input");
+				var label = document.createElement("label");
+				var br = document.createElement("br");
 				var id = properties[i].name;
-				var valueP = properties[i].value;
+				var valueP = "";
 				var inputText;
-				
+
+				var cid = ui.getSelectedCells()[0].cid;
 				var propVal = ui.getPropertyCell(id);
-				if(propVal){
+				if (propVal) {
 					properties[i].value = propVal;
-					properties[i].checked = true;
+					if (propVal == "true" || propVal == true) {
+						properties[i].checked = true;
+					} else if (propVal == "false" || propVal == false) {
+						properties[i].checked = false;
+					}
 				}
-				
+
+				valueP = properties[i].value;
 				input.id = id;
-				input.value = valueP;	
+				input.value = valueP;
 				input.name = nameFather;
-				input.className ='form-check-input';
+				input.className = 'form-check-input';
 				input.checked = properties[i].checked;
 				input.setAttribute("propertyType", properties[i].type);
 				input.setAttribute("propertyInput", true);
 				input.setAttribute("propertyHide", properties[i].hide);
-				
-				label.className ='form-check-label';
+
+				label.className = 'form-check-label';
 				label.style = 'margin-left: 5px';
 				label.for = id;
 				label.textContent = id;
-				
+
 				//divInput.className = "form-group";
-				if(isChildren){
+				if (isChildren) {
 					input.setAttribute("propertyHide", properties[i].hide);
-					if(TypesAttributesEnum.CHECKBOX == properties[i].type){
-						input.type = "checkbox";	
-					}else{
-						input.type = "radio";	
+					if (TypesAttributesEnum.CHECKBOX == properties[i].type) {
+						input.type = "checkbox";
+					} else {
+						input.type = "radio";
 					}
-					
+
 					divInput.appendChild(input);
 					divInput.appendChild(label);
-					if(TypesAttributesEnum.TEXT == properties[i].type ||
-						TypesAttributesEnum.EXPRESSION == properties[i].type || 
-						TypesAttributesEnum.LIST == properties[i].type){
-							
+					if (TypesAttributesEnum.TEXT == properties[i].type ||
+						TypesAttributesEnum.EXPRESSION == properties[i].type ||
+						TypesAttributesEnum.LIST == properties[i].type) {
+
 						var listProp = properties[i].list;
-						if(listProp && listProp.length > 0 ){
+						if (listProp && listProp.length > 0) {
 							var newDiv = document.createElement("div");
-							newDiv.style ='width: 90%; display: flex; flex-direction: row;';
-							for(var m = 0; m < listProp.length; m++){
+							newDiv.style = 'width: 90%; display: flex; flex-direction: row;';
+							for (var m = 0; m < listProp.length; m++) {
 								inputText = document.createElement("input");
 								inputText.style = "margin-left: 20px; width: 90%";
-								input.className ='form-check-input';
-								inputText.className ='col';
+								input.className = 'form-check-input';
+								inputText.className = 'col';
 								inputText.id = input.id + "_text";
 								inputText.placeholder = listProp[m].placeholder;
 								//inputText.value = input.value;	
 								//inputText.type = "text";
-								
-								inputText.value = input.value;	
-								inputText.name = input.id;	
+
+								inputText.value = input.value;
+								inputText.name = input.id;
 								inputText.setAttribute("propertyType", properties[i].type);
 								newDiv.appendChild(br);
 								newDiv.appendChild(inputText);
 							}
 							divInput.appendChild(newDiv);
-						}else{
+						} else {
 							inputText = document.createElement("textarea");
 							inputText.style = "margin-left: 20px; width: 90%";
-							input.className ='form-check-input';
+							input.className = 'form-check-input';
 							inputText.id = input.id + "_text";
 							inputText.placeholder = properties[i].placeholder;
 							//inputText.value = input.value;	
 							//inputText.type = "text";
-							
-							inputText.value = input.value;	
-							inputText.name = input.id;	
+
+							inputText.value = input.value;
+							inputText.name = input.id;
 							inputText.setAttribute("propertyType", properties[i].type);
 							divInput.appendChild(br);
 							divInput.appendChild(inputText);
 						}
 					}
-				}else{
-					if(TypesAttributesEnum.BOOLEAN == properties[i].type ||
+				} else {
+					if (TypesAttributesEnum.BOOLEAN == properties[i].type ||
 						TypesAttributesEnum.CHECKBOX == properties[i].type ||
 						TypesAttributesEnum.OBJECT_SELECTABLE == properties[i].type ||
 						TypesAttributesEnum.OBJECT_NULLABLE == properties[i].type ||
-						TypesAttributesEnum.OBJECT == properties[i].type){
+						TypesAttributesEnum.OBJECT == properties[i].type) {
 						input.setAttribute("propertyHide", properties[i].hide);
 						input.type = "checkbox";
 						divInput.appendChild(input);
 						divInput.appendChild(label);
-					}else if(TypesAttributesEnum.RADIO_BUTTON == properties[i].type){
+					} else if (TypesAttributesEnum.RADIO_BUTTON == properties[i].type) {
 						input.type = "radio";
 						input.setAttribute("propertyHide", properties[i].hide);
 						divInput.appendChild(input);
-						divInput.appendChild(label);	
+						divInput.appendChild(label);
 					}
-					else if(TypesAttributesEnum.TEXT == properties[i].type ||
-						TypesAttributesEnum.EXPRESSION == properties[i].type || 
-						TypesAttributesEnum.LIST == properties[i].type){
-							
+					else if (TypesAttributesEnum.TEXT == properties[i].type ||
+						TypesAttributesEnum.EXPRESSION == properties[i].type ||
+						TypesAttributesEnum.LIST == properties[i].type) {
+
 						inputText = document.createElement("textarea");
 						inputText.style = "margin-left: 20px; width: 90%";
-						input.className ='form-check-input';
+						input.className = 'form-check-input';
 						inputText.id = input.id;
-						inputText.value = input.value;	
+						inputText.value = input.value;
 						inputText.name = nameFather;
-						inputText.placeholder = input.placeholder;	
+						inputText.placeholder = input.placeholder;
 						inputText.setAttribute("propertyType", properties[i].type);
 						inputText.setAttribute("propertyHide", properties[i].hide);
 						inputText.setAttribute("propertyInput", true);
-						
+
 						//input.type = "text";	
 						divInput.appendChild(label);
 						divInput.appendChild(br);
 						divInput.appendChild(inputText);
 					}
 				}
-				
-				
-				if(properties[i].childrens.length > 0){
-					var divChildrens = document.createElement("div"); 
+
+
+				divInput.setAttribute("cid", cid);
+				if (properties[i].childrens.length > 0) {
+					var divChildrens = document.createElement("div");
 					divChildrens.style = "margin-left: 20px;";
 					divChildrens.id = properties[i].name + "_childrens";
-					divInput.setAttribute("hasChildren", true);	
+					divInput.setAttribute("hasChildren", true);
 					ui.generatePropertiesModalHtml(divChildrens, properties[i].childrens, true, properties[i].name);
 					divInput.appendChild(divChildrens);
-				}else{
+				} else {
 					divInput.setAttribute("hasChildren", false);
 				}
-				
-				if(nameFather == null || nameFather == ""){
+
+				if (nameFather == null || nameFather == "") {
 					divInput.setAttribute("propertyElement", true);
-				}else{
+				} else {
 					divInput.setAttribute("propertyElement", false);
 				}
-				
-				htmlEl.append(divInput);		
-					input.addEventListener((input.type == "text" ? "keyup" : "change"), function(){ui.loadPropertiesJson()}, false);
-				
-				if(inputText){
-					inputText.addEventListener("keyup", function(){ui.loadPropertiesJson()}, false);	
+
+				htmlEl.append(divInput);
+				input.addEventListener((input.type == "text" ? "keyup" : "change"), function() { ui.loadPropertiesJson() }, false);
+
+				if (inputText) {
+					inputText.addEventListener("keyup", function() { ui.loadPropertiesJson() }, false);
 				}
 			}
 			ui.loadPropertiesJson();
 		},
 		applyExpression(input) {
-			var id = input.id.replace("_"+ input.placeholder, "");
+			var id = input.id.replace("_" + input.placeholder, "");
 			var element = document.getElementById(id);
 			var elementsProp = document.getElementsByClassName("element_property");
-			
+
 			element.value = element.value.replace(regexExpression, input.value);
 			ui.generateProperties(elementsProp);
 		},
@@ -1285,7 +1355,7 @@ ui.connectLinksToShape = function() {
 	}, 100);
 };
 
-ui.getFileInput = function(fileInput, callback){
+ui.getFileInput = function(fileInput, callback) {
 	if (fileInput.files.length === 0) {
 		ui.alert('You must select a file to load', 'No file selected');
 	}
@@ -1293,11 +1363,11 @@ ui.getFileInput = function(fileInput, callback){
 		//else, load model from file
 		var file = fileInput.files[0];
 		//if (file.type === 'text/plain') {
-			var fileReader = new FileReader();
-			fileReader.onload = function(e) {
-  				callback(e.target.result);
-			};
-			fileReader.readAsText(file);
+		var fileReader = new FileReader();
+		fileReader.onload = function(e) {
+			callback(e.target.result);
+		};
+		fileReader.readAsText(file);
 
 		//}
 	}
@@ -1372,6 +1442,37 @@ $('#runEPMCButton').click(function() {
 	});
 });
 
+
+$('#showError').click(function() {
+	'use strict';
+	$.ajax({
+		type: "GET",
+		url: '/loadTerminal',
+		success: function(errors) {
+			$('#terminal-body').empty();
+			for(let i = 0; i < errors.length; i++){
+				$('#terminal-body').append( "<p>$ "+ errors[i] +"</p>" );
+			}
+		},
+		error: function(request, status, error) {
+			ui.handleException(request.responseText);
+		}
+	});
+});
+
+$('#minimizeTerminal').click(function() {
+	'use strict';
+	$('#terminal').height("40px");
+	$('#terminal').css("overflow-y", "hidden");
+});
+
+$('#maximizeTerminal').click(function() {
+	'use strict';
+	/*$(window).height()*/ 
+	$('#terminal').height("200px");
+	$('#terminal').scroll();
+});
+
 $('#menu-button-save-model').click(function() {
 	'use strict';
 
@@ -1384,51 +1485,54 @@ $('#menu-button-save-model').click(function() {
 
 $('#modal-button-multrose-save').click(function() {
 	'use strict';
-	var fileInputModel = $('#input-multrose-model');
+	/*var fileInputModel = $('#input-multrose-model');*/
+	var fileInputModel = $('#input-file-to-load');
 	var fileInputHddl = $('#input-multrose-hddl');
 	var fileInputConfig = $('#input-multrose-config');
 	var fileInputWorld = $('#input-multrose-world');
-	
-	if(!fileInputModel.val() || !fileInputHddl.val() || !fileInputConfig.val() || !fileInputWorld.val()){
+
+
+	var resultModel = istar.fileManager.saveModel();
+	if (/*!fileInputModel.val()*/ !resultModel || !fileInputHddl.val() || !fileInputConfig.val() || !fileInputWorld.val()) {
 		ui.alert('You must select all a input file to load', 'No file(s) selected');
 		$('#modal-load-hddl').modal('hide');
 		return;
 	}
-	
+
 	try {
-		ui.getFileInput(fileInputModel[0], function(resultModel){
-			ui.getFileInput(fileInputHddl[0], function(resultHddl){
-				ui.getFileInput(fileInputConfig[0], function(resultConfig){
-					ui.getFileInput(fileInputWorld[0], function(resultWorld){
-						$.ajax({
-							type: "POST",
-							url: '/load/multrose',
-							data: {
-								model: resultModel,
-								hddl: resultHddl,
-								config: resultConfig,
-								world: resultWorld
-							},
-							success: function() {
-								/*window.location.href = 'prism.zip';*/
-								$('#modal-load-hddl').modal('hide');
-								fileInputModel.val(null);
-								fileInputHddl.val(null);
-								fileInputConfig.val(null);
-								fileInputWorld.val(null);
-							},
-							error: function(request, status, error) {
-								ui.handleException(request.responseText);
-							}
-						});
-						
+		//ui.getFileInput(fileInputModel[0], function(resultModel){
+		ui.getFileInput(fileInputHddl[0], function(resultHddl) {
+			ui.getFileInput(fileInputConfig[0], function(resultConfig) {
+				ui.getFileInput(fileInputWorld[0], function(resultWorld) {
+					$.ajax({
+						type: "POST",
+						url: '/load/multrose',
+						data: {
+							model: resultModel,
+							hddl: resultHddl,
+							config: resultConfig,
+							world: resultWorld
+						},
+						success: function() {
+							/*window.location.href = 'prism.zip';*/
+							$('#modal-load-hddl').modal('hide');
+							//fileInputModel.val(null);
+							fileInputHddl.val(null);
+							fileInputConfig.val(null);
+							fileInputWorld.val(null);
+						},
+						error: function(request, status, error) {
+							ui.handleException(request.responseText);
+						}
 					});
+
 				});
 			});
 		});
-	}		
+		//});
+	}
 	catch (error) {
-		fileInputModel.val(null);
+		//fileInputModel.val(null);
 		fileInputHddl.val(null);
 		fileInputConfig.val(null);
 		fileInputWorld.val(null);
@@ -1786,7 +1890,7 @@ $(document).keyup(function(e) {
 	if (ui.getSelectedCells()[0] !== null) {
 		if (ui.states.editor.isViewing()) {
 			var modalEdition = $('#modalNodeEdition');
-			if(modalEdition.css('display') == "none"){
+			if (modalEdition.css('display') == "none") {
 				if (e.which === 8 || e.which === 46) {
 					// 8: backspace
 					// 46: delete

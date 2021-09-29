@@ -1,12 +1,13 @@
 package br.unb.cic.goda.rtgoretoprism.generator.goda.writer;
 
-import br.unb.cic.goda.rtgoretoprism.generator.CodeGenerationException;
-import br.unb.cic.goda.rtgoretoprism.util.FileUtility;
-
 import java.io.BufferedWriter;
+import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
+
+import br.unb.cic.goda.rtgoretoprism.generator.CodeGenerationException;
+import br.unb.cic.goda.rtgoretoprism.util.FileUtility;
 
 public class ManageWriter {
 
@@ -41,4 +42,19 @@ public class ManageWriter {
         }
         adf.close();
     }
+
+	public static void generateFile(final String path, final String nameFile, final String message) {
+		try {
+			File dir = new File(path);
+			dir.mkdirs();
+
+			FileWriter arq = new FileWriter(dir + "/" + nameFile);
+			PrintWriter writeArq = new PrintWriter(arq);
+			writeArq.printf(message);
+			arq.close();
+		} catch (IOException e) {
+			throw new RuntimeException("Error: Can't create file.");
+		}
+	}
+
 }

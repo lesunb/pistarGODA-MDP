@@ -26,7 +26,7 @@ import br.unb.cic.modelling.models.PropertyModel;
 public class AchieveCondition extends PropertyModel {
 	
 	public AchieveCondition() {
-		this.setName("AchieveCondition");
+		this.setName("Achieve");
 		this.setType(TypesAttributesEnum.OBJECT);
 		this.setChildrens();
 	}
@@ -36,7 +36,7 @@ public class AchieveCondition extends PropertyModel {
 		List<PropertyModel> childrens = new ArrayList<PropertyModel>();
 		PropertyModel universal = new PropertyModel();
 		universal.setType(TypesAttributesEnum.TEXT);
-		universal.setName("Universal");
+		universal.setName("UniversalAchieveCondition");
 		universal.setChecked(false);
 
 		StringBuilder expression = new StringBuilder();
@@ -45,7 +45,7 @@ public class AchieveCondition extends PropertyModel {
 		
 		PropertyModel nonUniversal = new PropertyModel();
 		nonUniversal.setType(TypesAttributesEnum.EXPRESSION);
-		nonUniversal.setName("NonUniversal");
+		nonUniversal.setName("AchieveCondition");
 		nonUniversal.setPlaceholder("Condition");
 		nonUniversal.setChecked(true);
 		

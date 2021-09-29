@@ -49,7 +49,8 @@ istar.metamodel = {
     "containers": {
         "Actor": { },
         "Agent": { },
-        "Role": { }
+        "Role": { },
+        "Mission": { },
     },
 
     //Add here the elements of your language that do not behave like actors, i.e., they are not containers;
