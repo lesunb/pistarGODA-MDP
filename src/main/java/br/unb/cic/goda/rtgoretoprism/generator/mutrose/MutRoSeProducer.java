@@ -21,8 +21,7 @@ public class MutRoSeProducer {
 			ManageWriter.generateFile(dir, "configHddl.hddl", hddl);
 			
 //			Runtime.getRuntime().exec("mrs/MRSDecomposer.exe mrs/configHddl.hddl mrs/model.txt mrs/configFile.json mrs/worldKnowledge.xml");
-			ProcessBuilder pb = new ProcessBuilder("MRSDecomposer.exe", "configHddl.hddl", "model.txt", "configFile.json", "worldKnowledge.xml");
-			pb.directory(new File(dir));
+			ProcessBuilder pb = new ProcessBuilder("mrs/MRSDecomposer.exe", "mrs/configHddl.hddl", "mrs/model.txt", "mrs/configFile.json", "mrs/worldKnowledge.xml");
 //			
 			Process p = pb.start();
 			ZipOutputStream zos = new ZipOutputStream(p.getOutputStream());
