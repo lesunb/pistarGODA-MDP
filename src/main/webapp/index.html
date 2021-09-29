@@ -106,15 +106,19 @@ https://github.com/jhcp/pistar
 							data-toggle="modal" data-target="#modal-save-image"> <span
 							class="glyphicon glyphicon-picture" aria-hidden="true"></span><br>
 							Save Image
-						</a>
-
+						</a> 
 						<a class="btn btn-default button-vertical ml-2"
-							id="menu-button-save-hddl"
-							title="Save (download) mutrose files"
+							id="menu-button-save-hddl" title="Save (download) mutrose files"
 							data-toggle="modal" data-target="#modal-load-hddl"> <span
 							class="glyphicon glyphicon-file" aria-hidden="true"></span><br>
 							Load MutRoSe Files
 						</a>
+						<a class="btn btn-default button-vertical ml-2"
+							id="showError" title="Load" > <span
+							class="glyphicon glyphicon-file" aria-hidden="true"></span><br>
+							Show Errors
+						</a>
+						
 					</div>
 				</div>
 			</div>
@@ -362,6 +366,17 @@ https://github.com/jhcp/pistar
 			</div>
 
 		</div>
+		<div id="terminal">
+			<div id="terminal-header" class="header">
+				<h5 class="">Terminal</h5>
+				<div>
+					<small id="minimizeTerminal">-</small>
+					<small id="maximizeTerminal">+</small>
+				</div>
+			</div>
+			<div id="terminal-body" class="body">
+			</div>
+		</div>
 
 	</div>
 
@@ -489,18 +504,19 @@ https://github.com/jhcp/pistar
 							aria-label="Close">
 							<span aria-hidden="true">×</span>
 						</button>
-						<h4 class="modal-title" id="label-load-model-modal">Load MutRoSe files</h4>
+						<h4 class="modal-title" id="label-load-model-modal">Load
+							MutRoSe files</h4>
 					</div>
 					<div class="modal-body">
 						<!-- <label>Model</label> -->
-					<!-- id="input-multrose-model" -->
+						<!-- id="input-multrose-model" -->
 						<!-- <input type="file" id="input-multrose-model" (onClick)="$('#modal-button-load-model').click()" name="model_file" accept=".json, .txt" /> <br> -->
-						<label>HDDL</label>
-						<input type="file" id="input-multrose-hddl" name="hddl_file" accept=".hddl" /> <br>
-						<label>Configuration</label>
-						<input type="file" id="input-multrose-config" name="config_file" accept="*" /> <br>
-						<label>World Knowledge</label>
-						<input type="file" id="input-multrose-world" name="wk_file" accept=".xml, .txt" /> <br>
+						<label>HDDL</label> <input type="file" id="input-multrose-hddl"
+							name="hddl_file" accept=".hddl" /> <br> <label>Configuration</label>
+						<input type="file" id="input-multrose-config" name="config_file"
+							accept=".json" /> <br> <label>World Knowledge</label> <input
+							type="file" id="input-multrose-world" name="wk_file"
+							accept=".xml" /> <br>
 					</div>
 					<div class="modal-footer">
 						<button id="modal-button-multrose-save" type="button"
@@ -511,7 +527,7 @@ https://github.com/jhcp/pistar
 				</div>
 			</div>
 		</div>
-		
+
 		<div class="modal fade" id="modal-load-model" tabindex="-1"
 			role="dialog" aria-labelledby="label-load-model-modal">
 			<div class="modal-dialog" role="document">
@@ -679,7 +695,7 @@ https://github.com/jhcp/pistar
 					<div class="modal-body">
 						<input class="input-group" id="MNE_nameNode"
 							style="width: 100%; margin-bottom: 15px;" />
-					<!-- 	<div class="form-check mt-md">
+						<!-- 	<div class="form-check mt-md">
 							<input id="MNE_rootNode" onclick="setRootCell()" type="checkbox"
 								class="form-check-input" id="rootNode"> <label
 								class="form-check-label" for="rootNode">Is Root</label>
@@ -692,9 +708,8 @@ https://github.com/jhcp/pistar
 							<div id="MNE_dmSelect" class="form-check container" onclick="ui.selectDMCheckbox()">
 							</div>
 						</div> -->
-						
-						<div id="MNE_properties"  class="form-check">
-						</div>
+
+						<div id="MNE_properties" class="form-check"></div>
 					</div>
 					<div class="modal-footer">
 						<button type="button" class="btn btn-primary"

@@ -60,5 +60,10 @@ public class IntegrationController {
     public  void loadMultRoSe( MultRoSe content) {
     	 this.service.generateBinMultRoSe(content);
     }
+
+    @RequestMapping(value = "/loadTerminal", method = RequestMethod.GET)
+	public List<String> loadTerminal() {
+    	 return this.service.loadTerminal();
+    }
     
 }

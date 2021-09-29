@@ -48,6 +48,14 @@ public class IntegrationService {
 		PistarModel model = gson.fromJson(content.getModel(), PistarModel.class);
 		
 	}
+	
+	public List<String> loadTerminal() {
+		List<String> erros = new ArrayList<String>();
+		erros.add("Error: Fail to load model.");
+		erros.add("Error: Invalid model.");
+		
+		return  erros;
+	}
 
 	public List<PropertyModel> getProperties(String typeAttr) {
 		List<PropertyModel> properties = new ArrayList<PropertyModel>();

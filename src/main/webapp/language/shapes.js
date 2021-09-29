@@ -8,6 +8,52 @@
 
 	A rectangular boundary is used instead of the original circular boundary, to maximize the space available for drawing
 */
+joint.shapes.istar.Mission = joint.dia.Element.extend({
+    markup: '<g><rect class="boundary" /><circle class="element actorSymbol" /><path /><text class="content"/></g>',
+    defaults: joint.util.deepSupplement({
+        type: 'Container',
+        size: {width: 200, height: 120},
+        attrs: {
+            '.element': {
+                cx: 40,
+                cy: 40,
+                fill: 'rgb(205,254,205)',
+                r: 40,
+                stroke: 'black',
+                'stroke-width': 2,
+                transform: 'translate(-20, -20)'  //displaces the circle a little bit
+            },
+            text: {
+                fill: '#000000',
+                'font-family': 'Arial, helvetica, sans-serif',
+                'font-size': 12,
+                ref: 'circle',//makes the position of the text relative to the circle
+                'ref-x': 0.5,
+                'ref-y': 0.5,
+                text: 'Mission',
+                'text-anchor': 'middle',
+                'y-alignment': 'middle'
+            },
+            '.boundary': {
+                fill: 'rgb(242,242,242)',
+                height: 120,
+                rx: 100,
+                ry: 40,
+                stroke: 'black',
+                'stroke-dasharray': '10,5,4,4',
+                'stroke-width': 2,
+                width: 200
+            },
+            path: {
+                d: "m -11 45 q 30 15 62 0 "+
+           			"m -60 -45  q 30 15 62 0",
+                fill: 'none',
+                stroke: 'black',
+                'stroke-width': 1.5
+            }
+        }
+    }, joint.dia.Element.prototype.defaults)
+});
 
 joint.shapes.istar.Actor = joint.dia.Element.extend({
     markup: '<g><rect class="boundary" /><circle class="element actorSymbol" /><path /><text class="content"/></g>',
