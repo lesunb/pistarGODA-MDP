@@ -31,6 +31,7 @@ import br.unb.cic.goda.model.Plan;
 import br.unb.cic.goda.model.PlanImpl;
 import br.unb.cic.goda.rtgoretoprism.action.PRISMCodeGenerationAction;
 import br.unb.cic.goda.rtgoretoprism.action.RunParamAction;
+import br.unb.cic.goda.rtgoretoprism.generator.mutrose.MutRoSeProducer;
 import br.unb.cic.modelling.Properties;
 import br.unb.cic.modelling.enums.AttributesEnum;
 import br.unb.cic.modelling.models.PropertyModel;
@@ -44,9 +45,11 @@ import br.unb.cic.pistar.model.PistarNode;
 public class IntegrationService {
 	
 	public void generateBinMultRoSe(MultRoSe content) {
-		Gson gson = new GsonBuilder().create();
-		PistarModel model = gson.fromJson(content.getModel(), PistarModel.class);
+		//Gson gson = new GsonBuilder().create();
+		//PistarModel model = gson.fromJson(content.getModel(), PistarModel.class);
 		
+		MutRoSeProducer mrs = new MutRoSeProducer(); 
+		mrs.execute(content.getModel(), content.getHddl(), content.getConfig(), content.getWorld());
 	}
 	
 	public List<String> loadTerminal() {
