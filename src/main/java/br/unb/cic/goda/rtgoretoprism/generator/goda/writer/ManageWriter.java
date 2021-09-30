@@ -56,5 +56,17 @@ public class ManageWriter {
 			throw new RuntimeException("Error: Can't create file.");
 		}
 	}
+	
+	public static void generateFile(final String nameFile, final String message) {
+		try {
+			File file = new File(nameFile);
+			FileWriter arq = new FileWriter(file.getAbsolutePath());
+			PrintWriter writeArq = new PrintWriter(arq);
+			writeArq.printf(message);
+			arq.close();
+		} catch (IOException e) {
+			throw new RuntimeException("Error: Can't create file.");
+		}
+	}
 
 }
