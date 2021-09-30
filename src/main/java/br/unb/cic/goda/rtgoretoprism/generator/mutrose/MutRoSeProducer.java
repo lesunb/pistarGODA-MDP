@@ -46,15 +46,15 @@ public class MutRoSeProducer {
 			ManageWriter.generateFile(dir, "configHddl.hddl", hddl);
 //			ManageWriter.generateFile(output, "task_output.json", "");
 
-			StringBuilder command = new StringBuilder().append("chmod 777 ").append(dir).append("MRSDecomposer.exe ")
+			StringBuilder command = new StringBuilder().append("chmod 777 ").append(dir).append("MRSDecomposer ")
 					.append(dir).append("configHddl.hddl ").append(dir).append("model.txt ").append(dir)
 					.append("configFile.json ").append(dir).append("worldKnowledge.xml ");
 
-			runCommand(command.toString(), "src/main/webapp/");
+			Runtime.getRuntime().exec(command.toString());
 
 			FileOutputStream fos = new FileOutputStream(outputZip);
 			ZipOutputStream zos = new ZipOutputStream(fos);
-			DirectoryStream<Path> directoryStream = Files.newDirectoryStream(Paths.get(output));
+			DirectoryStream<Path> directoryStream = Files.newDirectoryStream(Paths.get("src/main/webapp/"));
 			for (Path path : directoryStream) {
 				byte[] bytes = Files.readAllBytes(path);
 				zos.putNextEntry(new ZipEntry(path.getFileName().toString()));
@@ -67,7 +67,7 @@ public class MutRoSeProducer {
 		}
 	}
 
-	private String runCommand(String commandLine, String resultsPath) throws IOException {
+	private void runCommand(String commandLine, String resultsPath) throws IOException {
 
 		LOGGER.info(commandLine);
 		Process program = Runtime.getRuntime().exec(commandLine);
@@ -82,10 +82,6 @@ public class MutRoSeProducer {
 		}
 		
 		logExecCommands(program);
-
-		List<String> lines = Files.readAllLines(Paths.get(resultsPath), Charset.forName("UTF-8"));
-		// Formula
-		return lines.get(lines.size() - 1);
 	}
 	
 
