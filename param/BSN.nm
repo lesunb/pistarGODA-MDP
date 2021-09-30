@@ -1,0 +1,271 @@
+param
+
+const double R_G3_T1_11;
+module G3_T1_11_ReadData
+	sG3_T1_11 :[0..4] init 0;
+	
+	[next_1] sG3_T1_11 = 0 -> (sG3_T1_11'=1);//init to running
+	
+
+	[] sG3_T1_11 = 1 -> R_G3_T1_11 : (sG3_T1_11'=2) + (1 - R_G3_T1_11) : (sG3_T1_11'=4);//running to final state
+	[next_2] sG3_T1_11 = 2 -> (sG3_T1_11'=2);//final state success
+	[next_2] sG3_T1_11 = 3 -> (sG3_T1_11'=3);//final state skipped
+	[next_2] sG3_T1_11 = 4 -> (sG3_T1_11'=4);//final state failure
+endmodule
+
+const double R_G3_T1_12;
+module G3_T1_12_FilterData
+	sG3_T1_12 :[0..4] init 0;
+	
+	[next_2] sG3_T1_12 = 0 -> (sG3_T1_12'=1);//init to running
+	
+
+	[] sG3_T1_12 = 1 -> R_G3_T1_12 : (sG3_T1_12'=2) + (1 - R_G3_T1_12) : (sG3_T1_12'=4);//running to final state
+	[next_3] sG3_T1_12 = 2 -> (sG3_T1_12'=2);//final state success
+	[next_3] sG3_T1_12 = 3 -> (sG3_T1_12'=3);//final state skipped
+	[next_3] sG3_T1_12 = 4 -> (sG3_T1_12'=4);//final state failure
+endmodule
+
+const double R_G3_T1_13;
+module G3_T1_13_TransferData
+	sG3_T1_13 :[0..4] init 0;
+	
+	[next_3] sG3_T1_13 = 0 -> (sG3_T1_13'=1);//init to running
+	
+
+	[] sG3_T1_13 = 1 -> R_G3_T1_13 : (sG3_T1_13'=2) + (1 - R_G3_T1_13) : (sG3_T1_13'=4);//running to final state
+	[next_4] sG3_T1_13 = 2 -> (sG3_T1_13'=2);//final state success
+	[next_4] sG3_T1_13 = 3 -> (sG3_T1_13'=3);//final state skipped
+	[next_4] sG3_T1_13 = 4 -> (sG3_T1_13'=4);//final state failure
+endmodule
+
+const double R_G3_T1_21;
+module G3_T1_21_ReadData
+	sG3_T1_21 :[0..4] init 0;
+	
+	[next_1] sG3_T1_21 = 0 -> (sG3_T1_21'=1);//init to running
+	
+
+	[] sG3_T1_21 = 1 -> R_G3_T1_21 : (sG3_T1_21'=2) + (1 - R_G3_T1_21) : (sG3_T1_21'=4);//running to final state
+	[next_2] sG3_T1_21 = 2 -> (sG3_T1_21'=2);//final state success
+	[next_2] sG3_T1_21 = 3 -> (sG3_T1_21'=3);//final state skipped
+	[next_2] sG3_T1_21 = 4 -> (sG3_T1_21'=4);//final state failure
+endmodule
+
+const double R_G3_T1_22;
+module G3_T1_22_FilterData
+	sG3_T1_22 :[0..4] init 0;
+	
+	[next_2] sG3_T1_22 = 0 -> (sG3_T1_22'=1);//init to running
+	
+
+	[] sG3_T1_22 = 1 -> R_G3_T1_22 : (sG3_T1_22'=2) + (1 - R_G3_T1_22) : (sG3_T1_22'=4);//running to final state
+	[next_3] sG3_T1_22 = 2 -> (sG3_T1_22'=2);//final state success
+	[next_3] sG3_T1_22 = 3 -> (sG3_T1_22'=3);//final state skipped
+	[next_3] sG3_T1_22 = 4 -> (sG3_T1_22'=4);//final state failure
+endmodule
+
+const double R_G3_T1_23;
+module G3_T1_23_TransferData
+	sG3_T1_23 :[0..4] init 0;
+	
+	[next_3] sG3_T1_23 = 0 -> (sG3_T1_23'=1);//init to running
+	
+
+	[] sG3_T1_23 = 1 -> R_G3_T1_23 : (sG3_T1_23'=2) + (1 - R_G3_T1_23) : (sG3_T1_23'=4);//running to final state
+	[next_4] sG3_T1_23 = 2 -> (sG3_T1_23'=2);//final state success
+	[next_4] sG3_T1_23 = 3 -> (sG3_T1_23'=3);//final state skipped
+	[next_4] sG3_T1_23 = 4 -> (sG3_T1_23'=4);//final state failure
+endmodule
+
+const double R_G3_T1_31;
+module G3_T1_31_ReadData
+	sG3_T1_31 :[0..4] init 0;
+	
+	[next_1] sG3_T1_31 = 0 -> (sG3_T1_31'=1);//init to running
+	
+
+	[] sG3_T1_31 = 1 -> R_G3_T1_31 : (sG3_T1_31'=2) + (1 - R_G3_T1_31) : (sG3_T1_31'=4);//running to final state
+	[next_2] sG3_T1_31 = 2 -> (sG3_T1_31'=2);//final state success
+	[next_2] sG3_T1_31 = 3 -> (sG3_T1_31'=3);//final state skipped
+	[next_2] sG3_T1_31 = 4 -> (sG3_T1_31'=4);//final state failure
+endmodule
+
+const double R_G3_T1_32;
+module G3_T1_32_FilterData
+	sG3_T1_32 :[0..4] init 0;
+	
+	[next_2] sG3_T1_32 = 0 -> (sG3_T1_32'=1);//init to running
+	
+
+	[] sG3_T1_32 = 1 -> R_G3_T1_32 : (sG3_T1_32'=2) + (1 - R_G3_T1_32) : (sG3_T1_32'=4);//running to final state
+	[next_3] sG3_T1_32 = 2 -> (sG3_T1_32'=2);//final state success
+	[next_3] sG3_T1_32 = 3 -> (sG3_T1_32'=3);//final state skipped
+	[next_3] sG3_T1_32 = 4 -> (sG3_T1_32'=4);//final state failure
+endmodule
+
+const double R_G3_T1_33;
+module G3_T1_33_TransferData
+	sG3_T1_33 :[0..4] init 0;
+	
+	[next_3] sG3_T1_33 = 0 -> (sG3_T1_33'=1);//init to running
+	
+
+	[] sG3_T1_33 = 1 -> R_G3_T1_33 : (sG3_T1_33'=2) + (1 - R_G3_T1_33) : (sG3_T1_33'=4);//running to final state
+	[next_4] sG3_T1_33 = 2 -> (sG3_T1_33'=2);//final state success
+	[next_4] sG3_T1_33 = 3 -> (sG3_T1_33'=3);//final state skipped
+	[next_4] sG3_T1_33 = 4 -> (sG3_T1_33'=4);//final state failure
+endmodule
+
+const double R_G3_T1_411;
+module G3_T1_411_ReadDiastolic
+	sG3_T1_411 :[0..4] init 0;
+	
+	[next_1] sG3_T1_411 = 0 -> (sG3_T1_411'=1);//init to running
+	
+
+	[] sG3_T1_411 = 1 -> R_G3_T1_411 : (sG3_T1_411'=2) + (1 - R_G3_T1_411) : (sG3_T1_411'=4);//running to final state
+	[next_2] sG3_T1_411 = 2 -> (sG3_T1_411'=2);//final state success
+	[next_2] sG3_T1_411 = 3 -> (sG3_T1_411'=3);//final state skipped
+	[next_2] sG3_T1_411 = 4 -> (sG3_T1_411'=4);//final state failure
+endmodule
+
+const double R_G3_T1_412;
+module G3_T1_412_ReadSystolic
+	sG3_T1_412 :[0..4] init 0;
+	
+	[next_2] sG3_T1_412 = 0 -> (sG3_T1_412'=1);//init to running
+	
+
+	[] sG3_T1_412 = 1 -> R_G3_T1_412 : (sG3_T1_412'=2) + (1 - R_G3_T1_412) : (sG3_T1_412'=4);//running to final state
+	[next_3] sG3_T1_412 = 2 -> (sG3_T1_412'=2);//final state success
+	[next_3] sG3_T1_412 = 3 -> (sG3_T1_412'=3);//final state skipped
+	[next_3] sG3_T1_412 = 4 -> (sG3_T1_412'=4);//final state failure
+endmodule
+
+const double R_G3_T1_42;
+module G3_T1_42_FilterData
+	sG3_T1_42 :[0..4] init 0;
+	
+	[next_3] sG3_T1_42 = 0 -> (sG3_T1_42'=1);//init to running
+	
+
+	[] sG3_T1_42 = 1 -> R_G3_T1_42 : (sG3_T1_42'=2) + (1 - R_G3_T1_42) : (sG3_T1_42'=4);//running to final state
+	[next_4] sG3_T1_42 = 2 -> (sG3_T1_42'=2);//final state success
+	[next_4] sG3_T1_42 = 3 -> (sG3_T1_42'=3);//final state skipped
+	[next_4] sG3_T1_42 = 4 -> (sG3_T1_42'=4);//final state failure
+endmodule
+
+const double R_G3_T1_43;
+module G3_T1_43_TransferData
+	sG3_T1_43 :[0..4] init 0;
+	
+	[next_4] sG3_T1_43 = 0 -> (sG3_T1_43'=1);//init to running
+	
+
+	[] sG3_T1_43 = 1 -> R_G3_T1_43 : (sG3_T1_43'=2) + (1 - R_G3_T1_43) : (sG3_T1_43'=4);//running to final state
+	[next_5] sG3_T1_43 = 2 -> (sG3_T1_43'=2);//final state success
+	[next_5] sG3_T1_43 = 3 -> (sG3_T1_43'=3);//final state skipped
+	[next_5] sG3_T1_43 = 4 -> (sG3_T1_43'=4);//final state failure
+endmodule
+
+const int OPT_G3_T1_X;
+const int CTX_G3_T1_X; //Unknown_sensor = true
+const double R_G3_T1_X;
+module G3_T1_X_Unknown
+	sG3_T1_X :[0..4] init 0;
+	
+	[next_1] sG3_T1_X = 0 -> OPT_G3_T1_X*CTX_G3_T1_X : (sG3_T1_X'=1) + (1 - OPT_G3_T1_X*CTX_G3_T1_X) : (sG3_T1_X'=3); //init to running or skip
+	
+
+	[] sG3_T1_X = 1 -> R_G3_T1_X : (sG3_T1_X'=2) + (1 - R_G3_T1_X) : (sG3_T1_X'=4);//running to final state
+	[next_2] sG3_T1_X = 2 -> (sG3_T1_X'=2);//final state success
+	[next_2] sG3_T1_X = 3 -> (sG3_T1_X'=3);//final state skipped
+	[next_2] sG3_T1_X = 4 -> (sG3_T1_X'=4);//final state failure
+endmodule
+
+formula G3 = (((sG3_T1_11=2) & (sG3_T1_12=2) & (sG3_T1_13=2)) | ((sG3_T1_21=2) & (sG3_T1_22=2) & (sG3_T1_23=2)) | ((sG3_T1_31=2) & (sG3_T1_32=2) & (sG3_T1_33=2)) | (((sG3_T1_411=2) & (sG3_T1_412=2)) & (sG3_T1_42=2) & (sG3_T1_43=2)));
+
+const double R_G4_T1_1;
+module G4_T1_1_FuseSensorsData
+	sG4_T1_1 :[0..4] init 0;
+	
+	[next_5] (G3) & sG4_T1_1 = 0 -> (sG4_T1_1'=1);//init to running
+	[next_5] !(G3) & sG4_T1_1 = 0 -> (sG4_T1_1'=3);//init to skip
+
+	[] sG4_T1_1 = 1 -> R_G4_T1_1 : (sG4_T1_1'=2) + (1 - R_G4_T1_1) : (sG4_T1_1'=4);//running to final state
+	[next_6] sG4_T1_1 = 2 -> (sG4_T1_1'=2);//final state success
+	[next_6] sG4_T1_1 = 3 -> (sG4_T1_1'=3);//final state skipped
+	[next_6] sG4_T1_1 = 4 -> (sG4_T1_1'=4);//final state failure
+endmodule
+
+const double R_G4_T1_2;
+module G4_T1_2_DetectPatientStatus
+	sG4_T1_2 :[0..4] init 0;
+	
+	[next_6] (G3) & sG4_T1_2 = 0 -> (sG4_T1_2'=1);//init to running
+	[next_6] !(G3) & sG4_T1_2 = 0 -> (sG4_T1_2'=3);//init to skip
+
+	[] sG4_T1_2 = 1 -> R_G4_T1_2 : (sG4_T1_2'=2) + (1 - R_G4_T1_2) : (sG4_T1_2'=4);//running to final state
+	[next_7] sG4_T1_2 = 2 -> (sG4_T1_2'=2);//final state success
+	[next_7] sG4_T1_2 = 3 -> (sG4_T1_2'=3);//final state skipped
+	[next_7] sG4_T1_2 = 4 -> (sG4_T1_2'=4);//final state failure
+endmodule
+
+const double R_G4_T1_3;
+module G4_T1_3_PersistData
+	sG4_T1_3 :[0..4] init 0;
+	
+	[next_7] (G3) & sG4_T1_3 = 0 -> (sG4_T1_3'=1);//init to running
+	[next_7] !(G3) & sG4_T1_3 = 0 -> (sG4_T1_3'=3);//init to skip
+
+	[] sG4_T1_3 = 1 -> R_G4_T1_3 : (sG4_T1_3'=2) + (1 - R_G4_T1_3) : (sG4_T1_3'=4);//running to final state
+	[next_8] sG4_T1_3 = 2 -> (sG4_T1_3'=2);//final state success
+	[next_8] sG4_T1_3 = 3 -> (sG4_T1_3'=3);//final state skipped
+	[next_8] sG4_T1_3 = 4 -> (sG4_T1_3'=4);//final state failure
+endmodule
+
+formula G4 = ((sG4_T1_1=2) & (sG4_T1_2=2) & (sG4_T1_3=2));
+
+formula G2 = G3 & G4;
+formula G1 = G2;
+label "success" = G1;
+
+const double W_G3_T1_11;
+const double W_G3_T1_12;
+const double W_G3_T1_13;
+const double W_G3_T1_21;
+const double W_G3_T1_22;
+const double W_G3_T1_23;
+const double W_G3_T1_31;
+const double W_G3_T1_32;
+const double W_G3_T1_33;
+const double W_G3_T1_411;
+const double W_G3_T1_412;
+const double W_G3_T1_42;
+const double W_G3_T1_43;
+const double W_G3_T1_X;
+const double W_G4_T1_1;
+const double W_G4_T1_2;
+const double W_G4_T1_3;
+rewards "cost"
+	sG3_T1_11 = 1 : W_G3_T1_11;
+	sG3_T1_12 = 1 : W_G3_T1_12;
+	sG3_T1_13 = 1 : W_G3_T1_13;
+	sG3_T1_21 = 1 : W_G3_T1_21;
+	sG3_T1_22 = 1 : W_G3_T1_22;
+	sG3_T1_23 = 1 : W_G3_T1_23;
+	sG3_T1_31 = 1 : W_G3_T1_31;
+	sG3_T1_32 = 1 : W_G3_T1_32;
+	sG3_T1_33 = 1 : W_G3_T1_33;
+	sG3_T1_411 = 1 : W_G3_T1_411;
+	sG3_T1_412 = 1 : W_G3_T1_412;
+	sG3_T1_42 = 1 : W_G3_T1_42;
+	sG3_T1_43 = 1 : W_G3_T1_43;
+	sG3_T1_X = 1 : W_G3_T1_X;
+	sG4_T1_1 = 1 : W_G4_T1_1;
+	sG4_T1_2 = 1 : W_G4_T1_2;
+	sG4_T1_3 = 1 : W_G4_T1_3;
+	
+endrewards
+

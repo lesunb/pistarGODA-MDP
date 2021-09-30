@@ -1,7 +1,7 @@
 {
     "output": {
         "output_type": "file",
-        "file_path": "output/Room Preparation/Multiple Locations/V2/task_output.json",
+        "file_path": "src/main/webapp/task_output.json",
         "file_type": "json"
     },
 
