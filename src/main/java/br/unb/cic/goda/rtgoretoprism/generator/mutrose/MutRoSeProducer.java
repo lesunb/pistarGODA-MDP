@@ -17,6 +17,7 @@ import br.unb.cic.goda.rtgoretoprism.generator.goda.writer.ManageWriter;
 public class MutRoSeProducer {
 
 
+	@SuppressWarnings({ "resource", "unchecked" })
 	public void execute(String model, String hddl, String configuration, String worldKnowledge) {
 		if (model == null || model.isEmpty() || hddl == null || model.isEmpty() || configuration == null
 				|| model.isEmpty() || worldKnowledge == null || model.isEmpty()) {
@@ -34,11 +35,10 @@ public class MutRoSeProducer {
 			JSONObject outputConfig = (JSONObject) jsonObject.get("output");
 			String output = (String) outputConfig.get("file_path");
 			File file = new File(output);
-			String nameFile = file.getName();
-
-
+			String filename = file.getName();
+			File pathToFile = new File(dirOutput + filename);
 			// atualizar o path do config
-			outputConfig.replace("file_path", dirOutput + nameFile);
+			outputConfig.replace("file_path", pathToFile.getAbsolutePath());
 
 			// gerar arquivos
 			ManageWriter.generateFile(dir, "model.txt", model);
