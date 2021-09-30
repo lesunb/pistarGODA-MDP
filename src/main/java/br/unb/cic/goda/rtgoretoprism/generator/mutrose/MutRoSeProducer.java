@@ -1,17 +1,11 @@
 package br.unb.cic.goda.rtgoretoprism.generator.mutrose;
 
-import java.io.BufferedReader;
+import java.io.File;
 import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.nio.charset.Charset;
 import java.nio.file.DirectoryStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 
@@ -22,7 +16,6 @@ import br.unb.cic.goda.rtgoretoprism.generator.goda.writer.ManageWriter;
 
 public class MutRoSeProducer {
 
-	private static final Logger LOGGER = Logger.getLogger(MutRoSeProducer.class.getName());
 
 	public void execute(String model, String hddl, String configuration, String worldKnowledge) {
 		if (model == null || model.isEmpty() || hddl == null || model.isEmpty() || configuration == null
@@ -31,83 +24,48 @@ public class MutRoSeProducer {
 		}
 
 		try {
+			String dir = "mrs/";
+			String dirOutput = dir + "output/";
+
+			// recuperar o path original do arquivo de configuracao
 			JSONObject jsonObject;
 			JSONParser parser = new JSONParser();
 			jsonObject = (JSONObject) parser.parse(configuration);
-
 			JSONObject outputConfig = (JSONObject) jsonObject.get("output");
 			String output = (String) outputConfig.get("file_path");
+			File file = new File(output);
+			String nameFile = file.getName();
 
-			String dir = "mrs/";
-			String outputZip = "src/main/webapp/mrs.zip";
+
+			// atualizar o path do config
+			outputConfig.replace("file_path", dirOutput + nameFile);
+
+			// gerar arquivos
 			ManageWriter.generateFile(dir, "model.txt", model);
-			ManageWriter.generateFile(dir, "configFile.json", configuration);
+			ManageWriter.generateFile(dir, "configFile.json", jsonObject.toJSONString());
 			ManageWriter.generateFile(dir, "worldKnowledge.xml", worldKnowledge);
 			ManageWriter.generateFile(dir, "configHddl.hddl", hddl);
-//			ManageWriter.generateFile(output, "task_output.json", "");
 
-			StringBuilder command = new StringBuilder().append("chmod 777 ").append(dir).append("MRSDecomposer ")
+			StringBuilder command = new StringBuilder().append("chmod +x ").append(dir).append("MRSDecomposer ")
 					.append(dir).append("configHddl.hddl ").append(dir).append("model.txt ").append(dir)
 					.append("configFile.json ").append(dir).append("worldKnowledge.xml ");
 
 			Runtime.getRuntime().exec(command.toString());
 
-			FileOutputStream fos = new FileOutputStream(outputZip);
-			ZipOutputStream zos = new ZipOutputStream(fos);
-			DirectoryStream<Path> directoryStream = Files.newDirectoryStream(Paths.get("src/main/webapp/"));
+			FileOutputStream fos = new FileOutputStream("src/main/webapp/mrs.zip");
+			ZipOutputStream zoss = new ZipOutputStream(fos);
+			DirectoryStream<Path> directoryStream = Files.newDirectoryStream(Paths.get(dirOutput));
 			for (Path path : directoryStream) {
 				byte[] bytes = Files.readAllBytes(path);
-				zos.putNextEntry(new ZipEntry(path.getFileName().toString()));
-				zos.write(bytes, 0, bytes.length);
-				zos.closeEntry();
+				zoss.putNextEntry(new ZipEntry(path.getFileName().toString()));
+				zoss.write(bytes, 0, bytes.length);
+				zoss.closeEntry();
 			}
+			
+//			ManageWriter.generateFile(file.getAbsolutePath(), configuration);
 		} catch (Exception error) {
 			throw new RuntimeException(error);
 
 		}
 	}
-
-	private void runCommand(String commandLine, String resultsPath) throws IOException {
-
-		LOGGER.info(commandLine);
-		Process program = Runtime.getRuntime().exec(commandLine);
-		int exitCode = 0;
-		try {
-			exitCode = program.waitFor();
-		} catch (InterruptedException e) {
-			LOGGER.severe("Error invoking param with command:" + commandLine);
-
-			LOGGER.severe("Exit code: " + exitCode);
-			LOGGER.log(Level.SEVERE, e.toString(), e);
-		}
-		
-		logExecCommands(program);
-	}
-	
-
-    private void logExecCommands(Process proc) throws IOException  {
-        BufferedReader stdInput = new BufferedReader(new 
-       	     InputStreamReader(proc.getInputStream()));
-       
-       BufferedReader stdError = new BufferedReader(new 
-       	     InputStreamReader(proc.getErrorStream()));
-       
-       String s = null;
-       
-       if(stdInput.ready()) {
-	       // Read the output from the command
-	       System.out.println("Here is the standard output of the command:");
-	       while ((s = stdInput.readLine()) != null) {
-	           System.out.println(s);
-	       }
-       }
-
-       if(stdError.ready()) {
-           // Read any errors from the attempted command
-           System.err.println("Here is the standard error of the command (if any):");
-           while ((s = stdError.readLine()) != null) {
-               System.err.println(s);
-           }
-       }
-    }
 }
