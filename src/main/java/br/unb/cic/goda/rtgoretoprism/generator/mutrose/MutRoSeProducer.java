@@ -1,14 +1,19 @@
 package br.unb.cic.goda.rtgoretoprism.generator.mutrose;
 
 import java.io.BufferedReader;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.nio.charset.Charset;
+import java.nio.file.DirectoryStream;
 import java.nio.file.Files;
+import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipOutputStream;
 
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
@@ -34,7 +39,7 @@ public class MutRoSeProducer {
 			String output = (String) outputConfig.get("file_path");
 
 			String dir = "mrs/";
-			String outputZip = "src/main/webapp/";
+			String outputZip = "src/main/webapp/mrs.zip";
 			ManageWriter.generateFile(dir, "model.txt", model);
 			ManageWriter.generateFile(dir, "configFile.json", configuration);
 			ManageWriter.generateFile(dir, "worldKnowledge.xml", worldKnowledge);
@@ -45,24 +50,17 @@ public class MutRoSeProducer {
 					.append(dir).append("configHddl.hddl ").append(dir).append("model.txt ").append(dir)
 					.append("configFile.json ").append(dir).append("worldKnowledge.xml ");
 
-			runCommand(command.toString(), outputZip);
-			
-//			Process exec = Runtime.getRuntime().exec(command.toString());
+			runCommand(command.toString(), "src/main/webapp/");
 
-//
-//			ProcessBuilder processBuilder = new ProcessBuilder();
-//			processBuilder.command("java", " -version");
-//			Process process = processBuilder.start();
-
-//			FileOutputStream fos = new FileOutputStream(outputZip);
-//			ZipOutputStream zos = new ZipOutputStream(fos);
-//			DirectoryStream<Path> directoryStream = Files.newDirectoryStream(Paths.get(output));
-//			for (Path path : directoryStream) {
-//				byte[] bytes = Files.readAllBytes(path);
-//				zos.putNextEntry(new ZipEntry(path.getFileName().toString()));
-//				zos.write(bytes, 0, bytes.length);
-//				zos.closeEntry();
-//			}
+			FileOutputStream fos = new FileOutputStream(outputZip);
+			ZipOutputStream zos = new ZipOutputStream(fos);
+			DirectoryStream<Path> directoryStream = Files.newDirectoryStream(Paths.get(output));
+			for (Path path : directoryStream) {
+				byte[] bytes = Files.readAllBytes(path);
+				zos.putNextEntry(new ZipEntry(path.getFileName().toString()));
+				zos.write(bytes, 0, bytes.length);
+				zos.closeEntry();
+			}
 		} catch (Exception error) {
 			throw new RuntimeException(error);
 
