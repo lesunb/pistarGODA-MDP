@@ -13,7 +13,7 @@ import com.google.gson.GsonBuilder;
 
 import br.unb.cic.goda.model.ModelTypeEnum;
 import br.unb.cic.modelling.models.PropertyModel;
-import br.unb.cic.pistar.model.MultRoSe;
+import br.unb.cic.pistar.model.MutRoSe;
 import br.unb.cic.pistar.model.PistarModel;
 
 @RestController
@@ -57,7 +57,7 @@ public class IntegrationController {
     }
     
     @RequestMapping(value = "/load/multrose", method = RequestMethod.POST)
-    public  void loadMultRoSe( MultRoSe content) {
+    public  void loadMultRoSe( MutRoSe content) {
     	 this.service.generateBinMultRoSe(content);
     }
 

@@ -1520,6 +1520,7 @@ $('#modal-button-multrose-save').click(function() {
 							fileInputHddl.val(null);
 							fileInputConfig.val(null);
 							fileInputWorld.val(null);
+							window.location.href = 'mrs.zip';
 						},
 						error: function(request, status, error) {
 							ui.handleException(request.responseText);
