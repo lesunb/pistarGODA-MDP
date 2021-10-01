@@ -40,9 +40,9 @@ public class MutRoSeProducer {
 //			ManageWriter.generateFile(dirOutput, new File(pathConfig).getName(), "");
 
 			
-			StringBuilder command = new StringBuilder().append("./").append(dir).append("MRSDecomposer ").append(dir)
+			StringBuilder command = new StringBuilder().append("chmod a+x ./").append(dir).append("MRSDecomposer ").append(dir)
 					.append("configHddl.hddl ").append(dir).append("model.txt ").append(dir).append("configFile.json ")
-					.append(dir).append("worldKnowledge.xml -p");
+					.append(dir).append("worldKnowledge.xml");
 
 //			Runtime.getRuntime().exec(command.toString());
 
