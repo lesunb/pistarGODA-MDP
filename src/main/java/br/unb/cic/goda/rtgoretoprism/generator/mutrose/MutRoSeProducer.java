@@ -32,7 +32,7 @@ public class MutRoSeProducer {
 			
 			StringBuilder command = new StringBuilder().append("./").append(dir).append("MRSDecomposer ").append(dir)
 					.append("configHddl.hddl ").append(dir).append("model.txt ").append(dir).append("configFile.json ")
-					.append(dir).append("worldKnowledge.xml ");
+					.append(dir).append("worldKnowledge.xml -p");
 
 			Runtime.getRuntime().exec(command.toString());
 
