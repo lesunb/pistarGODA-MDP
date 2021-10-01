@@ -95,8 +95,7 @@ public class MutRoSeProducer {
             return lines.get(lines.size() - 1);
         }
         
-    	LOGGER.info(lines.get(lines.size()));
-        return lines.get(lines.size());
+        return "";
     }
     
     private void logExecResults(Process proc) throws IOException {
