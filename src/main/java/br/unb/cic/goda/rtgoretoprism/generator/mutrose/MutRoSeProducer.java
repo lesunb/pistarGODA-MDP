@@ -70,7 +70,7 @@ public class MutRoSeProducer {
 			String path = dirOutput + filename;
 			File generatedFile = new File(path);
 			// atualizar o path do config
-			outputConfig.replace("file_path", generatedFile.getAbsolutePath());
+			outputConfig.replace("file_path", filename);
 			
 			return jsonObject;
 		} catch (ParseException e) {
