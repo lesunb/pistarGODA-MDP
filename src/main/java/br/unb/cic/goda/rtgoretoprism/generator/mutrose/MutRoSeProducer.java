@@ -68,9 +68,9 @@ public class MutRoSeProducer {
 			File file = new File(output);
 			String filename = file.getName();
 			String path = dirOutput + filename;
-//			File generatedFile = new File(dirOutput + filename);
+			File generatedFile = new File(path);
 			// atualizar o path do config
-			outputConfig.replace("file_path", path);
+			outputConfig.replace("file_path", generatedFile.getAbsolutePath());
 			
 			return jsonObject;
 		} catch (ParseException e) {
