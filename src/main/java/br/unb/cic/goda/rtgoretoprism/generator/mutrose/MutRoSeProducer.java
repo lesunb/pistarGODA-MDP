@@ -37,6 +37,7 @@ public class MutRoSeProducer {
 		    ManageWriter.generateFile(dir, "configFile.json", jsonObject.toJSONString());
 			ManageWriter.generateFile(dir, "worldKnowledge.xml", worldKnowledge);
 			ManageWriter.generateFile(dir, "configHddl.hddl", hddl);
+			ManageWriter.generateFile(jsonObject.toJSONString(), "");
 //			ManageWriter.generateFile(dirOutput, new File(pathConfig).getName(), "");
 
 			
