@@ -28,15 +28,15 @@ public class MutRoSeProducer {
 		}
 
 		try {
-			String dir = "mrs/";
+			String dir = "";
 			String dirOutput = dir + "output/";
 			JSONObject jsonObject = this.updatePathConfigurationFile(configuration, dirOutput);
 
 			// gerar arquivos
-			ManageWriter.generateFile(dir, "model.txt", model);
-		    ManageWriter.generateFile(dir, "configFile.json", jsonObject.toJSONString());
-			ManageWriter.generateFile(dir, "worldKnowledge.xml", worldKnowledge);
-			ManageWriter.generateFile(dir, "configHddl.hddl", hddl);
+			ManageWriter.generateFile( "model.txt", model);
+		    ManageWriter.generateFile( "configFile.json", jsonObject.toJSONString());
+			ManageWriter.generateFile( "worldKnowledge.xml", worldKnowledge);
+			ManageWriter.generateFile( "configHddl.hddl", hddl);
 			ManageWriter.generateFile(jsonObject.toJSONString(), "");
 //			ManageWriter.generateFile(dirOutput, new File(pathConfig).getName(), "");
 
@@ -45,7 +45,9 @@ public class MutRoSeProducer {
 					.append("configHddl.hddl ").append(dir).append("model.txt ").append(dir).append("configFile.json ")
 					.append(dir).append("worldKnowledge.xml ");
 
-			Runtime.getRuntime().exec(command.toString());
+			Process proc = Runtime.getRuntime().exec(command.toString());
+			LOGGER.info(proc.getInputStream().toString());
+			LOGGER.info(proc.getOutputStream().toString());
 
 			JSONObject outputConfig = (JSONObject) jsonObject.get("output");
 			String output = (String) outputConfig.get("file_path");
