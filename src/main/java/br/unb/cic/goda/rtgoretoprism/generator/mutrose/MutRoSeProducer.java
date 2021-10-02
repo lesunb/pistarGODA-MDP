@@ -30,24 +30,25 @@ public class MutRoSeProducer {
 		try {
 			String dir = "mrs/";
 			String dirOutput = dir + "output/";
-			String pathConfig = this.updatePathConfigurationFile(configuration, dirOutput);
+			JSONObject jsonObject = this.updatePathConfigurationFile(configuration, dirOutput);
 
 			// gerar arquivos
 			ManageWriter.generateFile(dir, "model.txt", model);
-		    ManageWriter.generateFile(dir, "configFile.json", pathConfig);
+		    ManageWriter.generateFile(dir, "configFile.json", jsonObject.toJSONString());
 			ManageWriter.generateFile(dir, "worldKnowledge.xml", worldKnowledge);
 			ManageWriter.generateFile(dir, "configHddl.hddl", hddl);
 //			ManageWriter.generateFile(dirOutput, new File(pathConfig).getName(), "");
 
 			
-			StringBuilder command = new StringBuilder().append("chmod a+x ./").append(dir).append("MRSDecomposer ").append(dir)
+			StringBuilder command = new StringBuilder().append("./").append(dir).append("MRSDecomposer ").append(dir)
 					.append("configHddl.hddl ").append(dir).append("model.txt ").append(dir).append("configFile.json ")
-					.append(dir).append("worldKnowledge.xml");
+					.append(dir).append("worldKnowledge.xml ");
 
-//			Runtime.getRuntime().exec(command.toString());
+			Runtime.getRuntime().exec(command.toString());
 
-			invokeAndGetResult(command.toString(), pathConfig);
-			ManageWriter.toCompact(pathConfig, "src/main/webapp/mrs.zip");
+			JSONObject outputConfig = (JSONObject) jsonObject.get("output");
+			String output = (String) outputConfig.get("file_path");
+			ManageWriter.toCompact(output, "src/main/webapp/mrs.zip");
 		} catch (Exception error) {
 			throw new RuntimeException(error);
 
@@ -55,7 +56,7 @@ public class MutRoSeProducer {
 	}
 	
 	@SuppressWarnings("unchecked")
-	private String updatePathConfigurationFile(String configuration, String dirOutput) {
+	private JSONObject updatePathConfigurationFile(String configuration, String dirOutput) {
 		
 		// recuperar o path original do arquivo de configuracao
 		JSONObject jsonObject;
@@ -71,56 +72,9 @@ public class MutRoSeProducer {
 			// atualizar o path do config
 			outputConfig.replace("file_path", path);
 			
-			return path;
+			return jsonObject;
 		} catch (ParseException e) {
 			throw new RuntimeException(e);
 		}
 	}
-	
-
-    private String invokeAndGetResult(String commandLine, String resultsPath) throws IOException {
-        Process program = Runtime.getRuntime().exec(commandLine);
-        try {
-            program.waitFor();
-        } catch (InterruptedException e) {
-			throw new RuntimeException(e);
-        }
-        
-        logExecResults(program);
-        
-        List<String> lines = Files.readAllLines(Paths.get(resultsPath), Charset.forName("UTF-8"));
-
-        if(lines.size() > 0) {
-        	LOGGER.info(lines.get(lines.size() - 1));
-            return lines.get(lines.size() - 1);
-        }
-        
-        return "";
-    }
-    
-    private void logExecResults(Process proc) throws IOException {
-        BufferedReader stdInput = new BufferedReader(new 
-       	     InputStreamReader(proc.getInputStream()));
-       
-       BufferedReader stdError = new BufferedReader(new 
-       	     InputStreamReader(proc.getErrorStream()));
-       
-       String s = null;
-       
-       if(stdInput.ready()) {
-	       // Read the output from the command
-	       System.out.println("Here is the standard output of the command:");
-	       while ((s = stdInput.readLine()) != null) {
-	           System.out.println(s);
-	       }
-       }
-
-       if(stdError.ready()) {
-           // Read any errors from the attempted command
-           System.err.println("Here is the standard error of the command (if any):");
-           while ((s = stdError.readLine()) != null) {
-               System.err.println(s);
-           }
-       }
-    }
 }
