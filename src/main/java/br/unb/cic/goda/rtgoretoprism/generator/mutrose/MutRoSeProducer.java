@@ -59,7 +59,7 @@ public class MutRoSeProducer {
 			
 //			invokeAndGetResult(command.toString(), resultsFile.getAbsolutePath() + ".out");
 
-			ManageWriter.toCompact(new File(output).getAbsolutePath(), "src/main/webapp/mrs.zip");
+			ManageWriter.toCompact(output, "src/main/webapp/mrs.zip");
 		} catch (Exception error) {
 			throw new RuntimeException(error);
 
