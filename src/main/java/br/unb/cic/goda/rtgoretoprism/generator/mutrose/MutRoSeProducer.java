@@ -47,7 +47,7 @@ public class MutRoSeProducer {
 //			File resultsFile = File.createTempFile(output, null);
 			
 			StringBuilder command = new StringBuilder()
-					.append("chmod -x ./").append(dir).append("MRSDecomposer").append(" ")
+					.append("./").append(dir).append("MRSDecomposer").append(" ")
 					.append(hddlFile.getAbsolutePath()).append(" ")
 					.append(modelFile.getAbsolutePath()).append(" ")
 					.append(configFile.getAbsolutePath()).append(" ")
@@ -59,7 +59,7 @@ public class MutRoSeProducer {
 			
 //			invokeAndGetResult(command.toString(), resultsFile.getAbsolutePath() + ".out");
 
-			ManageWriter.toCompact(new File(output).getAbsolutePath(), "src/main/webapp/mrs.zip");
+			ManageWriter.toCompact(output, "src/main/webapp/mrs.zip");
 		} catch (Exception error) {
 			throw new RuntimeException(error);
 
