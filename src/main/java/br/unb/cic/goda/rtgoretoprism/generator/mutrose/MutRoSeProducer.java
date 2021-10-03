@@ -28,16 +28,16 @@ public class MutRoSeProducer {
 		}
 
 		try {
-			String dir = "";
+			String dir = "mrs/";
 			String dirOutput = dir + "output/";
 			JSONObject jsonObject = this.updatePathConfigurationFile(configuration, dirOutput);
 
 			// gerar arquivos
-			ManageWriter.generateFile( "model.txt", model);
-		    ManageWriter.generateFile( "configFile.json", jsonObject.toJSONString());
-			ManageWriter.generateFile( "worldKnowledge.xml", worldKnowledge);
-			ManageWriter.generateFile( "configHddl.hddl", hddl);
-			ManageWriter.generateFile(jsonObject.toJSONString(), "");
+			ManageWriter.generateFile(dir, "model.txt", model);
+		    ManageWriter.generateFile(dir, "configFile.json", jsonObject.toJSONString());
+			ManageWriter.generateFile(dir, "worldKnowledge.xml", worldKnowledge);
+			ManageWriter.generateFile(dir, "configHddl.hddl", hddl);
+//			ManageWriter.generateFile(jsonObject.toJSONString(), "");
 //			ManageWriter.generateFile(dirOutput, new File(pathConfig).getName(), "");
 
 			
@@ -73,7 +73,7 @@ public class MutRoSeProducer {
 			String path = dirOutput + filename;
 			File generatedFile = new File(path);
 			// atualizar o path do config
-			outputConfig.replace("file_path", filename);
+			outputConfig.replace("file_path", path);
 			
 			return jsonObject;
 		} catch (ParseException e) {
