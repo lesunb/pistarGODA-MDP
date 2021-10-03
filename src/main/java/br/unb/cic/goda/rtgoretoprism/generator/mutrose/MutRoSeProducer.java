@@ -37,8 +37,9 @@ public class MutRoSeProducer {
 		    ManageWriter.generateFile(dir, "configFile.json", jsonObject.toJSONString());
 			ManageWriter.generateFile(dir, "worldKnowledge.xml", worldKnowledge);
 			ManageWriter.generateFile(dir, "configHddl.hddl", hddl);
-//			ManageWriter.generateFile(jsonObject.toJSONString(), "");
-//			ManageWriter.generateFile(dirOutput, new File(pathConfig).getName(), "");
+			JSONObject outputConfig = (JSONObject) jsonObject.get("output");
+			String output = (String) outputConfig.get("file_path");
+			ManageWriter.generateFile(output, "");
 
 			
 			StringBuilder command = new StringBuilder().append("./").append(dir).append("MRSDecomposer ").append(dir)
@@ -49,8 +50,6 @@ public class MutRoSeProducer {
 			LOGGER.info(proc.getInputStream().toString());
 			LOGGER.info(proc.getOutputStream().toString());
 
-			JSONObject outputConfig = (JSONObject) jsonObject.get("output");
-			String output = (String) outputConfig.get("file_path");
 			ManageWriter.toCompact(output, "src/main/webapp/mrs.zip");
 		} catch (Exception error) {
 			throw new RuntimeException(error);
