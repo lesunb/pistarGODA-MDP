@@ -22,7 +22,7 @@ public class MutRoSeProducer {
     private static final Logger LOGGER = Logger.getLogger(MutRoSeProducer.class.getName());
     
 //	@SuppressWarnings({ "resource", "unchecked" })
-	public void execute(String model, String hddl, String configuration, String worldKnowledge) {
+	public String execute(String model, String hddl, String configuration, String worldKnowledge) {
 		if (model == null || model.isEmpty() || hddl == null || model.isEmpty() || configuration == null
 				|| model.isEmpty() || worldKnowledge == null || model.isEmpty()) {
 			throw new RuntimeException("Invalid File");
@@ -48,7 +48,7 @@ public class MutRoSeProducer {
 //			File resultsFile = File.createTempFile(output, null);
 			
 			StringBuilder command = new StringBuilder()
-					.append("chmod 755  ./").append(dir).append("MRSDecomposer").append(" ")
+					.append("./").append(dir).append("MRSDecomposer").append(" ")
 					.append(hddlFile.getAbsolutePath()).append(" ")
 					.append(modelFile.getAbsolutePath()).append(" ")
 					.append(configFile.getAbsolutePath()).append(" ")
@@ -61,6 +61,7 @@ public class MutRoSeProducer {
 //			invokeAndGetResult(command.toString(), resultsFile.getAbsolutePath() + ".out");
 
 //			ManageWriter.toCompact(output, "src/main/webapp/mrs.zip");
+			return "output.zip";
 		} catch (Exception error) {
 			throw new RuntimeException(error);
 

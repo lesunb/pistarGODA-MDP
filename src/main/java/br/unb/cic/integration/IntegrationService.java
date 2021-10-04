@@ -44,9 +44,9 @@ import br.unb.cic.pistar.model.PistarNode;
 @Service
 public class IntegrationService {
 	
-	public void generateBinMultRoSe(MutRoSe content) {
+	public String generateBinMultRoSe(MutRoSe content) {
 		MutRoSeProducer mrs = new MutRoSeProducer(); 
-		mrs.execute(content.getModel(), content.getHddl(), content.getConfig(), content.getWorld());
+		return mrs.execute(content.getModel(), content.getHddl(), content.getConfig(), content.getWorld());
 	}
 	
 	public List<String> loadTerminal() {

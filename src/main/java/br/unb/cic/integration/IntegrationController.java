@@ -8,13 +8,9 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
-
 import br.unb.cic.goda.model.ModelTypeEnum;
 import br.unb.cic.modelling.models.PropertyModel;
 import br.unb.cic.pistar.model.MutRoSe;
-import br.unb.cic.pistar.model.PistarModel;
 
 @RestController
 public class IntegrationController {
@@ -57,8 +53,8 @@ public class IntegrationController {
     }
     
     @RequestMapping(value = "/load/multrose", method = RequestMethod.POST)
-    public  void loadMultRoSe( MutRoSe content) {
-    	 this.service.generateBinMultRoSe(content);
+    public String loadMultRoSe( MutRoSe content) {
+    	 return this.service.generateBinMultRoSe(content);
     }
 
     @RequestMapping(value = "/loadTerminal", method = RequestMethod.GET)
