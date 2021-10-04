@@ -1513,14 +1513,14 @@ $('#modal-button-multrose-save').click(function() {
 							config: resultConfig,
 							world: resultWorld
 						},
-						success: function() {
+						success: function(urlZip) {
 							/*window.location.href = 'prism.zip';*/
 							$('#modal-load-hddl').modal('hide');
 							//fileInputModel.val(null);
 							fileInputHddl.val(null);
 							fileInputConfig.val(null);
 							fileInputWorld.val(null);
-							window.location.href = 'mrs.zip';
+							window.location.href = urlZip;
 						},
 						error: function(request, status, error) {
 							ui.handleException(request.responseText);
