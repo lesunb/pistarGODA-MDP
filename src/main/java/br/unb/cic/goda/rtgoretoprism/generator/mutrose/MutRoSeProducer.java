@@ -30,7 +30,8 @@ public class MutRoSeProducer {
 
 		try {
 			String dir = "mrs/";
-			String dirOutput =  dir + "output/";
+//			String dirOutput =  dir + "output/";
+			String dirOutput = "src/main/webapp/";
 			JSONObject jsonObject = this.updatePathConfigurationFile(configuration, dirOutput);
 
 			// gerar arquivos
@@ -47,7 +48,7 @@ public class MutRoSeProducer {
 //			File resultsFile = File.createTempFile(output, null);
 			
 			StringBuilder command = new StringBuilder()
-					.append("./").append(dir).append("MRSDecomposer").append(" ")
+					.append("sudo chmod 755  ./").append(dir).append("MRSDecomposer").append(" ")
 					.append(hddlFile.getAbsolutePath()).append(" ")
 					.append(modelFile.getAbsolutePath()).append(" ")
 					.append(configFile.getAbsolutePath()).append(" ")
