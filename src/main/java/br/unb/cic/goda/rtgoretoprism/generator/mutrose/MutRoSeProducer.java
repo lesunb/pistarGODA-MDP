@@ -48,7 +48,7 @@ public class MutRoSeProducer {
 //			File resultsFile = File.createTempFile(output, null);
 			
 			StringBuilder command = new StringBuilder()
-					.append("sudo chmod 755  ./").append(dir).append("MRSDecomposer").append(" ")
+					.append("chmod 755  ./").append(dir).append("MRSDecomposer").append(" ")
 					.append(hddlFile.getAbsolutePath()).append(" ")
 					.append(modelFile.getAbsolutePath()).append(" ")
 					.append(configFile.getAbsolutePath()).append(" ")
