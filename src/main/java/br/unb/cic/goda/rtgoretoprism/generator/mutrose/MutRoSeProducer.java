@@ -40,8 +40,8 @@ public class MutRoSeProducer {
 			File hddlFile = ManageWriter.generateFile(dir,  "configHddl.hddl", hddl);
 			
 			
-			JSONObject outputConfig = (JSONObject) jsonObject.get("output");
-			String output = (String) outputConfig.get("file_path");
+//			JSONObject outputConfig = (JSONObject) jsonObject.get("output");
+//			String output = (String) outputConfig.get("file_path");
 //			ManageWriter.generateFile(output, "");
 //            File resultsFile = ManageWriter.generateFile(output, "");
 //			File resultsFile = File.createTempFile(output, null);
@@ -59,7 +59,7 @@ public class MutRoSeProducer {
 			
 //			invokeAndGetResult(command.toString(), resultsFile.getAbsolutePath() + ".out");
 
-			ManageWriter.toCompact(output, "src/main/webapp/mrs.zip");
+//			ManageWriter.toCompact(output, "src/main/webapp/mrs.zip");
 		} catch (Exception error) {
 			throw new RuntimeException(error);
 
