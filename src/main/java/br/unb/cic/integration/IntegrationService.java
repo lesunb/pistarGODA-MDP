@@ -90,7 +90,7 @@ public class IntegrationService {
 			cleanFolder(typeModel.toLowerCase());
 		} catch (IOException ex) {
 			ex.printStackTrace();
-//			throw new RuntimeException(ex.getMessage());
+			throw new RuntimeException(ex.getMessage());
 		}
 	}
 

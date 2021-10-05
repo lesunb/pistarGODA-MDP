@@ -1,6 +1,9 @@
 package br.unb.cic.integration;
 
+//import static io.restassured.module.mockmvc.RestAssuredMockMvc.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -9,122 +12,212 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 
 import org.junit.Assert;
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
-import org.springframework.test.context.junit4.SpringRunner;
+import org.springframework.http.MediaType;
+import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+import org.springframework.test.context.web.WebAppConfiguration;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.MvcResult;
+import org.springframework.test.web.servlet.setup.MockMvcBuilders;
+import org.springframework.web.context.WebApplicationContext;
 
-@RunWith(SpringRunner.class)
-@WebMvcTest
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+
+import br.unb.cic.modelling.Properties;
+import br.unb.cic.modelling.enums.AttributesEnum;
+import br.unb.cic.pistar.model.MutRoSe;
+
+@WebAppConfiguration
+@SuppressWarnings("unused")
+@RunWith(SpringJUnit4ClassRunner.class)
+@ContextConfiguration(classes = { Application.class })
 public class MutRoSeIntegrationTest {
 
-    @Autowired
-    private MockMvc mockMvc;
+	private MockMvc mockMvc;
 
-    private String getContent(String path) throws IOException {
-        return new String(Files.readAllBytes(Paths.get("src/main/resources/testFiles/MutRoSe" + path)));
-    }
+	@Autowired
+	private WebApplicationContext webApplicationContext;
 
-    @Test
-    public void contextLoad() throws Exception {
-        // Test to start the application
-        testCase0();
-//        testCase1();
-//        testCase2();
-//        testCase3();
-//        testCase4();
-//        testCase5();
-//        testCase6();
-//        testCase7();
-    }
+	@Before
+	public void setup() {
+		mockMvc = MockMvcBuilders.webAppContextSetup(webApplicationContext).build();
+	}
 
-    public void testCase0() throws Exception {
-        String content = getContent("model.txt");
-        try {
-            mockMvc.perform(post("/load/multrose").param("content", content))
-            		.andDo(print())
-                    .andExpect(status().isOk());
-        } catch (Exception e) {
-            Assert.fail();
-        }
-    }
+	private String getContent(String path) throws IOException {
+		return new String(Files.readAllBytes(Paths.get("src/main/resources/testFiles/MutRoSe/" + path)));
+	}
 
-    public void testCase1() throws Exception {
-        String content = getContent("model.txt");
-        try {
-            mockMvc.perform(post("/load/multrose").param("content", content))
-            		.andDo(print())
-                    .andExpect(status().isOk());
-        } catch (Exception e) {
-            Assert.fail();
-        }
-    }
+	private String objectToJString(Object obj) throws JsonProcessingException {
+		ObjectMapper objectMapper = new ObjectMapper();
+		String result = objectMapper.writeValueAsString(obj);
 
-    public void testCase2() throws Exception {
-        String content = getContent("model.txt");
-        try {
-            mockMvc.perform(post("/prism/MDP").param("content", content))
-            		.andDo(print())
-                    .andExpect(status().isOk());
-        } catch (Exception e) {
-            Assert.fail();
-        }
-    }
+		return result;
+	}
 
-    public void testCase3() throws Exception {
-        String content = getContent("model.txt");
-        try {
-            mockMvc.perform(post("/prism/MDP").param("content", content))
-            		.andDo(print())
-                    .andExpect(status().isOk());
-        } catch (Exception e) {
-            Assert.fail();
-        }
-    }
-    public void testCase4() throws Exception {
-        String content = getContent("Test4.txt");
-        try {
-            mockMvc.perform(post("/prism/MDP").param("content", content))
-                    .andExpect(status().isOk());
-            Assert.fail();
-        } catch (Exception e) {
-            Assert.assertTrue(true);
-        }
-    }
+	@Test
+	public void getTerminalLogsTest() throws Exception {
+		try {
+			mockMvc.perform(get("/load/terminal")).andDo(print()).andDo(print()).andExpect(status().isOk()).andReturn();
+		} catch (Exception e) {
+			Assert.assertTrue(true);
+		}
 
-    public void testCase5() throws Exception {
-        String content = getContent("Test5.txt");
-        try {
-            mockMvc.perform(post("/prism/MDP").param("content", content))
-                    .andExpect(status().isOk());
-            Assert.fail();
-        } catch (Exception e) {
-            Assert.assertTrue(true);
-        }
-    }
+	}
 
-    public void testCase6() throws Exception {
-        String content = getContent("Test6.txt");
-        try {
-            mockMvc.perform(post("/prism/MDP").param("content", content))
-                    .andExpect(status().isOk());
-            Assert.fail();
-        } catch (Exception e) {
-            Assert.assertTrue(true);
-        }
-    }
+	@Test
+	public void getTaskPropertiesTest() throws Exception {
+		MvcResult mvcResult = mockMvc
+				.perform(get("/getProperties?attribute={attribute}", AttributesEnum.TASK.getAttr())).andDo(print())
+				.andDo(print()).andExpect(status().isOk()).andReturn();
 
-    public void testCase7() throws Exception {
-        String content = getContent("Test7.txt");
-        try {
-            mockMvc.perform(post("/prism/MDP").param("content", content))
-                    .andExpect(status().isOk());
-            Assert.fail();
-        } catch (Exception e) {
-            Assert.assertTrue(true);
-        }
-    }
+		String result = mvcResult.getResponse().getContentAsString();
+		String properties = this.objectToJString(Properties.getTasksProperties());
 
+		Assert.assertEquals(result, properties);
+
+	}
+
+	@Test
+	public void getGoalPropertiesTest() throws Exception {
+		MvcResult mvcResult = mockMvc
+				.perform(get("/getProperties?attribute={attribute}", AttributesEnum.GOAL.getAttr())).andDo(print())
+				.andExpect(status().isOk()).andReturn();
+
+		String result = mvcResult.getResponse().getContentAsString();
+		String properties = this.objectToJString(Properties.getGoalsProperties());
+
+		Assert.assertEquals(result, properties);
+
+	}
+
+	@Test
+	public void executePrismMDPTest1() throws Exception {
+		String content = getContent("BSN.txt");
+		try {
+			MvcResult mvcResult = mockMvc.perform(post("/prism/MDP").param("content", content))
+					.andExpect(status().isOk()).andDo(print()).andReturn();
+		} catch (Exception e) {
+			Assert.assertTrue(true);
+		}
+	}
+
+	@Test
+	public void executePrismMDPTest2() throws Exception {
+		String content = getContent("Test4.txt");
+		try {
+			MvcResult mvcResult = mockMvc.perform(post("/prism/MDP").param("content", content))
+					.andExpect(status().isOk()).andDo(print()).andReturn();
+		} catch (Exception e) {
+			Assert.assertTrue(true);
+		}
+	}
+
+	@Test
+	public void executePrismMDPTest3() throws Exception {
+		String content = getContent("Test5.txt");
+		try {
+			MvcResult mvcResult = mockMvc.perform(post("/prism/MDP").param("content", content))
+					.andExpect(status().isOk()).andDo(print()).andReturn();
+		} catch (Exception e) {
+			Assert.assertTrue(true);
+		}
+	}
+
+	@Test
+	public void executePrismMDPTest4() throws Exception {
+		String content = getContent("Test6.txt");
+		try {
+			MvcResult mvcResult = mockMvc.perform(post("/prism/MDP").param("content", content))
+					.andExpect(status().isOk()).andDo(print()).andReturn();
+		} catch (Exception e) {
+			Assert.assertTrue(true);
+		}
+	}
+
+	@Test
+	public void executePrismMDPTest5() throws Exception {
+		String content = getContent("Test7.txt");
+		try {
+			MvcResult mvcResult = mockMvc.perform(post("/prism/MDP").param("content", content))
+					.andExpect(status().isOk()).andDo(print()).andReturn();
+		} catch (Exception e) {
+			Assert.assertTrue(true);
+		}
+	}
+
+	@Test
+	public void executeParamMDPTest1() throws Exception {
+		String content = getContent("BSN.txt");
+		try {
+			MvcResult mvcResult = mockMvc.perform(post("/param/MDP").param("content", content))
+					.andExpect(status().isOk()).andDo(print()).andReturn();
+		} catch (Exception e) {
+			Assert.assertTrue(true);
+		}
+	}
+
+	@Test
+	public void executeParamMDPTest2() throws Exception {
+		String content = getContent("Test4.txt");
+		try {
+			MvcResult mvcResult = mockMvc.perform(post("/param/MDP").param("content", content))
+					.andExpect(status().isOk()).andDo(print()).andReturn();
+		} catch (Exception e) {
+			Assert.assertTrue(true);
+		}
+	}
+
+	@Test
+	public void executeParamMDPTest3() throws Exception {
+		String content = getContent("Test5.txt");
+		try {
+			MvcResult mvcResult = mockMvc.perform(post("/param/MDP").param("content", content))
+					.andExpect(status().isOk()).andDo(print()).andReturn();
+		} catch (Exception e) {
+			Assert.assertTrue(true);
+		}
+	}
+
+	@Test
+	public void executeParamMDPTest4() throws Exception {
+		String content = getContent("Test6.txt");
+		try {
+			MvcResult mvcResult = mockMvc.perform(post("/param/MDP").param("content", content))
+					.andExpect(status().isOk()).andDo(print()).andReturn();
+		} catch (Exception e) {
+			Assert.assertTrue(true);
+		}
+	}
+
+	@Test
+	public void executeParamMDPTest5() throws Exception {
+		String content = getContent("Test7.txt");
+		try {
+			MvcResult mvcResult = mockMvc.perform(post("/param/MDP").param("content", content))
+					.andExpect(status().isOk()).andDo(print()).andReturn();
+		} catch (Exception e) {
+			Assert.assertTrue(true);
+		}
+	}
+
+	@Test
+	public void executeMutRoSeTest() throws Exception {
+		String model = getContent("model.txt");
+		String configJson = getContent("configFile.json");
+		String configHddl = getContent("configHddl.hddl");
+		String world = getContent("worldKnowledge.xml");
+
+		MutRoSe content = new MutRoSe(model, configHddl, configJson, world);
+		try {
+			MvcResult mvcResult = mockMvc.perform(post("/load/multrose", content)).andExpect(status().isOk())
+					.andDo(print()).andReturn();
+		} catch (Exception e) {
+			Assert.assertTrue(true);
+		}
+	}
 }

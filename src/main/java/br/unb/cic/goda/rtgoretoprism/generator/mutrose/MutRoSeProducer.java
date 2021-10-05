@@ -21,7 +21,6 @@ public class MutRoSeProducer {
 
     private static final Logger LOGGER = Logger.getLogger(MutRoSeProducer.class.getName());
     
-//	@SuppressWarnings({ "resource", "unchecked" })
 	public String execute(String model, String hddl, String configuration, String worldKnowledge) {
 		if (model == null || model.isEmpty() || hddl == null || model.isEmpty() || configuration == null
 				|| model.isEmpty() || worldKnowledge == null || model.isEmpty()) {
@@ -30,8 +29,7 @@ public class MutRoSeProducer {
 
 		try {
 			String dir = "mrs/";
-//			String dirOutput =  dir + "output/";
-			String dirOutput = "src/main/webapp/";
+			String dirOutput =  dir + "output/";
 			JSONObject jsonObject = this.updatePathConfigurationFile(configuration, dirOutput);
 
 			// gerar arquivos
@@ -43,9 +41,6 @@ public class MutRoSeProducer {
 			
 //			JSONObject outputConfig = (JSONObject) jsonObject.get("output");
 //			String output = (String) outputConfig.get("file_path");
-//			ManageWriter.generateFile(output, "");
-//            File resultsFile = ManageWriter.generateFile(output, "");
-//			File resultsFile = File.createTempFile(output, null);
 			
 			StringBuilder command = new StringBuilder()
 					.append("./").append(dir).append("MRSDecomposer").append(" ")
@@ -58,7 +53,6 @@ public class MutRoSeProducer {
 			LOGGER.info(proc.getInputStream().toString());
 			LOGGER.info(proc.getOutputStream().toString());
 			
-//			invokeAndGetResult(command.toString(), resultsFile.getAbsolutePath() + ".out");
 
 //			ManageWriter.toCompact(output, "src/main/webapp/mrs.zip");
 			return "output.zip";

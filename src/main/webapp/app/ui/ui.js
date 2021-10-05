@@ -1447,7 +1447,7 @@ $('#showError').click(function() {
 	'use strict';
 	$.ajax({
 		type: "GET",
-		url: '/loadTerminal',
+		url: '/load/terminal',
 		success: function(errors) {
 			$('#terminal-body').empty();
 			for(let i = 0; i < errors.length; i++){
@@ -1520,7 +1520,7 @@ $('#modal-button-multrose-save').click(function() {
 							fileInputHddl.val(null);
 							fileInputConfig.val(null);
 							fileInputWorld.val(null);
-							window.location.href = urlZip;
+							window.location.href = "output.zip";
 						},
 						error: function(request, status, error) {
 							ui.handleException(request.responseText);
