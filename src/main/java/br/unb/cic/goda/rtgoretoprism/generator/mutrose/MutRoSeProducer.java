@@ -52,7 +52,7 @@ public class MutRoSeProducer {
 					.append(hddlFile.getAbsolutePath()).append(" ")
 					.append(modelFile.getAbsolutePath()).append(" ")
 					.append(configFile.getAbsolutePath()).append(" ")
-					.append(worldKnowledgeFile.getAbsolutePath());
+					.append(worldKnowledgeFile.getAbsolutePath()).append(" -p");
 
 			Process proc = Runtime.getRuntime().exec(command.toString());
 			LOGGER.info(proc.getInputStream().toString());
