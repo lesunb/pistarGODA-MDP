@@ -231,7 +231,7 @@ var ui = function() {
 			var type = this.selectedCell.prop('type').toUpperCase();
 			$.ajax({
 				type: "GET",
-				url: "/getProperties?attribute=" + type,
+				url: "/load/properties?attribute=" + type,
 				success: function(properties) {
 					var htmlGen = $("#MNE_properties");
 					htmlGen.empty();

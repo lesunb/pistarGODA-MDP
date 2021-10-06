@@ -18,6 +18,7 @@ import io.swagger.annotations.ApiOperation;
 @RestController
 @CrossOrigin(origins = "*")
 @Api(value = "API REST GODA")
+//@RequestMapping(value = "api")
 public class IntegrationController {
 	@Autowired
 	private IntegrationService service;
@@ -59,7 +60,7 @@ public class IntegrationController {
 	}
 
 	@ApiOperation(value = "Recupera as propriedades de uma tarefa ou objetivo.")
-	@RequestMapping(value = "/getProperties", method = RequestMethod.GET)
+	@RequestMapping(value = "/load/properties", method = RequestMethod.GET)
 	public List<PropertyModel> getProperties(@RequestParam(value = "attribute") String attribute) {
 		return this.service.getProperties(attribute);
 	}

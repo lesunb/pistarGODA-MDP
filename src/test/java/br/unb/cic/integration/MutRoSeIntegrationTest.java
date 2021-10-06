@@ -1,9 +1,9 @@
 package br.unb.cic.integration;
 
+import static org.junit.jupiter.api.Assertions.assertThrows;
 //import static io.restassured.module.mockmvc.RestAssuredMockMvc.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -16,7 +16,6 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.MediaType;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.web.WebAppConfiguration;
@@ -28,6 +27,7 @@ import org.springframework.web.context.WebApplicationContext;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+import br.unb.cic.goda.model.ModelTypeEnum;
 import br.unb.cic.modelling.Properties;
 import br.unb.cic.modelling.enums.AttributesEnum;
 import br.unb.cic.pistar.model.MutRoSe;
@@ -39,6 +39,12 @@ import br.unb.cic.pistar.model.MutRoSe;
 public class MutRoSeIntegrationTest {
 
 	private MockMvc mockMvc;
+
+	@Autowired
+	private IntegrationService service;
+
+	@Autowired
+	private IntegrationController controller;
 
 	@Autowired
 	private WebApplicationContext webApplicationContext;
@@ -64,7 +70,7 @@ public class MutRoSeIntegrationTest {
 		try {
 			mockMvc.perform(get("/load/terminal")).andDo(print()).andDo(print()).andExpect(status().isOk()).andReturn();
 		} catch (Exception e) {
-			Assert.assertTrue(true);
+			Assert.fail(e.getMessage());
 		}
 
 	}
@@ -72,7 +78,7 @@ public class MutRoSeIntegrationTest {
 	@Test
 	public void getTaskPropertiesTest() throws Exception {
 		MvcResult mvcResult = mockMvc
-				.perform(get("/getProperties?attribute={attribute}", AttributesEnum.TASK.getAttr())).andDo(print())
+				.perform(get("/load/properties?attribute={attribute}", AttributesEnum.TASK.getAttr())).andDo(print())
 				.andDo(print()).andExpect(status().isOk()).andReturn();
 
 		String result = mvcResult.getResponse().getContentAsString();
@@ -85,7 +91,7 @@ public class MutRoSeIntegrationTest {
 	@Test
 	public void getGoalPropertiesTest() throws Exception {
 		MvcResult mvcResult = mockMvc
-				.perform(get("/getProperties?attribute={attribute}", AttributesEnum.GOAL.getAttr())).andDo(print())
+				.perform(get("/load/properties?attribute={attribute}", AttributesEnum.GOAL.getAttr())).andDo(print())
 				.andExpect(status().isOk()).andReturn();
 
 		String result = mvcResult.getResponse().getContentAsString();
@@ -102,7 +108,7 @@ public class MutRoSeIntegrationTest {
 			MvcResult mvcResult = mockMvc.perform(post("/prism/MDP").param("content", content))
 					.andExpect(status().isOk()).andDo(print()).andReturn();
 		} catch (Exception e) {
-			Assert.assertTrue(true);
+			Assert.fail(e.getMessage());
 		}
 	}
 
@@ -113,7 +119,7 @@ public class MutRoSeIntegrationTest {
 			MvcResult mvcResult = mockMvc.perform(post("/prism/MDP").param("content", content))
 					.andExpect(status().isOk()).andDo(print()).andReturn();
 		} catch (Exception e) {
-			Assert.assertTrue(true);
+			Assert.fail(e.getMessage());
 		}
 	}
 
@@ -124,7 +130,7 @@ public class MutRoSeIntegrationTest {
 			MvcResult mvcResult = mockMvc.perform(post("/prism/MDP").param("content", content))
 					.andExpect(status().isOk()).andDo(print()).andReturn();
 		} catch (Exception e) {
-			Assert.assertTrue(true);
+			Assert.fail(e.getMessage());
 		}
 	}
 
@@ -132,10 +138,9 @@ public class MutRoSeIntegrationTest {
 	public void executePrismMDPTest4() throws Exception {
 		String content = getContent("Test6.txt");
 		try {
-			MvcResult mvcResult = mockMvc.perform(post("/prism/MDP").param("content", content))
-					.andExpect(status().isOk()).andDo(print()).andReturn();
+			RuntimeException exception = assertThrows(RuntimeException.class, () -> service.executePrism(content, ModelTypeEnum.MDP.getTipo(), "src/main/webapp/prism.zip"));
 		} catch (Exception e) {
-			Assert.assertTrue(true);
+			Assert.fail(e.getMessage());
 		}
 	}
 
@@ -146,7 +151,29 @@ public class MutRoSeIntegrationTest {
 			MvcResult mvcResult = mockMvc.perform(post("/prism/MDP").param("content", content))
 					.andExpect(status().isOk()).andDo(print()).andReturn();
 		} catch (Exception e) {
-			Assert.assertTrue(true);
+			Assert.fail(e.getMessage());
+		}
+	}
+
+	@Test
+	public void executePrismMDPTest6() throws Exception {
+		String content = getContent("Test8.txt");
+		try {
+			RuntimeException exception = assertThrows(RuntimeException.class, () -> service.executePrism(content, ModelTypeEnum.MDP.getTipo(), "src/main/webapp/prism.zip"));
+			
+		} catch (Exception e) {
+			Assert.fail(e.getMessage());
+		}
+	}
+
+	@Test
+	public void executePrismMDPTest7() throws Exception {
+		String content = getContent("model.txt");
+		try {
+			MvcResult mvcResult = mockMvc.perform(post("/prism/MDP").param("content", content))
+					.andExpect(status().isOk()).andDo(print()).andReturn();
+		} catch (Exception e) {
+			Assert.fail(e.getMessage());
 		}
 	}
 
@@ -157,7 +184,7 @@ public class MutRoSeIntegrationTest {
 			MvcResult mvcResult = mockMvc.perform(post("/param/MDP").param("content", content))
 					.andExpect(status().isOk()).andDo(print()).andReturn();
 		} catch (Exception e) {
-			Assert.assertTrue(true);
+			Assert.fail(e.getMessage());
 		}
 	}
 
@@ -168,7 +195,7 @@ public class MutRoSeIntegrationTest {
 			MvcResult mvcResult = mockMvc.perform(post("/param/MDP").param("content", content))
 					.andExpect(status().isOk()).andDo(print()).andReturn();
 		} catch (Exception e) {
-			Assert.assertTrue(true);
+			Assert.fail(e.getMessage());
 		}
 	}
 
@@ -179,7 +206,7 @@ public class MutRoSeIntegrationTest {
 			MvcResult mvcResult = mockMvc.perform(post("/param/MDP").param("content", content))
 					.andExpect(status().isOk()).andDo(print()).andReturn();
 		} catch (Exception e) {
-			Assert.assertTrue(true);
+			Assert.fail(e.getMessage());
 		}
 	}
 
@@ -188,9 +215,9 @@ public class MutRoSeIntegrationTest {
 		String content = getContent("Test6.txt");
 		try {
 			MvcResult mvcResult = mockMvc.perform(post("/param/MDP").param("content", content))
-					.andExpect(status().isOk()).andDo(print()).andReturn();
+					.andExpect(status().isOk()).andDo(print()).andReturn();	
 		} catch (Exception e) {
-			Assert.assertTrue(true);
+			Assert.fail(e.getMessage());
 		}
 	}
 
@@ -201,23 +228,79 @@ public class MutRoSeIntegrationTest {
 			MvcResult mvcResult = mockMvc.perform(post("/param/MDP").param("content", content))
 					.andExpect(status().isOk()).andDo(print()).andReturn();
 		} catch (Exception e) {
-			Assert.assertTrue(true);
+			Assert.fail(e.getMessage());
 		}
 	}
 
 	@Test
-	public void executeMutRoSeTest() throws Exception {
+	public void executeParamMDPTest6() throws Exception {
+		String content = getContent("Test8.txt");
+		try {
+			MvcResult mvcResult = mockMvc.perform(post("/param/MDP").param("content", content))
+					.andExpect(status().isOk()).andDo(print()).andReturn();
+		} catch (Exception e) {
+			Assert.fail(e.getMessage());
+		}
+	}
+
+	@Test
+	public void executeParamMDPTest7() throws Exception {
+		String content = getContent("model.txt");
+		
+		try {
+			MvcResult mvcResult = mockMvc.perform(post("/param/MDP").param("content", content))
+					.andExpect(status().isOk()).andDo(print()).andReturn();
+		} catch (Exception e) {
+			Assert.fail(e.getMessage());
+		}
+	}
+
+//	@Test
+//	public void executeMutRoSeTest() throws Exception {
+//		String model = getContent("model.txt");
+//		String configJson = getContent("configFile.json");
+//		String configHddl = getContent("configHddl.hddl");
+//		String world = getContent("worldKnowledge.xml");
+//
+//		MutRoSe content = new MutRoSe(model, configHddl, configJson, world);
+//		try {
+//			MvcResult mvcResult = mockMvc.perform(post("/load/multrose", content))
+//					.andExpect(status().isOk())
+//					.andDo(print()).andReturn();
+//		} catch (Exception e) {
+//			Assert.fail(e.getMessage());
+//		}
+//	}
+
+	@Test
+	public void executeMutRoSeTest1() throws Exception {
 		String model = getContent("model.txt");
-		String configJson = getContent("configFile.json");
 		String configHddl = getContent("configHddl.hddl");
 		String world = getContent("worldKnowledge.xml");
 
-		MutRoSe content = new MutRoSe(model, configHddl, configJson, world);
-		try {
-			MvcResult mvcResult = mockMvc.perform(post("/load/multrose", content)).andExpect(status().isOk())
-					.andDo(print()).andReturn();
-		} catch (Exception e) {
-			Assert.assertTrue(true);
-		}
+		MutRoSe content = new MutRoSe(model, configHddl, null, world);
+		RuntimeException exception = assertThrows(RuntimeException.class, () -> service.generateBinMultRoSe(content));
+	}
+
+	@Test
+	public void executeMutRoSeTest2() throws Exception {
+		String model = getContent("model.txt");
+		String configJson = getContent("configFile.json");
+		String configHddl = getContent("configHddl.hddl");
+
+		MutRoSe content = new MutRoSe(model, configHddl, configJson, null);
+		RuntimeException exception = assertThrows(RuntimeException.class, () -> service.generateBinMultRoSe(content));
+
+	}
+
+	@Test
+	public void executeMutRoSeTest3() throws Exception {
+		String model = getContent("model.txt");
+		String configJson = getContent("configFile.json");
+		String world = getContent("worldKnowledge.xml");
+
+		MutRoSe content = new MutRoSe(model, null, configJson, world);
+		RuntimeException exception = assertThrows(RuntimeException.class, () -> service.generateBinMultRoSe(content));
+
 	}
 }
