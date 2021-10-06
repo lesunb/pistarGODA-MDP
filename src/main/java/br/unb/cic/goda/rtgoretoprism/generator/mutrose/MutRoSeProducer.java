@@ -15,6 +15,7 @@ import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
 
+import br.unb.cic.goda.exception.ResponseException;
 import br.unb.cic.goda.rtgoretoprism.generator.goda.writer.ManageWriter;
 
 public class MutRoSeProducer {
@@ -24,7 +25,7 @@ public class MutRoSeProducer {
 	public String execute(String model, String hddl, String configuration, String worldKnowledge) {
 		if (model == null || model.isEmpty() || hddl == null || model.isEmpty() || configuration == null
 				|| model.isEmpty() || worldKnowledge == null || model.isEmpty()) {
-			throw new RuntimeException("Invalid File");
+			throw new ResponseException("Invalid File");
 		}
 
 		try {
@@ -57,7 +58,7 @@ public class MutRoSeProducer {
 			ManageWriter.toCompact(output, "src/main/webapp/mrs.zip");
 			return "src/main/webapp/mrs.zip";
 		} catch (Exception error) {
-			throw new RuntimeException(error);
+			throw new ResponseException(error);
 
 		}
 	}
@@ -81,7 +82,7 @@ public class MutRoSeProducer {
 			
 			return jsonObject;
 		} catch (ParseException e) {
-			throw new RuntimeException(e);
+			throw new ResponseException(e);
 		}
 	}
 
