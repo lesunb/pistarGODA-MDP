@@ -1,18 +1,6 @@
 package br.unb.cic.goda.rtgoretoprism.generator.mutrose;
 
-import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.nio.charset.Charset;
-import java.nio.file.Files;
-import java.nio.file.Paths;
-import java.nio.file.attribute.PosixFilePermission;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
-import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import org.json.simple.JSONObject;
@@ -36,6 +24,7 @@ public class MutRoSeProducer {
 //			/var/folders/sw
 			String dir = "mrs/";
 			String dirOutput =  "/tmp/";
+			String dirOutputZIP = "src/main/webapp/mrs.zip";
 			JSONObject jsonObject = this.updatePathConfigurationFile(configuration, dirOutput);
 
 			// gerar arquivos
@@ -49,22 +38,21 @@ public class MutRoSeProducer {
 			String output = (String) outputConfig.get("file_path");
             
 //			ManageWriter.createFolder(dirOutput);
-			ManageWriter.generateFile(output, "");
-			
+//			ManageWriter.generateFile(output, "");
 			StringBuilder command = new StringBuilder()
 					.append("./").append(dir).append("MRSDecomposer").append(" ")
 					.append(hddlFile.getAbsolutePath()).append(" ")
 					.append(modelFile.getAbsolutePath()).append(" ")
 					.append(configFile.getAbsolutePath()).append(" ")
-					.append(worldKnowledgeFile.getAbsolutePath()).append(" -p");
+					.append(worldKnowledgeFile.getAbsolutePath()).append(" ").append("-p");
 
 			Process proc = Runtime.getRuntime().exec(command.toString());
 			LOGGER.info(proc.getInputStream().toString());
 			LOGGER.info(proc.getOutputStream().toString());
 			
 
-			ManageWriter.toCompact(output, "src/main/webapp/mrs.zip");
-			return "src/main/webapp/mrs.zip";
+			ManageWriter.toCompact(output, dirOutputZIP);
+			return dirOutputZIP;
 		} catch (Exception error) {
 			throw new ResponseException(error);
 
@@ -98,50 +86,4 @@ public class MutRoSeProducer {
 			throw new ResponseException(e);
 		}
 	}
-
-    private String invokeAndGetResult(String commandLine, String resultsPath) throws IOException {
-        LOGGER.fine(commandLine);
-        Process program = Runtime.getRuntime().exec(commandLine);
-        int exitCode = 0;
-        try {
-            exitCode = program.waitFor();
-        } catch (InterruptedException e) {
-        	LOGGER.severe("Error invoking param with command:" + commandLine);
-        	
-            LOGGER.severe("Exit code: " + exitCode);
-            LOGGER.log(Level.SEVERE, e.toString(), e);
-        }
-        
-        logExecResults(program);
-        
-        List<String> lines = Files.readAllLines(Paths.get(resultsPath), Charset.forName("UTF-8"));
-        // Formula
-        return lines.get(lines.size() - 1);
-    }
-    
-    private void logExecResults(Process proc) throws IOException {
-        BufferedReader stdInput = new BufferedReader(new 
-       	     InputStreamReader(proc.getInputStream()));
-       
-       BufferedReader stdError = new BufferedReader(new 
-       	     InputStreamReader(proc.getErrorStream()));
-       
-       String s = null;
-       
-       if(stdInput.ready()) {
-	       // Read the output from the command
-	       System.out.println("Here is the standard output of the command:");
-	       while ((s = stdInput.readLine()) != null) {
-	           System.out.println(s);
-	       }
-       }
-
-       if(stdError.ready()) {
-           // Read any errors from the attempted command
-           System.err.println("Here is the standard error of the command (if any):");
-           while ((s = stdError.readLine()) != null) {
-               System.err.println(s);
-           }
-       }
-    }
 }

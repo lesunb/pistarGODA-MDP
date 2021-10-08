@@ -1,52 +1,52 @@
 package br.unb.cic.pistar.model;
 
 public class MutRoSe {
-	private String model;
-	private String hddl;
-	private String config;
-	private String world;
+	private String modelFile;
+	private String hddlFile;
+	private String configFile;
+	private String worldFile;
 
 	public MutRoSe() {
 
 	}
 
 	public MutRoSe(String model, String hddl, String config, String world) {
-		this.model = model;
-		this.config = config;
-		this.hddl = hddl;
-		this.world = world;
+		this.modelFile = model;
+		this.configFile = config;
+		this.hddlFile = hddl;
+		this.worldFile = world;
 	}
 
 	public String getModel() {
-		return model;
+		return modelFile;
 	}
 
 	public void setModel(String model) {
-		this.model = model;
+		this.modelFile = model;
 	}
 
 	public String getHddl() {
-		return hddl;
+		return hddlFile;
 	}
 
 	public void setHddl(String hddl) {
-		this.hddl = hddl;
+		this.hddlFile = hddl;
 	}
 
 	public String getConfig() {
-		return config;
+		return configFile;
 	}
 
 	public void setConfig(String config) {
-		this.config = config;
+		this.configFile = config;
 	}
 
 	public String getWorld() {
-		return world;
+		return worldFile;
 	}
 
 	public void setWorld(String world) {
-		this.world = world;
+		this.worldFile = world;
 	}
 
 }

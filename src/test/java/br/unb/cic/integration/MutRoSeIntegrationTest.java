@@ -269,7 +269,8 @@ public class MutRoSeIntegrationTest {
 //		String configHddl = getContent("configHddl.hddl");
 //		String world = getContent("worldKnowledge.xml");
 //
-//		MutRoSe content = new MutRoSe(model, configHddl, null, world);
+//		MutRoSe mut = new MutRoSe(model, configHddl, null, world);
+//		Model content = new Model(mut);
 //		RuntimeException exception = assertThrows(RuntimeException.class, () -> service.generateBinMultRoSe(content));
 //	}
 
@@ -279,7 +280,8 @@ public class MutRoSeIntegrationTest {
 		String configJson = getContent("configFile.json");
 		String configHddl = getContent("configHddl.hddl");
 
-		MutRoSe content = new MutRoSe(model, configHddl, configJson, null);
+		MutRoSe mut = new MutRoSe(model, configHddl, configJson, null);
+		Model content = new Model(mut);
 		RuntimeException exception = assertThrows(RuntimeException.class, () -> service.generateBinMultRoSe(content));
 
 	}
@@ -290,7 +292,8 @@ public class MutRoSeIntegrationTest {
 		String configJson = getContent("configFile.json");
 		String world = getContent("worldKnowledge.xml");
 
-		MutRoSe content = new MutRoSe(model, null, configJson, world);
+		MutRoSe mut = new MutRoSe(model, null, configJson, world);
+		Model content = new Model(mut);
 		RuntimeException exception = assertThrows(RuntimeException.class, () -> service.generateBinMultRoSe(content));
 
 	}
@@ -302,7 +305,8 @@ public class MutRoSeIntegrationTest {
 		String world = getContent("worldKnowledge.xml");
 		String configHddl = getContent("configHddl.hddl");
 
-		MutRoSe content = new MutRoSe(model, configHddl, configJson, world);
+		MutRoSe mut = new MutRoSe(model, configHddl, configJson, world);
+		Model content = new Model(mut);
 		RuntimeException exception = assertThrows(RuntimeException.class, () -> service.generateBinMultRoSe(content));
 
 	}

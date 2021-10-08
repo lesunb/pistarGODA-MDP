@@ -12,7 +12,6 @@ import org.springframework.web.bind.annotation.RestController;
 import br.unb.cic.goda.model.Model;
 import br.unb.cic.goda.model.ModelTypeEnum;
 import br.unb.cic.modelling.models.PropertyModel;
-import br.unb.cic.pistar.model.MutRoSe;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 
@@ -66,7 +65,7 @@ public class IntegrationController {
 
 	@ApiOperation(value = "Executa a decomposição realizada pelo MutRoSe.")
 	@RequestMapping(value = "/load/mutrose", method = RequestMethod.POST)
-	public String loadMultRoSe(@RequestBody MutRoSe content) {
+	public String loadMultRoSe(@RequestBody Model content) {
 		return this.service.generateBinMultRoSe(content);
 	}
 

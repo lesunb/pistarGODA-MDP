@@ -1380,8 +1380,8 @@ $('#runPrismMDPButton').click(function() {
 		type: "POST",
 		url: '/prism/MDP',
 		data: content,
-	    contentType: "application/json; charset=utf-8",
-	    dataType: "json",
+		contentType: "application/json; charset=utf-8",
+		dataType: "json",
 		success: function() {
 			window.location.href = 'prism.zip';
 		},
@@ -1399,8 +1399,8 @@ $('#runPrismDTMCButton').click(function() {
 		type: "POST",
 		url: '/prism/DTMC',
 		data: content,
-	    contentType: "application/json; charset=utf-8",
-	    dataType: "json",
+		contentType: "application/json; charset=utf-8",
+		dataType: "json",
 		success: function() {
 			window.location.href = 'prism.zip';
 		},
@@ -1417,8 +1417,8 @@ $('#runPARAMButton').click(function() {
 		type: "POST",
 		url: '/param',
 		data: content,
-	    contentType: "application/json; charset=utf-8",
-	    dataType: "json",
+		contentType: "application/json; charset=utf-8",
+		dataType: "json",
 		success: function() {
 			window.location.href = 'param.zip';
 		},
@@ -1435,8 +1435,8 @@ $('#runEPMCButton').click(function() {
 		type: "POST",
 		url: '/epmc',
 		data: content,
-	    contentType: "application/json; charset=utf-8",
-	    dataType: "json",
+		contentType: "application/json; charset=utf-8",
+		dataType: "json",
 		success: function() {
 			window.location.href = 'epmc.zip';
 		},
@@ -1505,21 +1505,18 @@ $('#modal-button-mutrose-save').click(function() {
 
 	try {
 		//ui.getFileInput(fileInputModel[0], function(resultModel){
-			
+
 		ui.getFileInput(fileInputHddl[0], function(resultHddl) {
 			ui.getFileInput(fileInputConfig[0], function(resultConfig) {
 				ui.getFileInput(fileInputWorld[0], function(resultWorld) {
-					var content = {
-							model: resultModel,
-							hddl: resultHddl,
-							config: resultConfig,
-							world: resultWorld
-						};
-                	console.log({ mutrose: content } );
+					var content = new MutRoSe((resultModel), resultHddl, resultConfig, resultWorld);
+					console.log({ mutrose: content });
 					$.ajax({
 						type: "POST",
 						url: '/load/mutrose',
-						data: content,
+						data: JSON.stringify(new Model(content)),
+						contentType: "application/json; charset=utf-8",
+						dataType: "json",
 						success: function(urlZip) {
 							/*window.location.href = 'prism.zip';*/
 							$('#modal-load-hddl').modal('hide');
@@ -1527,7 +1524,7 @@ $('#modal-button-mutrose-save').click(function() {
 							fileInputHddl.val(null);
 							fileInputConfig.val(null);
 							fileInputWorld.val(null);
-							window.location.href = "output.zip";
+							window.location.href = urlZip;
 						},
 						error: function(request, status, error) {
 							ui.handleException(request.responseText);
@@ -2333,6 +2330,15 @@ function setDMCell() {
 class Model {
 	constructor(content) {
 		this.content = content;
+	}
+}
+
+class MutRoSe {
+	constructor(modelFile, hddlFile, configFile, worldFile) {
+		this.modelFile = modelFile;
+		this.hddlFile = hddlFile;
+		this.configFile = configFile;
+		this.worldFile = worldFile;
 	}
 }
 
