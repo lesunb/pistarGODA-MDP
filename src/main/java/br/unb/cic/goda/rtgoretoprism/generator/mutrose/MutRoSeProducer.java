@@ -2,12 +2,16 @@ package br.unb.cic.goda.rtgoretoprism.generator.mutrose;
 
 import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.nio.file.attribute.PosixFilePermission;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -29,8 +33,9 @@ public class MutRoSeProducer {
 		}
 
 		try {
+//			/var/folders/sw
 			String dir = "mrs/";
-			String dirOutput =  "/var/folders/sw/mrs/output/";
+			String dirOutput =  "/tmp/";
 			JSONObject jsonObject = this.updatePathConfigurationFile(configuration, dirOutput);
 
 			// gerar arquivos
@@ -42,6 +47,8 @@ public class MutRoSeProducer {
 			
 			JSONObject outputConfig = (JSONObject) jsonObject.get("output");
 			String output = (String) outputConfig.get("file_path");
+            
+//			ManageWriter.createFolder(dirOutput);
 			ManageWriter.generateFile(output, "");
 			
 			StringBuilder command = new StringBuilder()

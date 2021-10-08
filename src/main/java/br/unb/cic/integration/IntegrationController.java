@@ -66,7 +66,7 @@ public class IntegrationController {
 
 	@ApiOperation(value = "Executa a decomposição realizada pelo MutRoSe.")
 	@RequestMapping(value = "/load/mutrose", method = RequestMethod.POST)
-	public String loadMultRoSe(MutRoSe content) {
+	public String loadMultRoSe(@RequestBody MutRoSe content) {
 		return this.service.generateBinMultRoSe(content);
 	}
 
