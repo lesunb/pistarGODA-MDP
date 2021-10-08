@@ -45,7 +45,7 @@ public class MutRoSeProducer {
 			String output = (String) outputConfig.get("file_path");
 
 //			ManageWriter.createFolder(dirOutput);
-//			ManageWriter.generateFile(output, "");
+			ManageWriter.generateFile(output, "");
 			StringBuilder command = new StringBuilder().append("./").append(dir).append("MRSDecomposer").append(" ")
 					.append(hddlFile.getAbsolutePath()).append(" ").append(modelFile.getAbsolutePath()).append(" ")
 					.append(configFile.getAbsolutePath()).append(" ").append(worldKnowledgeFile.getAbsolutePath())
