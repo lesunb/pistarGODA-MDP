@@ -1533,8 +1533,8 @@ $('#modal-button-mutrose-save').click(function() {
 							window.location.href = JSON.parse(urlZip);
 						},
 						error: function(request, status, error) {
-							if(request.status == 200){
-								window.location.href = JSON.parse(request.responseText);
+							if(request.status && request.status == 200){
+								window.location.href = request.responseText;
 							}
 							
 							ui.handleException(request.responseText, status);
