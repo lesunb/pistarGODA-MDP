@@ -46,12 +46,9 @@ import br.unb.cic.pistar.model.PistarNode;
 @Service
 public class IntegrationService {
 
-	public String generateBinMultRoSe(Model modelContent) {
-		Gson gson = new GsonBuilder().create();
-		MutRoSe content = gson.fromJson(modelContent.getContentJson(), MutRoSe.class);
-		
+	public String generateBinMultRoSe(MutRoSe content) {
 		MutRoSeProducer mrs = new MutRoSeProducer();
-		return mrs.execute(content.getModel(), content.getHddl(), content.getConfig(), content.getWorld());
+		return mrs.execute(content.getModelFile(), content.getHddlFile(), content.getConfigFile(), content.getWorldFile());
 	}
 
 	public List<String> loadTerminal() {

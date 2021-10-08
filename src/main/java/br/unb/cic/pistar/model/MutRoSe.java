@@ -17,36 +17,36 @@ public class MutRoSe {
 		this.worldFile = world;
 	}
 
-	public String getModel() {
+	public String getModelFile() {
 		return modelFile;
 	}
 
-	public void setModel(String model) {
-		this.modelFile = model;
+	public void setModelFile(String modelFile) {
+		this.modelFile = modelFile;
 	}
 
-	public String getHddl() {
+	public String getHddlFile() {
 		return hddlFile;
 	}
 
-	public void setHddl(String hddl) {
-		this.hddlFile = hddl;
+	public void setHddlFile(String hddlFile) {
+		this.hddlFile = hddlFile;
 	}
 
-	public String getConfig() {
+	public String getConfigFile() {
 		return configFile;
 	}
 
-	public void setConfig(String config) {
-		this.configFile = config;
+	public void setConfigFile(String configFile) {
+		this.configFile = configFile;
 	}
 
-	public String getWorld() {
+	public String getWorldFile() {
 		return worldFile;
 	}
 
-	public void setWorld(String world) {
-		this.worldFile = world;
+	public void setWorldFile(String worldFile) {
+		this.worldFile = worldFile;
 	}
 
 }

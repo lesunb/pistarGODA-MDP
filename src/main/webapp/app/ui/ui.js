@@ -1509,12 +1509,12 @@ $('#modal-button-mutrose-save').click(function() {
 		ui.getFileInput(fileInputHddl[0], function(resultHddl) {
 			ui.getFileInput(fileInputConfig[0], function(resultConfig) {
 				ui.getFileInput(fileInputWorld[0], function(resultWorld) {
-					var content = new MutRoSe((resultModel), resultHddl, resultConfig, resultWorld);
+					var content = new MutRoSe(resultModel, resultHddl, resultConfig.toString(), resultWorld);
 					console.log({ mutrose: content });
 					$.ajax({
 						type: "POST",
 						url: '/load/mutrose',
-						data: JSON.stringify(new Model(content)),
+						data: JSON.stringify(content),
 						contentType: "application/json; charset=utf-8",
 						dataType: "json",
 						success: function(urlZip) {
