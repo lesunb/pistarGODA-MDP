@@ -42,6 +42,7 @@ public class MutRoSeProducer {
 			
 			JSONObject outputConfig = (JSONObject) jsonObject.get("output");
 			String output = (String) outputConfig.get("file_path");
+			ManageWriter.generateFile(output, "");
 			
 			StringBuilder command = new StringBuilder()
 					.append("./").append(dir).append("MRSDecomposer").append(" ")
