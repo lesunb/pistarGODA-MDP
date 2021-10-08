@@ -48,7 +48,7 @@ public class IntegrationService {
 
 	public String generateBinMultRoSe(MutRoSe content) {
 		MutRoSeProducer mrs = new MutRoSeProducer();
-		return mrs.execute(content.getModel(), content.getHddl(), content.getConfig(), content.getWorld());
+		return mrs.execute(content.getModelFile(), content.getHddlFile(), content.getConfigFile(), content.getWorldFile());
 	}
 
 	public List<String> loadTerminal() {
