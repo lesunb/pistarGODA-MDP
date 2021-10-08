@@ -3,16 +3,15 @@ package br.unb.cic.integration;
 import static br.unb.cic.goda.rtgoretoprism.util.SintaticAnaliser.verifySintaxModel;
 
 import java.io.FileOutputStream;
-import java.io.IOException;
 import java.nio.file.DirectoryStream;
-import java.nio.file.FileVisitOption;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
-import java.util.Comparator;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.zip.ZipEntry;
@@ -23,14 +22,17 @@ import org.springframework.stereotype.Service;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
+import br.unb.cic.goda.exception.ResponseException;
 import br.unb.cic.goda.model.Actor;
 import br.unb.cic.goda.model.ActorImpl;
 import br.unb.cic.goda.model.Goal;
 import br.unb.cic.goda.model.GoalImpl;
+import br.unb.cic.goda.model.Model;
 import br.unb.cic.goda.model.Plan;
 import br.unb.cic.goda.model.PlanImpl;
 import br.unb.cic.goda.rtgoretoprism.action.PRISMCodeGenerationAction;
 import br.unb.cic.goda.rtgoretoprism.action.RunParamAction;
+import br.unb.cic.goda.rtgoretoprism.generator.goda.writer.ManageWriter;
 import br.unb.cic.goda.rtgoretoprism.generator.mutrose.MutRoSeProducer;
 import br.unb.cic.modelling.Properties;
 import br.unb.cic.modelling.enums.AttributesEnum;
@@ -43,93 +45,96 @@ import br.unb.cic.pistar.model.PistarNode;
 
 @Service
 public class IntegrationService {
-	
+
 	public String generateBinMultRoSe(MutRoSe content) {
-		MutRoSeProducer mrs = new MutRoSeProducer(); 
+		MutRoSeProducer mrs = new MutRoSeProducer();
 		return mrs.execute(content.getModel(), content.getHddl(), content.getConfig(), content.getWorld());
 	}
-	
+
 	public List<String> loadTerminal() {
 		List<String> erros = new ArrayList<String>();
 		erros.add("Error: Fail to load model.");
 		erros.add("Error: Invalid model.");
-		
-		return  erros;
+
+		return erros;
 	}
 
 	public List<PropertyModel> getProperties(String typeAttr) {
 		List<PropertyModel> properties = new ArrayList<PropertyModel>();
-		
- 		if (AttributesEnum.GOAL.equals(typeAttr)) {
- 			properties = Properties.getGoalsProperties();
-		} else if(AttributesEnum.TASK.equals(typeAttr)){
+
+		if (AttributesEnum.GOAL.equals(typeAttr)) {
+			properties = Properties.getGoalsProperties();
+		} else if (AttributesEnum.TASK.equals(typeAttr)) {
 			properties = Properties.getTasksProperties();
 		}
 
- 		return properties;
+		return properties;
 	}
-	public void executePrism(String content, String typeModel, String output) {
+
+	public String executePrism(Model modelContent, String typeModel, String output) {
 		Gson gson = new GsonBuilder().create();
-		PistarModel model = gson.fromJson(content, PistarModel.class);
+		PistarModel model = gson.fromJson(modelContent.getContentJson(), PistarModel.class);
 		Set<Actor> selectedActors = new HashSet<>();
 		Set<Goal> selectedGoals = new HashSet<>();
-		transformToTao4meEntities(model, selectedActors, selectedGoals, typeModel);
+		Map<String, String> results = new HashMap<String, String>();
 		try {
-			cleanFolder(typeModel.toLowerCase());
+			transformToTao4meEntities(model, selectedActors, selectedGoals, typeModel);
+			ManageWriter.cleanFolder(typeModel.toLowerCase());
 			new PRISMCodeGenerationAction(selectedActors, selectedGoals, typeModel).run();
-			FileOutputStream fos = new FileOutputStream(output);
-			ZipOutputStream zos = new ZipOutputStream(fos);
-			DirectoryStream<Path> directoryStream = Files.newDirectoryStream(Paths.get(typeModel.toLowerCase()));
-			for (Path path : directoryStream) {
-				byte[] bytes = Files.readAllBytes(path);
-				zos.putNextEntry(new ZipEntry(path.getFileName().toString()));
-				zos.write(bytes, 0, bytes.length);
-				zos.closeEntry();
-			}
-			zos.close();
-			cleanFolder(typeModel.toLowerCase());
-		} catch (IOException ex) {
-			ex.printStackTrace();
-//			throw new RuntimeException(ex.getMessage());
+			results = this.generateModelZip(output, typeModel);
+			ManageWriter.cleanFolder(typeModel.toLowerCase());
+		} catch (Exception ex) {
+			throw new ResponseException(ex.getMessage());
 		}
+		return gson.toJson(results);
 	}
 
-	public void executeParam(String content, String typeModel, Boolean isParam, String output) {
+	public String executeParam(Model modelContent, String typeModel, Boolean isParam, String output) {
 		Gson gson = new GsonBuilder().create();
-		PistarModel model = gson.fromJson(content, PistarModel.class);
+		PistarModel model = gson.fromJson(modelContent.getContentJson(), PistarModel.class);
 		Set<Actor> selectedActors = new HashSet<>();
 		Set<Goal> selectedGoals = new HashSet<>();
-		transformToTao4meEntities(model, selectedActors, selectedGoals, typeModel);
+		Map<String, String> results = new HashMap<String, String>();
 		try {
-			cleanFolder(typeModel.toLowerCase());
+			transformToTao4meEntities(model, selectedActors, selectedGoals, typeModel);
+			ManageWriter.cleanFolder(typeModel.toLowerCase());
 			new RunParamAction(selectedActors, selectedGoals, isParam, typeModel).run();
+			results = this.generateModelZip(output, typeModel);
+			ManageWriter.cleanFolder(typeModel.toLowerCase());
+		} catch (Exception ex) {
+			throw new ResponseException(ex.getMessage());
+		}
+
+		return gson.toJson(results);
+	}
+
+	private Map<String, String> generateModelZip(String output, String typeModel) {
+		Map<String, String> results = new HashMap<String, String>();
+		try {
+			ManageWriter.createFolder(typeModel.toLowerCase());
 			FileOutputStream fos = new FileOutputStream(output);
 			ZipOutputStream zos = new ZipOutputStream(fos);
 			DirectoryStream<Path> directoryStream = Files.newDirectoryStream(Paths.get(typeModel.toLowerCase()));
 			for (Path path : directoryStream) {
+				String fileName = path.getFileName().toString();
+				results.put(fileName, ManageWriter.readFileAsString(typeModel.toLowerCase() + "/" + fileName));
 				byte[] bytes = Files.readAllBytes(path);
-				zos.putNextEntry(new ZipEntry(path.getFileName().toString()));
+				zos.putNextEntry(new ZipEntry(fileName));
 				zos.write(bytes, 0, bytes.length);
 				zos.closeEntry();
 			}
 			zos.close();
-			cleanFolder(typeModel.toLowerCase());
-		} catch (Exception ex) {
-			ex.printStackTrace();
-			throw new RuntimeException(ex.getMessage());
+			
+			if(results.isEmpty()) {
+				throw new ResponseException("Fails when trying to generate zip file.");
+			}
+		}  catch (Exception ex) {
+			throw new ResponseException(ex.getMessage());
 		}
+		
+		return results;
 	}
-
-	private void cleanFolder(String typeModel) throws IOException {
-		if (Files.exists(Paths.get(typeModel))) {
-			Files.walk(Paths.get(typeModel), FileVisitOption.FOLLOW_LINKS).sorted(Comparator.reverseOrder())
-					.map(Path::toFile).forEach(f -> {
-						if (f.isFile()) {
-							f.delete();
-						}
-					});
-		}
-	}
+	
 
 	public static void transformToTao4meEntities(PistarModel model, Set<Actor> selectedActors, Set<Goal> selectedGoals,
 			String typeModel) {

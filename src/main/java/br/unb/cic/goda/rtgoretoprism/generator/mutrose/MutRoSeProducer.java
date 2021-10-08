@@ -15,23 +15,22 @@ import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
 
+import br.unb.cic.goda.exception.ResponseException;
 import br.unb.cic.goda.rtgoretoprism.generator.goda.writer.ManageWriter;
 
 public class MutRoSeProducer {
 
     private static final Logger LOGGER = Logger.getLogger(MutRoSeProducer.class.getName());
     
-//	@SuppressWarnings({ "resource", "unchecked" })
 	public String execute(String model, String hddl, String configuration, String worldKnowledge) {
 		if (model == null || model.isEmpty() || hddl == null || model.isEmpty() || configuration == null
 				|| model.isEmpty() || worldKnowledge == null || model.isEmpty()) {
-			throw new RuntimeException("Invalid File");
+			throw new ResponseException("Invalid File");
 		}
 
 		try {
 			String dir = "mrs/";
-//			String dirOutput =  dir + "output/";
-			String dirOutput = "src/main/webapp/";
+			String dirOutput =  "/var/folders/sw/mrs/output/";
 			JSONObject jsonObject = this.updatePathConfigurationFile(configuration, dirOutput);
 
 			// gerar arquivos
@@ -41,11 +40,8 @@ public class MutRoSeProducer {
 			File hddlFile = ManageWriter.generateFile(dir,  "configHddl.hddl", hddl);
 			
 			
-//			JSONObject outputConfig = (JSONObject) jsonObject.get("output");
-//			String output = (String) outputConfig.get("file_path");
-//			ManageWriter.generateFile(output, "");
-//            File resultsFile = ManageWriter.generateFile(output, "");
-//			File resultsFile = File.createTempFile(output, null);
+			JSONObject outputConfig = (JSONObject) jsonObject.get("output");
+			String output = (String) outputConfig.get("file_path");
 			
 			StringBuilder command = new StringBuilder()
 					.append("./").append(dir).append("MRSDecomposer").append(" ")
@@ -58,12 +54,11 @@ public class MutRoSeProducer {
 			LOGGER.info(proc.getInputStream().toString());
 			LOGGER.info(proc.getOutputStream().toString());
 			
-//			invokeAndGetResult(command.toString(), resultsFile.getAbsolutePath() + ".out");
 
-//			ManageWriter.toCompact(output, "src/main/webapp/mrs.zip");
-			return "output.zip";
+			ManageWriter.toCompact(output, "src/main/webapp/mrs.zip");
+			return "src/main/webapp/mrs.zip";
 		} catch (Exception error) {
-			throw new RuntimeException(error);
+			throw new ResponseException(error);
 
 		}
 	}
@@ -78,16 +73,21 @@ public class MutRoSeProducer {
 			jsonObject = (JSONObject) parser.parse(configuration);
 			JSONObject outputConfig = (JSONObject) jsonObject.get("output");
 			String output = (String) outputConfig.get("file_path");
-			File file = new File(output);
-			String filename = file.getName();
-			String path = dirOutput + filename;
-			File generatedFile = new File(path);
-			// atualizar o path do config
-			outputConfig.replace("file_path", path);
 			
-			return jsonObject;
+			if(output.isEmpty()) {
+				throw new ResponseException("Configuration file does not have decomposed file generation path.");
+			}else {
+				File file = new File(output);
+				String filename = file.getName();
+				String path = dirOutput + filename;
+//				File generatedFile = new File(path);
+				// atualizar o path do config
+				outputConfig.replace("file_path", path);
+				
+				return jsonObject;
+			}
 		} catch (ParseException e) {
-			throw new RuntimeException(e);
+			throw new ResponseException(e);
 		}
 	}
 

@@ -231,7 +231,7 @@ var ui = function() {
 			var type = this.selectedCell.prop('type').toUpperCase();
 			$.ajax({
 				type: "GET",
-				url: "/getProperties?attribute=" + type,
+				url: "/load/properties?attribute=" + type,
 				success: function(properties) {
 					var htmlGen = $("#MNE_properties");
 					htmlGen.empty();
@@ -290,7 +290,7 @@ var ui = function() {
 							}
 							ui.setPropObject(childrensDivAux[i]);
 						}
-					} else{
+					} else {
 						if (hide == "false" || hide == false) {
 							ui.setPropertyCell(input.id, input.value);
 						}
@@ -368,7 +368,7 @@ var ui = function() {
 			for (var j = 0; j < properties.length; j++) {
 				var name = properties[j].name;
 				var childrens = properties[j].childrens;
-				if (props[name] != null && props[name] != "" && props[name] != undefined) {
+				if (props && props[name] != null && props[name] != "" && props[name] != undefined) {
 					properties[j].value = props[name];
 					if (props[name] == "true" || props[name] == true) {
 						properties[j].checked = true;
@@ -1375,12 +1375,13 @@ ui.getFileInput = function(fileInput, callback) {
 
 $('#runPrismMDPButton').click(function() {
 	var model = istar.fileManager.saveModel();
+	var content = JSON.stringify(new Model(model));
 	$.ajax({
 		type: "POST",
 		url: '/prism/MDP',
-		data: {
-			"content": model
-		},
+		data: content,
+	    contentType: "application/json; charset=utf-8",
+	    dataType: "json",
 		success: function() {
 			window.location.href = 'prism.zip';
 		},
@@ -1393,12 +1394,13 @@ $('#runPrismMDPButton').click(function() {
 
 $('#runPrismDTMCButton').click(function() {
 	var model = istar.fileManager.saveModel();
+	var content = JSON.stringify(new Model(model));
 	$.ajax({
 		type: "POST",
 		url: '/prism/DTMC',
-		data: {
-			"content": model
-		},
+		data: content,
+	    contentType: "application/json; charset=utf-8",
+	    dataType: "json",
 		success: function() {
 			window.location.href = 'prism.zip';
 		},
@@ -1410,12 +1412,13 @@ $('#runPrismDTMCButton').click(function() {
 
 $('#runPARAMButton').click(function() {
 	var model = istar.fileManager.saveModel();
+	var content = JSON.stringify(new Model(model));
 	$.ajax({
 		type: "POST",
-		url: '/param/DTMC',
-		data: {
-			"content": model
-		},
+		url: '/param',
+		data: content,
+	    contentType: "application/json; charset=utf-8",
+	    dataType: "json",
 		success: function() {
 			window.location.href = 'param.zip';
 		},
@@ -1427,12 +1430,13 @@ $('#runPARAMButton').click(function() {
 
 $('#runEPMCButton').click(function() {
 	var model = istar.fileManager.saveModel();
+	var content = JSON.stringify(new Model(model));
 	$.ajax({
 		type: "POST",
-		url: '/epmc/DTMC',
-		data: {
-			"content": model
-		},
+		url: '/epmc',
+		data: content,
+	    contentType: "application/json; charset=utf-8",
+	    dataType: "json",
 		success: function() {
 			window.location.href = 'epmc.zip';
 		},
@@ -1447,11 +1451,11 @@ $('#showError').click(function() {
 	'use strict';
 	$.ajax({
 		type: "GET",
-		url: '/loadTerminal',
+		url: '/load/terminal',
 		success: function(errors) {
 			$('#terminal-body').empty();
-			for(let i = 0; i < errors.length; i++){
-				$('#terminal-body').append( "<p>$ "+ errors[i] +"</p>" );
+			for (let i = 0; i < errors.length; i++) {
+				$('#terminal-body').append("<p>$ " + errors[i] + "</p>");
 			}
 		},
 		error: function(request, status, error) {
@@ -1468,7 +1472,7 @@ $('#minimizeTerminal').click(function() {
 
 $('#maximizeTerminal').click(function() {
 	'use strict';
-	/*$(window).height()*/ 
+	/*$(window).height()*/
 	$('#terminal').height("200px");
 	$('#terminal').scroll();
 });
@@ -1483,13 +1487,13 @@ $('#menu-button-save-model').click(function() {
 
 
 
-$('#modal-button-multrose-save').click(function() {
+$('#modal-button-mutrose-save').click(function() {
 	'use strict';
-	/*var fileInputModel = $('#input-multrose-model');*/
+	/*var fileInputModel = $('#input-mutrose-model');*/
 	var fileInputModel = $('#input-file-to-load');
-	var fileInputHddl = $('#input-multrose-hddl');
-	var fileInputConfig = $('#input-multrose-config');
-	var fileInputWorld = $('#input-multrose-world');
+	var fileInputHddl = $('#input-mutrose-hddl');
+	var fileInputConfig = $('#input-mutrose-config');
+	var fileInputWorld = $('#input-mutrose-world');
 
 
 	var resultModel = istar.fileManager.saveModel();
@@ -1501,18 +1505,21 @@ $('#modal-button-multrose-save').click(function() {
 
 	try {
 		//ui.getFileInput(fileInputModel[0], function(resultModel){
+			
 		ui.getFileInput(fileInputHddl[0], function(resultHddl) {
 			ui.getFileInput(fileInputConfig[0], function(resultConfig) {
 				ui.getFileInput(fileInputWorld[0], function(resultWorld) {
-					$.ajax({
-						type: "POST",
-						url: '/load/multrose',
-						data: {
+					var content = {
 							model: resultModel,
 							hddl: resultHddl,
 							config: resultConfig,
 							world: resultWorld
-						},
+						};
+                	console.log({ mutrose: content } );
+					$.ajax({
+						type: "POST",
+						url: '/load/mutrose',
+						data: content,
 						success: function(urlZip) {
 							/*window.location.href = 'prism.zip';*/
 							$('#modal-load-hddl').modal('hide');
@@ -1520,7 +1527,7 @@ $('#modal-button-multrose-save').click(function() {
 							fileInputHddl.val(null);
 							fileInputConfig.val(null);
 							fileInputWorld.val(null);
-							window.location.href = urlZip;
+							window.location.href = "output.zip";
 						},
 						error: function(request, status, error) {
 							ui.handleException(request.responseText);
@@ -2322,6 +2329,13 @@ function setDMCell() {
 		ui.loadSelectDM();
 	}
 }
+
+class Model {
+	constructor(content) {
+		this.content = content;
+	}
+}
+
 
 /*definition of globals to prevent undue JSHint warnings*/
 /*globals istar:false, console:false, $:false, _:false, joint:false, uiC:false, bootbox:false */

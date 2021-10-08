@@ -9,6 +9,11 @@ import java.io.FileOutputStream;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.nio.file.FileVisitOption;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.Comparator;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 
@@ -29,6 +34,21 @@ public class ManageWriter {
 			throw new CodeGenerationException(msg);
 		}
 	}
+
+	public static String readFileAsString(File file) throws CodeGenerationException {
+		String res = null;
+		String filePath = file.getAbsolutePath();
+		try {
+			res = FileUtility.readFileAsString(filePath);
+		} catch (IOException e) {
+			String msg = "Error: file " + filePath + " not found.";
+			System.out.println(msg);
+			throw new CodeGenerationException(msg);
+		}
+		return res;
+	}
+
+	
 
 	public static String readFileAsString(String filePath) throws CodeGenerationException {
 		String res = null;
@@ -95,6 +115,24 @@ public class ManageWriter {
 			saida.close();
 		} catch (IOException e) {
 			throw new IOException(e.getMessage());
+		}
+	}
+	
+
+	public static void createFolder(String path) throws IOException {
+		if (!Files.exists(Paths.get(path))) {
+			Files.createDirectory(Paths.get(path));
+		}
+	}
+
+	public static void cleanFolder(String path) throws IOException {
+		if (Files.exists(Paths.get(path))) {
+			Files.walk(Paths.get(path), FileVisitOption.FOLLOW_LINKS).sorted(Comparator.reverseOrder())
+					.map(Path::toFile).forEach(f -> {
+						if (f.isFile()) {
+							f.delete();
+						}
+					});
 		}
 	}
 }
