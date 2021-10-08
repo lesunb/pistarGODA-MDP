@@ -4,9 +4,7 @@
         "file_path": "task_output.json",
         "file_type": "json"
     },
-
     "location_types": ["Room"],
-    
     "type_mapping": [
         {
             "hddl_type": "room",
@@ -17,7 +15,6 @@
             "ocl_type": "Sequence(Room)"
         }
     ],
-
     "var_mapping": [
         {
             "task_id": "AT1",
@@ -56,7 +53,6 @@
             ]
         }
     ],
-
     "semantic_mapping": [
         {
             "type": "attribute",
