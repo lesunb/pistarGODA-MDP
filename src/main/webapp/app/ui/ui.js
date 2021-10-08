@@ -368,7 +368,7 @@ var ui = function() {
 			for (var j = 0; j < properties.length; j++) {
 				var name = properties[j].name;
 				var childrens = properties[j].childrens;
-				if (props[name] != null && props[name] != "" && props[name] != undefined) {
+				if (props && props[name] != null && props[name] != "" && props[name] != undefined) {
 					properties[j].value = props[name];
 					if (props[name] == "true" || props[name] == true) {
 						properties[j].checked = true;

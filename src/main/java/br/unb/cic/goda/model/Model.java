@@ -4,6 +4,12 @@ import br.unb.cic.goda.utils.GodaUtils;
 
 public class Model {
 	private Object content;
+	
+	public Model() {}
+
+	public Model(Object content) {
+		this.content = content;
+	}
 
 	public Object getContent() {
 		return content;

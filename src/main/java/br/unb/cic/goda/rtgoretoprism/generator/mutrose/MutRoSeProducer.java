@@ -30,7 +30,7 @@ public class MutRoSeProducer {
 
 		try {
 			String dir = "mrs/";
-			String dirOutput =  dir + "output/";
+			String dirOutput =  "/var/folders/sw/mrs/output/";
 			JSONObject jsonObject = this.updatePathConfigurationFile(configuration, dirOutput);
 
 			// gerar arquivos
@@ -73,14 +73,19 @@ public class MutRoSeProducer {
 			jsonObject = (JSONObject) parser.parse(configuration);
 			JSONObject outputConfig = (JSONObject) jsonObject.get("output");
 			String output = (String) outputConfig.get("file_path");
-			File file = new File(output);
-			String filename = file.getName();
-			String path = dirOutput + filename;
-			File generatedFile = new File(path);
-			// atualizar o path do config
-			outputConfig.replace("file_path", path);
 			
-			return jsonObject;
+			if(output.isEmpty()) {
+				throw new ResponseException("Configuration file does not have decomposed file generation path.");
+			}else {
+				File file = new File(output);
+				String filename = file.getName();
+				String path = dirOutput + filename;
+//				File generatedFile = new File(path);
+				// atualizar o path do config
+				outputConfig.replace("file_path", path);
+				
+				return jsonObject;
+			}
 		} catch (ParseException e) {
 			throw new ResponseException(e);
 		}
