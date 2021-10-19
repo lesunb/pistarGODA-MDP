@@ -1,6 +1,10 @@
 package br.unb.cic.goda.rtgoretoprism.generator.mutrose;
 
 import java.io.File;
+import java.nio.charset.Charset;
+import java.nio.file.Files;
+import java.nio.file.Paths;
+import java.util.List;
 import java.util.logging.Logger;
 
 import org.json.simple.JSONObject;
@@ -55,7 +59,18 @@ public class MutRoSeProducer {
 			LOGGER.info(proc.getInputStream().toString());
 			LOGGER.info(proc.getOutputStream().toString());
 
+			List<String> lines = Files.readAllLines(Paths.get(output), Charset.forName("UTF-8"));
+
+			if (lines.size() - 1 < 0) {
+				throw new ResponseException("Fail to execute MutRoSe.");
+			} else {
+				String outputJson = lines.get(lines.size() - 1);
+				ManageWriter.generateFile(output, outputJson);
+			}
+			
+
 			ManageWriter.toCompact(output, dirOutputZIP);
+
 		} catch (Exception error) {
 			throw new ResponseException(error);
 

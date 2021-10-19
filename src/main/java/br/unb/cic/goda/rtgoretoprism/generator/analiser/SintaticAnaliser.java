@@ -1,5 +1,6 @@
 package br.unb.cic.goda.rtgoretoprism.generator.analiser;
 
+import java.io.File;
 import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.nio.file.Paths;
@@ -8,17 +9,20 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import br.unb.cic.goda.exception.ResponseException;
+import br.unb.cic.goda.rtgoretoprism.generator.goda.writer.ManageWriter;
 
 public class SintaticAnaliser {
 
 	private static final Logger LOGGER = Logger.getLogger(SintaticAnaliser.class.getName());
 
 	public static String recoverLogsError() {
-		String dir = "sintaticAnaliser/";
+		String dir = "temp/";
 
 		try {
+			String bin = ManageWriter.readFileAsString("sintaticAnaliser/goal-model-syntactic-analyzer-linux");
+		    ManageWriter.generateFile(dir, "goal-model-syntactic-analyzer-linux", bin);
 
-			StringBuilder command = new StringBuilder().append("chmod +x ./").append(dir)
+			StringBuilder command = new StringBuilder().append("./").append(dir)
 					.append("goal-model-syntactic-analyzer-linux");
 
 			Process proc = Runtime.getRuntime().exec(command.toString());
