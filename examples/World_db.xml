@@ -80,6 +80,7 @@ The assignation of the cell is related to the physical world (image of the hospi
             <grid cell="c23"/>
     </location>
     <Room>
+    	<id>R1</id>
         <name>RoomA</name>
         <location>c3</location>
         <is_clean>False</is_clean>
@@ -87,6 +88,7 @@ The assignation of the cell is related to the physical world (image of the hospi
         <door_open>False</door_open>
     </Room>
     <Room>
+    	<id>R2</id>
         <name>RoomB</name>
 	<location>c6</location>
         <is_clean>False</is_clean>
@@ -94,6 +96,7 @@ The assignation of the cell is related to the physical world (image of the hospi
         <door_open>True</door_open>
     </Room>
     <Room>
+    	<id>R3</id>
         <name>RoomC</name>
 	<location>c8</location>
         <is_clean>True</is_clean>
@@ -101,6 +104,7 @@ The assignation of the cell is related to the physical world (image of the hospi
         <door_open>True</door_open>
     </Room>
     <Room>
+    	<id>SR</id>
         <name>SanitizationRoom</name>
 	<location>c10</location>
         <is_clean>True</is_clean>
