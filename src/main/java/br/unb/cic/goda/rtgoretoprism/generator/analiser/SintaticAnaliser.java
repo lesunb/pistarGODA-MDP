@@ -15,9 +15,9 @@ public class SintaticAnaliser {
 		String dirSintatic = "sintaticAnaliser/goal-model-syntactic-analyzer-linux";
 
 		try {
-			Runtime.getRuntime().exec("cp " + dirSintatic + " " + dir);
+			Runtime.getRuntime().exec("chmod +x cp " + dirSintatic + " " + dir);
 			
-			StringBuilder command = new StringBuilder().append("./").append("tmp/goal-model-syntactic-analyzer-linux");
+			StringBuilder command = new StringBuilder().append("chmod +x ./").append("tmp/goal-model-syntactic-analyzer-linux");
 
 			Process proc = Runtime.getRuntime().exec(command.toString());
 			LOGGER.info(proc.getInputStream().toString());
