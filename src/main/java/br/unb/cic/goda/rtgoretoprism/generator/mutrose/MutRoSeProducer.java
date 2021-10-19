@@ -53,7 +53,7 @@ public class MutRoSeProducer {
 			StringBuilder command = new StringBuilder().append("chmod +x ./").append(dir).append("MRSDecomposer").append(" ")
 					.append(hddlFile.getAbsolutePath()).append(" ").append(modelFile.getAbsolutePath()).append(" ")
 					.append(configFile.getAbsolutePath()).append(" ").append(worldKnowledgeFile.getAbsolutePath())
-					.append(" ").append("-p");
+					.append(" ");
 
 			Process proc = Runtime.getRuntime().exec(command.toString());
 			LOGGER.info(proc.getInputStream().toString());
