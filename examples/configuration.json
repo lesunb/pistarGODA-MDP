@@ -1,10 +1,19 @@
 {
+    "world_db": {
+        "type": "file",
+        "file_type": "xml",
+        "path": "knowledge/World_db.xml",
+        "xml_root": "world_db"
+    },
+
     "output": {
         "output_type": "file",
-        "file_path": "task_output.json",
+        "file_path": "output/task_output.json",
         "file_type": "json"
     },
+
     "location_types": ["Room"],
+    
     "type_mapping": [
         {
             "hddl_type": "room",
@@ -15,6 +24,7 @@
             "ocl_type": "Sequence(Room)"
         }
     ],
+
     "var_mapping": [
         {
             "task_id": "AT1",
@@ -53,6 +63,7 @@
             ]
         }
     ],
+
     "semantic_mapping": [
         {
             "type": "attribute",

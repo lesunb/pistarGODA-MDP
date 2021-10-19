@@ -32,6 +32,7 @@ import br.unb.cic.goda.model.Plan;
 import br.unb.cic.goda.model.PlanImpl;
 import br.unb.cic.goda.rtgoretoprism.action.PRISMCodeGenerationAction;
 import br.unb.cic.goda.rtgoretoprism.action.RunParamAction;
+import br.unb.cic.goda.rtgoretoprism.generator.analiser.SintaticAnaliser;
 import br.unb.cic.goda.rtgoretoprism.generator.goda.writer.ManageWriter;
 import br.unb.cic.goda.rtgoretoprism.generator.mutrose.MutRoSeProducer;
 import br.unb.cic.modelling.Properties;
@@ -53,8 +54,8 @@ public class IntegrationService {
 
 	public List<String> loadTerminal() {
 		List<String> erros = new ArrayList<String>();
-		erros.add("Error: Fail to load model.");
-		erros.add("Error: Invalid model.");
+
+		erros.add(SintaticAnaliser.recoverLogsError());
 
 		return erros;
 	}
