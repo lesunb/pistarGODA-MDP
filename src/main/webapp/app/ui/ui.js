@@ -1504,7 +1504,7 @@ $('#modal-button-mutrose-save').click(function() {
 	var fileInputWorld = $('#input-mutrose-world');
 
 
-	var resultModel = istar.fileManager.saveModel();
+	var resultModel = (istar.fileManager.saveModel());
 	if (/*!fileInputModel.val()*/ !resultModel || !fileInputHddl.val() || !fileInputConfig.val() || !fileInputWorld.val()) {
 		ui.alert('You must select all a input file to load', 'No file(s) selected');
 		$('#modal-load-hddl').modal('hide');
