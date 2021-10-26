@@ -46,12 +46,12 @@ public class MutRoSeProducer {
 
 //			ManageWriter.createFolder(dirOutput);
 			// ManageWriter.generateFile(output, "");
-			StringBuilder command = new StringBuilder().append("./").append(dir).append("MRSDecomposer").append(" ")
+			StringBuilder command = new StringBuilder().append("chmod +x ./").append(dir).append("MutroseMissionDecomposer").append(" ")
 					.append(dir).append("configHddl.hddl").append(" ").append(dir).append("model.txt").append(" ")
 					.append(dir).append("configFile.json").append(" ").append(dir).append("worldKnowledge.xml")
 					.append(" ").append("");
 
-			Process proc = Runtime.getRuntime().exec(command.toString());
+			Runtime.getRuntime().exec(command.toString());
 			String result = ManageWriter.readFileAsString(output);
 			if (result == null) {
 				LOGGER.warning("Fail to execute Mutrose");
@@ -94,7 +94,6 @@ public class MutRoSeProducer {
 		}
 	}
 
-	@SuppressWarnings("unchecked")
 	private void removeCustomPropDiagram(String model) {
 		JSONObject jsonObject;
 		JSONParser parser = new JSONParser();
