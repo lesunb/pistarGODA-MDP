@@ -1,7 +1,5 @@
 package br.unb.cic.integration;
 
-import static br.unb.cic.goda.rtgoretoprism.util.SintaticAnaliser.verifySintaxModel;
-
 import java.io.FileOutputStream;
 import java.nio.file.DirectoryStream;
 import java.nio.file.Files;
@@ -287,7 +285,7 @@ public class IntegrationService {
 			// Verifica a Sintaxe para cada nó
 			// Settando o novo texto apenas para remover espaços em branco indesejados no
 			// nome do nó
-			node.setText(verifySintaxModel(node.getText(), typeModel));
+			node.setText(SintaticAnaliser.verifySintaxModel(node.getText(), typeModel));
 		}
 
 	}

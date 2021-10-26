@@ -36,7 +36,7 @@ public class MutRoSeProducer {
 		String dirOutputZIP = "src/main/webapp/mrs.zip";
 		try {
 			String dir = "mrs/";
-			String dirOutput =  dir + "results/";
+			String dirOutput = dir + "results/";
 			JSONObject jsonObject = this.updatePathConfigurationFile(configuration, dirOutput);
 			this.removeCustomPropDiagram(model);
 
@@ -50,21 +50,18 @@ public class MutRoSeProducer {
 			String output = (String) outputConfig.get("file_path");
 
 //			ManageWriter.createFolder(dirOutput);
-		//	ManageWriter.generateFile(output, "");
-			StringBuilder command = new StringBuilder().append("./")
-				.append(dir).append("MRSDecomposer").append(" ")
-				.append(dir).append("configHddl.hddl").append(" ")
-				.append(dir).append("model.txt").append(" ")
-				.append(dir).append("configFile.json").append(" ")
-				.append(dir).append("worldKnowledge.xml").append(" ")
-				.append("");
+			// ManageWriter.generateFile(output, "");
+			StringBuilder command = new StringBuilder().append("./").append(dir).append("MRSDecomposer").append(" ")
+					.append(dir).append("configHddl.hddl").append(" ").append(dir).append("model.txt").append(" ")
+					.append(dir).append("configFile.json").append(" ").append(dir).append("worldKnowledge.xml")
+					.append(" ").append("");
 
 			Process proc = Runtime.getRuntime().exec(command.toString());
 			String result = ManageWriter.readFileAsString(output);
-			if(result == null) {
+			if (result == null) {
 				throw new ResponseException("Fail to execute MutRoSe.");
 			}
-			
+
 			ManageWriter.toCompact(output, dirOutputZIP);
 		} catch (Exception error) {
 			throw new ResponseException(error);
@@ -100,10 +97,9 @@ public class MutRoSeProducer {
 			throw new ResponseException(e);
 		}
 	}
-	
 
 	@SuppressWarnings("unchecked")
-	private void removeCustomPropDiagram (String model) {
+	private void removeCustomPropDiagram(String model) {
 		JSONObject jsonObject;
 		JSONParser parser = new JSONParser();
 		try {
@@ -111,7 +107,7 @@ public class MutRoSeProducer {
 			JSONObject outputConfig = (JSONObject) jsonObject.get("diagram");
 			String output = (String) outputConfig.remove("customProperties");
 		} catch (ParseException e) {
-			throw new ResponseException(e);
+			e.printStackTrace();
 		}
 	}
 }
