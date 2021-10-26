@@ -7,13 +7,8 @@ import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
 
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
-
 import br.unb.cic.goda.exception.ResponseException;
 import br.unb.cic.goda.rtgoretoprism.generator.goda.writer.ManageWriter;
-import br.unb.cic.goda.utils.GodaUtils;
-import br.unb.cic.pistar.model.PistarModel;
 
 public class MutRoSeProducer {
 
@@ -38,7 +33,7 @@ public class MutRoSeProducer {
 			String dir = "mrs/";
 			String dirOutput = dir + "results/";
 			JSONObject jsonObject = this.updatePathConfigurationFile(configuration, dirOutput);
-			this.removeCustomPropDiagram(model);
+			//this.removeCustomPropDiagram(model);
 
 			// gerar arquivos
 			File modelFile = ManageWriter.generateFile(dir, "model.txt", model);
@@ -59,15 +54,16 @@ public class MutRoSeProducer {
 			Process proc = Runtime.getRuntime().exec(command.toString());
 			String result = ManageWriter.readFileAsString(output);
 			if (result == null) {
+				LOGGER.warning("Fail to execute Mutrose");
 				throw new ResponseException("Fail to execute MutRoSe.");
+			}else {
+				ManageWriter.toCompact(output, dirOutputZIP);
+				return result;
 			}
-
-			ManageWriter.toCompact(output, dirOutputZIP);
 		} catch (Exception error) {
 			throw new ResponseException(error);
 
 		}
-		return dirOutputZIP;
 	}
 
 	@SuppressWarnings("unchecked")
