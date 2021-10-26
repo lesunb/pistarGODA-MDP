@@ -1391,7 +1391,8 @@ $('#runPrismMDPButton').click(function() {
 		contentType: "application/json; charset=utf-8",
 		dataType: "json",
 		success: function() {
-			window.location.href = 'prism.zip';
+			//window.location.href = 'prism.zip';
+			window.open('prism.zip', '_blank');
 		},
 		error: function(request, status, error) {
 			ui.handleException(request.responseText, status);
@@ -1410,7 +1411,8 @@ $('#runPrismDTMCButton').click(function() {
 		contentType: "application/json; charset=utf-8",
 		dataType: "json",
 		success: function() {
-			window.location.href = 'prism.zip';
+			//window.location.href = 'prism.zip';
+			window.open('prism.zip', '_blank');
 		},
 		error: function(request, status, error) {
 			ui.handleException(request.responseText, status);
@@ -1428,7 +1430,8 @@ $('#runPARAMButton').click(function() {
 		contentType: "application/json; charset=utf-8",
 		dataType: "json",
 		success: function() {
-			window.location.href = 'param.zip';
+			//window.location.href = 'param.zip';
+			window.open('param.zip', '_blank');
 		},
 		error: function(request, status, error) {
 			ui.handleException(request.responseText, status);
@@ -1446,7 +1449,8 @@ $('#runEPMCButton').click(function() {
 		contentType: "application/json; charset=utf-8",
 		dataType: "json",
 		success: function() {
-			window.location.href = 'epmc.zip';
+			//window.location.href = 'epmc.zip';
+			window.open('epmc.zip', '_blank');
 		},
 		error: function(request, status, error) {
 			ui.handleException(request.responseText, status);
@@ -1530,12 +1534,13 @@ $('#modal-button-mutrose-save').click(function() {
 							fileInputHddl.val(null);
 							fileInputConfig.val(null);
 							fileInputWorld.val(null);
-							window.location.href = "mrs.zip";
+							window.open('mrs.zip', '_blank');
 							// JSON.parse(urlZip);
 						},
 						error: function(request, status, error) {
 							if(request.status && request.status == 200){
-							window.location.href = "mrs.zip";
+							//window.location.href = "mrs.zip";
+							window.open('mrs.zip', '_blank');
 							}
 							
 							ui.handleException(request.responseText, status);
