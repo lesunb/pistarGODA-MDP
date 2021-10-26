@@ -11,14 +11,16 @@ public class SintaticAnaliser {
 	private static final Logger LOGGER = Logger.getLogger(SintaticAnaliser.class.getName());
 
 	public static String recoverLogsError() {
-		String dir = "/tmp/";
+		String dir = "sintaticAnaliser/";
 		String dirSintatic = "sintaticAnaliser/goal-model-syntactic-analyzer-linux";
 
 		try {
-			Runtime.getRuntime().exec("chmod +x cp " + dirSintatic + " " + dir);
+			//Runtime.getRuntime().exec("cp " + dirSintatic + " " + dir);
 			
-			StringBuilder command = new StringBuilder().append("chmod +x ./").append("tmp/goal-model-syntactic-analyzer-linux");
-
+			StringBuilder command = new StringBuilder().append("./").append(dirSintatic);
+			
+			ManageWriter.generateFile(dir + "goal-model-list-error.json", "");
+			
 			Process proc = Runtime.getRuntime().exec(command.toString());
 			LOGGER.info(proc.getInputStream().toString());
 			LOGGER.info(proc.getOutputStream().toString());

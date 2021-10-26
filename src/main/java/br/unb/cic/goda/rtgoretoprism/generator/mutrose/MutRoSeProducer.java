@@ -1,18 +1,19 @@
 package br.unb.cic.goda.rtgoretoprism.generator.mutrose;
 
 import java.io.File;
-import java.nio.charset.Charset;
-import java.nio.file.Files;
-import java.nio.file.Paths;
-import java.util.List;
 import java.util.logging.Logger;
 
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
 
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+
 import br.unb.cic.goda.exception.ResponseException;
 import br.unb.cic.goda.rtgoretoprism.generator.goda.writer.ManageWriter;
+import br.unb.cic.goda.utils.GodaUtils;
+import br.unb.cic.pistar.model.PistarModel;
 
 public class MutRoSeProducer {
 
@@ -34,10 +35,10 @@ public class MutRoSeProducer {
 
 		String dirOutputZIP = "src/main/webapp/mrs.zip";
 		try {
-//			/var/folders/sw
 			String dir = "mrs/";
-			String dirOutput = "/tmp/";
+			String dirOutput =  dir + "results/";
 			JSONObject jsonObject = this.updatePathConfigurationFile(configuration, dirOutput);
+			this.removeCustomPropDiagram(model);
 
 			// gerar arquivos
 			File modelFile = ManageWriter.generateFile(dir, "model.txt", model);
@@ -49,28 +50,22 @@ public class MutRoSeProducer {
 			String output = (String) outputConfig.get("file_path");
 
 //			ManageWriter.createFolder(dirOutput);
-			ManageWriter.generateFile(output, "");
-			StringBuilder command = new StringBuilder().append("./").append(dir).append("MRSDecomposer").append(" ")
-					.append(hddlFile.getAbsolutePath()).append(" ").append(modelFile.getAbsolutePath()).append(" ")
-					.append(configFile.getAbsolutePath()).append(" ").append(worldKnowledgeFile.getAbsolutePath())
-					.append(" ");
+		//	ManageWriter.generateFile(output, "");
+			StringBuilder command = new StringBuilder().append("./")
+				.append(dir).append("MRSDecomposer").append(" ")
+				.append(dir).append("configHddl.hddl").append(" ")
+				.append(dir).append("model.txt").append(" ")
+				.append(dir).append("configFile.json").append(" ")
+				.append(dir).append("worldKnowledge.xml").append(" ")
+				.append("");
 
 			Process proc = Runtime.getRuntime().exec(command.toString());
-			LOGGER.info(proc.getInputStream().toString());
-			LOGGER.info(proc.getOutputStream().toString());
-
-			List<String> lines = Files.readAllLines(Paths.get(output), Charset.forName("UTF-8"));
-
-			if (lines.size() - 1 < 0) {
+			String result = ManageWriter.readFileAsString(output);
+			if(result == null) {
 				throw new ResponseException("Fail to execute MutRoSe.");
-			} else {
-				String outputJson = lines.get(lines.size() - 1);
-				ManageWriter.generateFile(output, outputJson);
 			}
 			
-
 			ManageWriter.toCompact(output, dirOutputZIP);
-
 		} catch (Exception error) {
 			throw new ResponseException(error);
 
@@ -101,6 +96,20 @@ public class MutRoSeProducer {
 
 				return jsonObject;
 			}
+		} catch (ParseException e) {
+			throw new ResponseException(e);
+		}
+	}
+	
+
+	@SuppressWarnings("unchecked")
+	private void removeCustomPropDiagram (String model) {
+		JSONObject jsonObject;
+		JSONParser parser = new JSONParser();
+		try {
+			jsonObject = (JSONObject) parser.parse(model);
+			JSONObject outputConfig = (JSONObject) jsonObject.get("diagram");
+			String output = (String) outputConfig.remove("customProperties");
 		} catch (ParseException e) {
 			throw new ResponseException(e);
 		}
