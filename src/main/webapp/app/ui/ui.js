@@ -1535,7 +1535,7 @@ $('#modal-button-mutrose-save').click(function() {
 						},
 						error: function(request, status, error) {
 							if(request.status && request.status == 200){
-								window.location.href = request.responseText;
+							window.location.href = "mrs.zip";
 							}
 							
 							ui.handleException(request.responseText, status);
