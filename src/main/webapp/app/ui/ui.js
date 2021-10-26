@@ -1530,7 +1530,7 @@ $('#modal-button-mutrose-save').click(function() {
 							fileInputHddl.val(null);
 							fileInputConfig.val(null);
 							fileInputWorld.val(null);
-							window.location.href = "src/main/webapp/mrs.zip";
+							window.location.href = "mrs.zip";
 							// JSON.parse(urlZip);
 						},
 						error: function(request, status, error) {
