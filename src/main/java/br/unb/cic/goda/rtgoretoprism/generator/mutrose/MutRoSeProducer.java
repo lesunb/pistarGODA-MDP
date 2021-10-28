@@ -48,7 +48,7 @@ public class MutRoSeProducer {
 
 			//ManageWriter.createFolder(dirOutput);
 			//ManageWriter.generateFile(output, "");
-			StringBuilder command = new StringBuilder().append("./").append(dir).append("MRSDecomposer").append(" ")
+			StringBuilder command = new StringBuilder().append("./").append(dir).append("MutroseMissionDecomposer").append(" ")
 					.append(dirConfig).append("configHddl.hddl").append(" ").append(dirConfig).append("model.txt").append(" ")
 					.append(dirConfig).append("configFile.json").append(" ").append(dirConfig).append("worldKnowledge.xml")
 					.append(" ").append("");
