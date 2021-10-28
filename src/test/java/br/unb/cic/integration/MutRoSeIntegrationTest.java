@@ -31,6 +31,7 @@ import br.unb.cic.goda.model.ModelTypeEnum;
 import br.unb.cic.goda.utils.GodaUtils;
 import br.unb.cic.modelling.Properties;
 import br.unb.cic.modelling.enums.AttributesEnum;
+import br.unb.cic.pistar.model.MutRoSe;
 
 @WebAppConfiguration
 @SuppressWarnings("unused")
@@ -98,7 +99,7 @@ public class MutRoSeIntegrationTest {
 	@Test
 	public void Teste01() throws Exception {
 		Model content = new Model(getContent("BSN.txt"));
-		
+
 		try {
 			String result = service.executePrism(content, ModelTypeEnum.MDP.getTipo(), "src/main/webapp/prism.zip");
 			assertNotNull(result);
@@ -109,8 +110,8 @@ public class MutRoSeIntegrationTest {
 
 	@Test
 	public void Teste02() throws Exception {
-	Model content = new Model(getContent("Test2.txt"));
-		
+		Model content = new Model(getContent("Test2.txt"));
+
 		try {
 			String result = service.executePrism(content, ModelTypeEnum.MDP.getTipo(), "src/main/webapp/prism.zip");
 			assertNotNull(result);
@@ -118,11 +119,11 @@ public class MutRoSeIntegrationTest {
 			Assert.fail(e.getMessage());
 		}
 	}
-	
+
 	@Test
 	public void Teste03() throws Exception {
 		Model content = new Model(getContent("Test3.txt"));
-		
+
 		try {
 			String result = service.executePrism(content, ModelTypeEnum.MDP.getTipo(), "src/main/webapp/prism.zip");
 			assertNotNull(result);
@@ -134,7 +135,7 @@ public class MutRoSeIntegrationTest {
 	@Test
 	public void Teste04() throws Exception {
 		Model content = new Model(getContent("Test4.txt"));
-		
+
 		try {
 			String result = service.executePrism(content, ModelTypeEnum.MDP.getTipo(), "src/main/webapp/prism.zip");
 			assertNotNull(result);
@@ -146,7 +147,7 @@ public class MutRoSeIntegrationTest {
 	@Test
 	public void Teste05() throws Exception {
 		Model content = new Model(getContent("Test5.txt"));
-		
+
 		try {
 			String result = service.executePrism(content, ModelTypeEnum.MDP.getTipo(), "src/main/webapp/prism.zip");
 			assertNotNull(result);
@@ -154,7 +155,6 @@ public class MutRoSeIntegrationTest {
 			Assert.fail(e.getMessage());
 		}
 	}
-
 
 	@Test
 	public void Teste06() throws Exception {
@@ -170,7 +170,7 @@ public class MutRoSeIntegrationTest {
 	@Test
 	public void Teste07() throws Exception {
 		Model content = new Model(getContent("Test7.txt"));
-		
+
 		try {
 			String result = service.executePrism(content, ModelTypeEnum.MDP.getTipo(), "src/main/webapp/prism.zip");
 			assertNotNull(result);
@@ -179,7 +179,6 @@ public class MutRoSeIntegrationTest {
 		}
 	}
 
-	
 	@Test
 	public void Teste08() throws Exception {
 		Model content = new Model(getContent("Test8.txt"));
@@ -194,19 +193,7 @@ public class MutRoSeIntegrationTest {
 	@Test
 	public void Teste09() throws Exception {
 		Model content = new Model(getContent("Test9.txt"));
-		
-		try {
-			RuntimeException exception = assertThrows(RuntimeException.class,
-					() -> service.executePrism(content, ModelTypeEnum.MDP.getTipo(), "src/main/webapp/prism.zip"));
-		} catch (Exception e) {
-			Assert.fail(e.getMessage());
-		}
-	}
-	
-	@Test
-	public void Teste10() throws Exception {
-		Model content = new Model(getContent("Test10.txt"));
-		
+
 		try {
 			RuntimeException exception = assertThrows(RuntimeException.class,
 					() -> service.executePrism(content, ModelTypeEnum.MDP.getTipo(), "src/main/webapp/prism.zip"));
@@ -215,6 +202,17 @@ public class MutRoSeIntegrationTest {
 		}
 	}
 
+	@Test
+	public void Teste10() throws Exception {
+		Model content = new Model(getContent("Test10.txt"));
+
+		try {
+			RuntimeException exception = assertThrows(RuntimeException.class,
+					() -> service.executePrism(content, ModelTypeEnum.MDP.getTipo(), "src/main/webapp/prism.zip"));
+		} catch (Exception e) {
+			Assert.fail(e.getMessage());
+		}
+	}
 
 	@Test
 	public void executeMutRoSeTest() throws Exception {
@@ -226,42 +224,44 @@ public class MutRoSeIntegrationTest {
 		MutRoSe content = new MutRoSe(model, configHddl, configJson, world);
 		try {
 			String result = service.generateBinMultRoSe(content);
+			Assert.assertTrue(!result.isEmpty());
 		} catch (Exception e) {
 			Assert.fail(e.getMessage());
 		}
 	}
-	
+
 	@Test
 	public void executeMutRoSeTest0() throws Exception {
-		String model = getContent("model.txt");
-		String configJson = getContent("configFile.json");
+		String model = getContent("model2.txt");
+		String configJson = getContent("configFile2.json");
 		String configHddl = getContent("configHddl.hddl");
 		String world = getContent("worldKnowledge.xml");
 
 		MutRoSe content = new MutRoSe(model, configHddl, configJson, world);
 		try {
 			String result = service.generateBinMultRoSe(content);
-			assertNotNull(result);
+			Assert.assertTrue(!result.isEmpty());
 		} catch (Exception e) {
 			Assert.fail(e.getMessage());
 		}
 	}
-	
+
 	@Test
 	public void executeMutRoSeTest1() throws Exception {
-		String model = getContent("model.txt");
-		String configJson = getContent("configFile.json");
+		String model = getContent("model3.txt");
+		String configJson = getContent("configFile3.json");
 		String configHddl = getContent("configHddl.hddl");
 		String world = getContent("worldKnowledge.xml");
 
 		MutRoSe content = new MutRoSe(model, configHddl, configJson, world);
 		try {
 			String result = service.generateBinMultRoSe(content);
+			Assert.assertTrue(!result.isEmpty());
 		} catch (Exception e) {
 			Assert.fail(e.getMessage());
 		}
 	}
-	
+
 	@Test
 	public void executeMutRoSeTest2() throws Exception {
 		String model = getContent("model.txt");
@@ -271,6 +271,7 @@ public class MutRoSeIntegrationTest {
 		MutRoSe content = new MutRoSe(model, configHddl, null, world);
 		RuntimeException exception = assertThrows(RuntimeException.class, () -> service.generateBinMultRoSe(content));
 	}
+
 //
 	@Test
 	public void executeMutRoSeTest3() throws Exception {
@@ -301,7 +302,7 @@ public class MutRoSeIntegrationTest {
 		String world = getContent("worldKnowledge.xml");
 		String configHddl = getContent("configHddl.hddl");
 
-		MutRoSe content = new MutRoSe(model, configHddl, configJson, world);
+		MutRoSe content = new MutRoSe(model, null, null, null);
 		RuntimeException exception = assertThrows(RuntimeException.class, () -> service.generateBinMultRoSe(content));
 
 	}
