@@ -31,7 +31,6 @@ import br.unb.cic.goda.model.ModelTypeEnum;
 import br.unb.cic.goda.utils.GodaUtils;
 import br.unb.cic.modelling.Properties;
 import br.unb.cic.modelling.enums.AttributesEnum;
-import br.unb.cic.pistar.model.MutRoSe;
 
 @WebAppConfiguration
 @SuppressWarnings("unused")

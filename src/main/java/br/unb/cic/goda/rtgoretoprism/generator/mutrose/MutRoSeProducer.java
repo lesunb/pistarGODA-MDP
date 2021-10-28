@@ -1,10 +1,6 @@
 package br.unb.cic.goda.rtgoretoprism.generator.mutrose;
 
 import java.io.File;
-import java.nio.charset.Charset;
-import java.nio.file.Files;
-import java.nio.file.Paths;
-import java.util.List;
 import java.util.logging.Logger;
 
 import org.json.simple.JSONObject;
@@ -34,10 +30,10 @@ public class MutRoSeProducer {
 
 		String dirOutputZIP = "src/main/webapp/mrs.zip";
 		try {
-//			/var/folders/sw
 			String dir = "mrs/";
-			String dirOutput = "/tmp/";
+			String dirOutput = dir + "results/";
 			JSONObject jsonObject = this.updatePathConfigurationFile(configuration, dirOutput);
+			//this.removeCustomPropDiagram(model);
 
 			// gerar arquivos
 			File modelFile = ManageWriter.generateFile(dir, "model.txt", model);
@@ -49,33 +45,25 @@ public class MutRoSeProducer {
 			String output = (String) outputConfig.get("file_path");
 
 //			ManageWriter.createFolder(dirOutput);
-			ManageWriter.generateFile(output, "");
-			StringBuilder command = new StringBuilder().append("./").append(dir).append("MRSDecomposer").append(" ")
-					.append(hddlFile.getAbsolutePath()).append(" ").append(modelFile.getAbsolutePath()).append(" ")
-					.append(configFile.getAbsolutePath()).append(" ").append(worldKnowledgeFile.getAbsolutePath())
-					.append(" ");
+			// ManageWriter.generateFile(output, "");
+			StringBuilder command = new StringBuilder().append("chmod +x ./").append(dir).append("MutroseMissionDecomposer").append(" ")
+					.append(dir).append("configHddl.hddl").append(" ").append(dir).append("model.txt").append(" ")
+					.append(dir).append("configFile.json").append(" ").append(dir).append("worldKnowledge.xml")
+					.append(" ").append("");
 
-			Process proc = Runtime.getRuntime().exec(command.toString());
-			LOGGER.info(proc.getInputStream().toString());
-			LOGGER.info(proc.getOutputStream().toString());
-
-			List<String> lines = Files.readAllLines(Paths.get(output), Charset.forName("UTF-8"));
-
-			if (lines.size() - 1 < 0) {
+			Runtime.getRuntime().exec(command.toString());
+			String result = ManageWriter.readFileAsString(output);
+			if (result == null) {
+				LOGGER.warning("Fail to execute Mutrose");
 				throw new ResponseException("Fail to execute MutRoSe.");
-			} else {
-				String outputJson = lines.get(lines.size() - 1);
-				ManageWriter.generateFile(output, outputJson);
+			}else {
+				ManageWriter.toCompact(output, dirOutputZIP);
+				return result;
 			}
-			
-
-			ManageWriter.toCompact(output, dirOutputZIP);
-
 		} catch (Exception error) {
 			throw new ResponseException(error);
 
 		}
-		return dirOutputZIP;
 	}
 
 	@SuppressWarnings("unchecked")
@@ -103,6 +91,18 @@ public class MutRoSeProducer {
 			}
 		} catch (ParseException e) {
 			throw new ResponseException(e);
+		}
+	}
+
+	private void removeCustomPropDiagram(String model) {
+		JSONObject jsonObject;
+		JSONParser parser = new JSONParser();
+		try {
+			jsonObject = (JSONObject) parser.parse(model);
+			JSONObject outputConfig = (JSONObject) jsonObject.get("diagram");
+			String output = (String) outputConfig.remove("customProperties");
+		} catch (ParseException e) {
+			e.printStackTrace();
 		}
 	}
 }
