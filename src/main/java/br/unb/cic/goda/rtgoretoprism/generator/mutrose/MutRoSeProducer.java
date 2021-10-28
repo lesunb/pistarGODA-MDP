@@ -14,6 +14,7 @@ public class MutRoSeProducer {
 
 	private static final Logger LOGGER = Logger.getLogger(MutRoSeProducer.class.getName());
 
+	@SuppressWarnings("unused")
 	public String execute(String model, String hddl, String configuration, String worldKnowledge) {
 		if (model == null || model.isEmpty()) {
 			throw new ResponseException("Invalid Model File");
@@ -45,7 +46,7 @@ public class MutRoSeProducer {
 			String output = (String) outputConfig.get("file_path");
 
 //			ManageWriter.createFolder(dirOutput);
-			// ManageWriter.generateFile(output, "");
+			//ManageWriter.generateFile(output, "");
 			StringBuilder command = new StringBuilder().append("chmod +x ./").append(dir).append("MutroseMissionDecomposer").append(" ")
 					.append(dir).append("configHddl.hddl").append(" ").append(dir).append("model.txt").append(" ")
 					.append(dir).append("configFile.json").append(" ").append(dir).append("worldKnowledge.xml")
@@ -94,6 +95,7 @@ public class MutRoSeProducer {
 		}
 	}
 
+	@SuppressWarnings("unused")
 	private void removeCustomPropDiagram(String model) {
 		JSONObject jsonObject;
 		JSONParser parser = new JSONParser();

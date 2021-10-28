@@ -12,7 +12,7 @@
       "nodes": [
         {
           "id": "64f076a2-d1e4-4ae1-a739-2f0406edf1a0",
-          "text": "G1: RoomsH Are Prepared For New Patients [G2;G3;G10]",
+          "text": "G1: Rooms Are Prepared For New Patients [G2;G3;G10]",
           "type": "istar.Goal",
           "x": 543,
           "y": 102,
@@ -22,7 +22,7 @@
         },
         {
           "id": "f942813f-cc19-456b-bed4-7e56c17f7bd4",
-          "text": "G2: RoomsH To Be Prepared Are Fetched",
+          "text": "G2: Rooms To Be Prepared ",
           "type": "istar.Goal",
           "x": 175,
           "y": 222,
@@ -46,7 +46,7 @@
         },
         {
           "id": "4ba74b3c-1ef2-4ac3-8b0b-2bc35cbdef98",
-          "text": "G3: RoomsH Are Prepared [G4#G9]",
+          "text": "G3: Rooms Are Prepared [G4#G9]",
           "type": "istar.Goal",
           "x": 534,
           "y": 256,
@@ -117,7 +117,7 @@
         },
         {
           "id": "2a10298a-f717-4831-8d1d-c87647f416e1",
-          "text": "G7: Fetch Sanitization Room",
+          "text": "G7: F3 Fetch Sanitization Room",
           "type": "istar.Goal",
           "x": 434,
           "y": 722,
