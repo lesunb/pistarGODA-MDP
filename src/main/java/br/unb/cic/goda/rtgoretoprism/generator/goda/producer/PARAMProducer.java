@@ -304,11 +304,7 @@ public class PARAMProducer {
 			return nodeId;	
 		}	
 		
-		if (rtAnnot == null) {
-			return nodeId;
-		}
-
-		if (rtAnnot.contains(";")) { // Sequential
+		if (rtAnnot == null || rtAnnot.contains(";")) { // Sequential
 
 			if (reliability) {
 				// Reliability formula
@@ -327,7 +323,7 @@ public class PARAMProducer {
 			}
 
 			return formula.toString();
-		} else if (rtAnnot.contains("#")) { // Parallel
+		} else if (rtAnnot == null || rtAnnot.contains("#")) { // Parallel
 
 			if (reliability) {
 				// Reliability formula
@@ -346,13 +342,13 @@ public class PARAMProducer {
 			}
 
 			return formula.toString();
-		} else if (rtAnnot.contains("DM")) {
+		} else if (rtAnnot == null || rtAnnot.contains("DM")) {
 			if (reliability) {
 				formula = symbolic.getDMReliability(ids, this.ctxInformation);
 			} else {
 				formula = symbolic.getDMCost(ids, ctxInformation, this.isParam);
 			}
-		} else if (rtAnnot.contains("@")) {
+		} else if (rtAnnot == null || rtAnnot.contains("@")) {
 			int retryNum = Integer.parseInt(rtAnnot.substring(rtAnnot.indexOf("@") + 1));
 
 			if (reliability) {
@@ -361,7 +357,7 @@ public class PARAMProducer {
 				formula = symbolic.getRetryCost(ids, nodeId, this.ctxInformation, this.isParam, retryNum);
 			}
 			return formula.toString();
-		} else if (rtAnnot.contains("try")) {
+		} else if (rtAnnot == null || rtAnnot.contains("try")) {
 			
 			if(rtAnnot.contains("?skip:")) { //try(a)?b:skip
 				ids = new String[] {ids[0], "skip", ids[1]};
