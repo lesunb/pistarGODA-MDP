@@ -12,7 +12,7 @@
       "nodes": [
         {
           "id": "64f076a2-d1e4-4ae1-a739-2f0406edf1a0",
-          "text": "G1: Rooms Are Prepared For New Patients [G2;G3;G10]",
+          "text": "G1: RoomsH Are Prepared For New Patients [G2;G3;G10]",
           "type": "istar.Goal",
           "x": 543,
           "y": 102,
@@ -22,7 +22,7 @@
         },
         {
           "id": "f942813f-cc19-456b-bed4-7e56c17f7bd4",
-          "text": "G2: Rooms To Be Prepared Are Fetched",
+          "text": "G2: RoomsH To Be Prepared Are Fetched",
           "type": "istar.Goal",
           "x": 175,
           "y": 222,
@@ -46,14 +46,14 @@
         },
         {
           "id": "4ba74b3c-1ef2-4ac3-8b0b-2bc35cbdef98",
-          "text": "G3: Rooms Are Prepared [G4#G9]",
+          "text": "G3: RoomsH Are Prepared [G4#G9]",
           "type": "istar.Goal",
           "x": 534,
           "y": 256,
           "customProperties": {
             "Description": "",
             "GoalType": "Achieve",
-            "UniversalAchieveCondition": "rooms->forAll(current_room | current_room.is_prepared && current_room.is_clean)",
+            "AchieveCondition": "rooms->forAll(current_room | current_room.is_prepared && current_room.is_clean)",
             "Monitors": "rooms : Sequence(Room)",
             "Controls": "current_room : Room"
           }
@@ -66,8 +66,7 @@
           "y": 438,
           "customProperties": {
             "Description": "",
-            "Context": "Trigger",
-            "Trigger": "assertion trigger \"E1\"",
+            "CreationCondition": "assertion trigger \"E1\"",
             "Group": "False"
           }
         },
@@ -79,9 +78,8 @@
           "y": 473,
           "customProperties": {
             "Description": "",
-            "Monitors": "current_room",
-            "Context": "Condition",
-            "Condition": "current_room.is_clean"
+            "CreationCondition": "assertion condition \"current_room.is_clean\"",
+            "Monitors": "current_room"
           }
         },
         {
@@ -181,79 +179,79 @@
   "dependencies": [],
   "links": [
     {
-      "id": "97a12691-d37d-44c6-88a1-18dcdb10ef3c",
+      "id": "ebc60cf8-4016-419f-8985-5f97ffc92d77",
       "type": "istar.AndRefinementLink",
       "source": "f942813f-cc19-456b-bed4-7e56c17f7bd4",
       "target": "64f076a2-d1e4-4ae1-a739-2f0406edf1a0"
     },
     {
-      "id": "3923c8ac-67ec-40c1-81d0-091459408003",
+      "id": "e174b863-1ef9-4ed1-aee6-115564310ba6",
       "type": "istar.AndRefinementLink",
       "source": "4ba74b3c-1ef2-4ac3-8b0b-2bc35cbdef98",
       "target": "64f076a2-d1e4-4ae1-a739-2f0406edf1a0"
     },
     {
-      "id": "29bb8456-b477-4478-a5c1-441693b8d9d6",
+      "id": "f42058e7-519a-42c0-8d15-66f29f5ff88c",
       "type": "istar.AndRefinementLink",
       "source": "cb523437-82ac-42f5-bd64-7fd8cac9ed9b",
       "target": "73773dc7-52fd-4a2b-94db-0814bc75b9ef"
     },
     {
-      "id": "b91408de-ce1a-4611-b3e9-5712085b55ee",
+      "id": "9cac10d6-2c51-4abb-bfd2-d54cfcd65eb7",
       "type": "istar.AndRefinementLink",
       "source": "b3c82c9a-9069-4c82-ab7c-aad4bf39599d",
       "target": "cb523437-82ac-42f5-bd64-7fd8cac9ed9b"
     },
     {
-      "id": "3d5f4aa5-54bf-49b8-ba91-525ac4b7d235",
+      "id": "01690e05-e8b5-42b0-a54d-1a0465b46d11",
       "type": "istar.AndRefinementLink",
       "source": "0b94f467-df7b-4706-84ee-542c9ffef5bf",
       "target": "73773dc7-52fd-4a2b-94db-0814bc75b9ef"
     },
     {
-      "id": "a8a13701-e5cd-4ca3-8abf-9d5223c6d46d",
+      "id": "b2bd6391-f481-4be5-b62f-2452eea0bea3",
       "type": "istar.AndRefinementLink",
       "source": "2a10298a-f717-4831-8d1d-c87647f416e1",
       "target": "0b94f467-df7b-4706-84ee-542c9ffef5bf"
     },
     {
-      "id": "1d32c0c9-db36-4a37-955f-e8dfe707916d",
+      "id": "2e5f0a0e-ced1-4bcb-b1ab-646b78bb3596",
       "type": "istar.AndRefinementLink",
       "source": "4be61642-c0fa-4321-a484-59b6eec5a289",
       "target": "0b94f467-df7b-4706-84ee-542c9ffef5bf"
     },
     {
-      "id": "ec905104-9e84-4f51-9076-26b5dd59e875",
+      "id": "424a0e39-d200-4cd8-aab5-d7ad48885fd3",
       "type": "istar.AndRefinementLink",
       "source": "9000a40a-d897-4441-9fff-5cc4c6512a0f",
       "target": "4be61642-c0fa-4321-a484-59b6eec5a289"
     },
     {
-      "id": "e700615d-9ba4-4c3a-b6b9-1e67db70435e",
+      "id": "6fa5d888-3ec8-4d08-b2df-849504385305",
       "type": "istar.AndRefinementLink",
       "source": "71ad3d44-eceb-4b40-bdea-d88f619f2c30",
       "target": "620832f2-63a9-4f6e-93f0-703f15571008"
     },
     {
-      "id": "a9ecf39c-3cd0-4204-a1f5-3fe63acb35a1",
+      "id": "932fa5a7-c41c-4453-9c24-8ccb4e951e33",
       "type": "istar.AndRefinementLink",
       "source": "9c0e9890-b557-4ed4-ba03-cd2e3bb5d078",
       "target": "64f076a2-d1e4-4ae1-a739-2f0406edf1a0"
     },
     {
-      "id": "16cd0006-8ef4-4ba1-a4e6-26bf7b9f1c6c",
+      "id": "c619836d-1d4e-41a4-b61e-d1b54f9e6ead",
       "type": "istar.AndRefinementLink",
       "source": "4aa6540b-6291-4ab3-8f66-ff0470a70e53",
       "target": "9c0e9890-b557-4ed4-ba03-cd2e3bb5d078"
     },
     {
-      "id": "986a9be1-f479-4c78-a252-61dbd411a4f2",
+      "id": "ed27b0f9-f121-4206-aa81-efd5aa973f96",
       "type": "istar.AndRefinementLink",
       "source": "73773dc7-52fd-4a2b-94db-0814bc75b9ef",
       "target": "4ba74b3c-1ef2-4ac3-8b0b-2bc35cbdef98"
     },
     {
-      "id": "df82ed25-a504-40f8-81b7-33a6fba0a247",
+      "id": "363b21fe-3fcb-483f-899e-273154f801e8",
       "type": "istar.AndRefinementLink",
       "source": "620832f2-63a9-4f6e-93f0-703f15571008",
       "target": "4ba74b3c-1ef2-4ac3-8b0b-2bc35cbdef98"
@@ -291,7 +289,7 @@
   },
   "tool": "pistar.2.0.0",
   "istar": "2.0",
-  "saveDate": "Tue, 26 Oct 2021 18:54:33 GMT",
+  "saveDate": "Sun, 03 Oct 2021 22:10:54 GMT",
   "diagram": {
     "width": 2142,
     "height": 1300,

@@ -14,6 +14,7 @@ public class MutRoSeProducer {
 
 	private static final Logger LOGGER = Logger.getLogger(MutRoSeProducer.class.getName());
 
+	@SuppressWarnings("unused")
 	public String execute(String model, String hddl, String configuration, String worldKnowledge) {
 		if (model == null || model.isEmpty()) {
 			throw new ResponseException("Invalid Model File");
@@ -28,27 +29,27 @@ public class MutRoSeProducer {
 			throw new ResponseException("Invalid World Knowledge File");
 		}
 
-		String dirOutputZIP = "src/main/webapp/mrs.zip";
 		try {
 			String dir = "mrs/";
+			String dirConfig = "mrs/config/";
 			String dirOutput = dir + "results/";
+			String dirOutputZIP = "src/main/webapp/mrs.zip";
 			JSONObject jsonObject = this.updatePathConfigurationFile(configuration, dirOutput);
-			//this.removeCustomPropDiagram(model);
 
 			// gerar arquivos
-			File modelFile = ManageWriter.generateFile(dir, "model.txt", model);
-			File configFile = ManageWriter.generateFile(dir, "configFile.json", jsonObject.toJSONString());
-			File worldKnowledgeFile = ManageWriter.generateFile(dir, "worldKnowledge.xml", worldKnowledge);
-			File hddlFile = ManageWriter.generateFile(dir, "configHddl.hddl", hddl);
+			File modelFile = ManageWriter.generateFile(dirConfig, "model.txt", model);
+			File configFile = ManageWriter.generateFile(dirConfig, "configFile.json", jsonObject.toJSONString());
+			File worldKnowledgeFile = ManageWriter.generateFile(dirConfig, "worldKnowledge.xml", worldKnowledge);
+			File hddlFile = ManageWriter.generateFile(dirConfig, "configHddl.hddl", hddl);
 
 			JSONObject outputConfig = (JSONObject) jsonObject.get("output");
 			String output = (String) outputConfig.get("file_path");
 
-//			ManageWriter.createFolder(dirOutput);
-			// ManageWriter.generateFile(output, "");
-			StringBuilder command = new StringBuilder().append("chmod +x ./").append(dir).append("MutroseMissionDecomposer").append(" ")
-					.append(dir).append("configHddl.hddl").append(" ").append(dir).append("model.txt").append(" ")
-					.append(dir).append("configFile.json").append(" ").append(dir).append("worldKnowledge.xml")
+			//ManageWriter.createFolder(dirOutput);
+			//ManageWriter.generateFile(output, "");
+			StringBuilder command = new StringBuilder().append("./").append(dir).append("MutroseMissionDecomposer").append(" ")
+					.append(dirConfig).append("configHddl.hddl").append(" ").append(dirConfig).append("model.txt").append(" ")
+					.append(dirConfig).append("configFile.json").append(" ").append(dirConfig).append("worldKnowledge.xml")
 					.append(" ").append("");
 
 			Runtime.getRuntime().exec(command.toString());
@@ -58,6 +59,8 @@ public class MutRoSeProducer {
 				throw new ResponseException("Fail to execute MutRoSe.");
 			}else {
 				ManageWriter.toCompact(output, dirOutputZIP);
+				ManageWriter.cleanFolder(output);
+				ManageWriter.cleanFolder(dirConfig);
 				return result;
 			}
 		} catch (Exception error) {
@@ -91,18 +94,6 @@ public class MutRoSeProducer {
 			}
 		} catch (ParseException e) {
 			throw new ResponseException(e);
-		}
-	}
-
-	private void removeCustomPropDiagram(String model) {
-		JSONObject jsonObject;
-		JSONParser parser = new JSONParser();
-		try {
-			jsonObject = (JSONObject) parser.parse(model);
-			JSONObject outputConfig = (JSONObject) jsonObject.get("diagram");
-			String output = (String) outputConfig.remove("customProperties");
-		} catch (ParseException e) {
-			e.printStackTrace();
 		}
 	}
 }

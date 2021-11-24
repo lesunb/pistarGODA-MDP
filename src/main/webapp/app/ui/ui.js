@@ -1509,9 +1509,24 @@ $('#modal-button-mutrose-save').click(function() {
 
 
 	var resultModel = (istar.fileManager.saveModel());
-	if (/*!fileInputModel.val()*/ !resultModel || !fileInputHddl.val() || !fileInputConfig.val() || !fileInputWorld.val()) {
-		ui.alert('You must select all a input file to load', 'No file(s) selected');
-		$('#modal-load-hddl').modal('hide');
+	if (/*!fileInputModel.val()*/ !resultModel) {
+		ui.alert('You must select all a input file to load', 'No Model file selected');
+		$('#modal-load-mutrose').modal('hide');
+		return;
+	}
+	if (!fileInputHddl.val() ) {
+		ui.alert('You must select all a input file to load', 'No HDDL file  selected');
+		$('#modal-load-mutrose').modal('hide');
+		return;
+	}
+	if (!fileInputConfig.val()) {
+		ui.alert('You must select all a input file to load', 'No Configuration file selected');
+		$('#modal-load-mutrose').modal('hide');
+		return;
+	}
+	if (!fileInputWorld.val()) {
+		ui.alert('You must select all a input file to load', 'No World Knowledge file selected');
+		$('#modal-load-mutrose').modal('hide');
 		return;
 	}
 
@@ -1530,9 +1545,10 @@ $('#modal-button-mutrose-save').click(function() {
 						contentType: "application/json; charset=utf-8",
 						dataType: "json",
 						success: function(urlZip) {
-							$('#modal-load-hddl').modal('hide');
+							$('#modal-load-mutrose').modal('hide');
 							fileInputHddl.val(null);
 							fileInputConfig.val(null);
+			
 							fileInputWorld.val(null);
 							window.open('mrs.zip', '_blank');
 							// JSON.parse(urlZip);
@@ -1557,7 +1573,7 @@ $('#modal-button-mutrose-save').click(function() {
 		fileInputHddl.val(null);
 		fileInputConfig.val(null);
 		fileInputWorld.val(null);
-		$('#modal-load-hddl').modal('hide');
+		$('#modal-load-mutrose').modal('hide');
 		ui.alert('Sorry, the input model is not valid.', 'Error loading file');
 	}
 });
@@ -2313,17 +2329,11 @@ function changeValueInputEditionNode() {
 		ui.setNameCell(inputNodeEdition.val());
 	}
 
+	var resultModel = (istar.fileManager.saveModel());
+	console.log({model: resultModel});
 	closeModalEditionNode();
 }
 
-function changeValueInputEditionNode() {
-	var inputNodeEdition = $('#MNE_nameNode');
-	if (inputNodeEdition.val() !== null) {
-		ui.setNameCell(inputNodeEdition.val());
-	}
-
-	closeModalEditionNode();
-}
 
 function setRootCell() {
 	var checked = $('#MNE_rootNode').prop("checked");
