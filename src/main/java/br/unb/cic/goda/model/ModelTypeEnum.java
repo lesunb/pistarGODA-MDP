@@ -4,7 +4,7 @@ public enum ModelTypeEnum {
 	DTMC(1, "DTMC"), 
 	MDP(2, "MDP"),
 	PARAM(3, "PARAM"),
-	EPMC(4, "EPMC");
+	EPMC(4, "MDP");
 
     private final Integer codigo;
     private final String tipo;
