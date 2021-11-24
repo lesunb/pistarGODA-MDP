@@ -296,16 +296,19 @@ public class PARAMProducer {
 
 	private String getNodeForm(Const decType, String rtAnnot, String nodeId, boolean reliability, RTContainer rootNode)
 			throws Exception {
-
+		StringBuilder formula = new StringBuilder();	
+		SymbolicParamGenerator symbolic = new SymbolicParamGenerator();	
+		String[] ids = getChildrenId(rootNode);	
+			
+		if (ids == null) {	
+			return nodeId;	
+		}	
+		
 		if (rtAnnot == null) {
 			return nodeId;
 		}
 
-		StringBuilder formula = new StringBuilder();
-		SymbolicParamGenerator symbolic = new SymbolicParamGenerator();
-
 		if (rtAnnot.contains(";")) { // Sequential
-			String[] ids = getChildrenId(rootNode);
 
 			if (reliability) {
 				// Reliability formula
@@ -325,7 +328,6 @@ public class PARAMProducer {
 
 			return formula.toString();
 		} else if (rtAnnot.contains("#")) { // Parallel
-			String[] ids = getChildrenId(rootNode);
 
 			if (reliability) {
 				// Reliability formula
@@ -345,14 +347,12 @@ public class PARAMProducer {
 
 			return formula.toString();
 		} else if (rtAnnot.contains("DM")) {
-			String[] ids = getChildrenId(rootNode);
 			if (reliability) {
 				formula = symbolic.getDMReliability(ids, this.ctxInformation);
 			} else {
 				formula = symbolic.getDMCost(ids, ctxInformation, this.isParam);
 			}
 		} else if (rtAnnot.contains("@")) {
-			String[] ids = getChildrenId(rootNode);
 			int retryNum = Integer.parseInt(rtAnnot.substring(rtAnnot.indexOf("@") + 1));
 
 			if (reliability) {
@@ -362,7 +362,6 @@ public class PARAMProducer {
 			}
 			return formula.toString();
 		} else if (rtAnnot.contains("try")) {
-			String[] ids = getChildrenId(rootNode);
 			
 			if(rtAnnot.contains("?skip:")) { //try(a)?b:skip
 				ids = new String[] {ids[0], "skip", ids[1]};

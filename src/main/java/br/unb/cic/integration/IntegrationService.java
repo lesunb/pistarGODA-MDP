@@ -30,7 +30,8 @@ import br.unb.cic.goda.model.Plan;
 import br.unb.cic.goda.model.PlanImpl;
 import br.unb.cic.goda.rtgoretoprism.action.PRISMCodeGenerationAction;
 import br.unb.cic.goda.rtgoretoprism.action.RunParamAction;
-import br.unb.cic.goda.rtgoretoprism.generator.analiser.SintaticAnaliser;
+import br.unb.cic.goda.rtgoretoprism.generator.analiser.SintaticAnaliserGODA;
+import br.unb.cic.goda.rtgoretoprism.generator.analiser.SintaticAnaliserMutRoSe;
 import br.unb.cic.goda.rtgoretoprism.generator.goda.writer.ManageWriter;
 import br.unb.cic.goda.rtgoretoprism.generator.mutrose.MutRoSeProducer;
 import br.unb.cic.modelling.Properties;
@@ -44,6 +45,8 @@ import br.unb.cic.pistar.model.PistarNode;
 
 @Service
 public class IntegrationService {
+	
+	private  SintaticAnaliserMutRoSe sintaticAnaliserMutRoSe = new SintaticAnaliserMutRoSe();
 
 	public String generateBinMultRoSe(MutRoSe content) {
 		MutRoSeProducer mrs = new MutRoSeProducer();
@@ -53,7 +56,7 @@ public class IntegrationService {
 	public List<String> loadTerminal() {
 		List<String> erros = new ArrayList<String>();
 
-		erros.add(SintaticAnaliser.recoverLogsError());
+		erros.add(sintaticAnaliserMutRoSe.recoverLogsError());
 
 		return erros;
 	}
@@ -285,7 +288,7 @@ public class IntegrationService {
 			// Verifica a Sintaxe para cada nó
 			// Settando o novo texto apenas para remover espaços em branco indesejados no
 			// nome do nó
-			node.setText(SintaticAnaliser.verifySintaxModel(node.getText(), typeModel));
+			node.setText(SintaticAnaliserGODA.verifySintaxModel(node.getText(), typeModel));
 		}
 
 	}

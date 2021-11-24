@@ -29,13 +29,12 @@ public class MutRoSeProducer {
 			throw new ResponseException("Invalid World Knowledge File");
 		}
 
-		String dirOutputZIP = "src/main/webapp/mrs.zip";
 		try {
 			String dir = "mrs/";
 			String dirConfig = "mrs/config/";
 			String dirOutput = dir + "results/";
+			String dirOutputZIP = "src/main/webapp/mrs.zip";
 			JSONObject jsonObject = this.updatePathConfigurationFile(configuration, dirOutput);
-			//this.removeCustomPropDiagram(model);
 
 			// gerar arquivos
 			File modelFile = ManageWriter.generateFile(dirConfig, "model.txt", model);
@@ -95,19 +94,6 @@ public class MutRoSeProducer {
 			}
 		} catch (ParseException e) {
 			throw new ResponseException(e);
-		}
-	}
-
-	@SuppressWarnings("unused")
-	private void removeCustomPropDiagram(String model) {
-		JSONObject jsonObject;
-		JSONParser parser = new JSONParser();
-		try {
-			jsonObject = (JSONObject) parser.parse(model);
-			JSONObject outputConfig = (JSONObject) jsonObject.get("diagram");
-			String output = (String) outputConfig.remove("customProperties");
-		} catch (ParseException e) {
-			e.printStackTrace();
 		}
 	}
 }
