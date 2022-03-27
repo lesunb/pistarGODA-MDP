@@ -7,8 +7,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class PlanImpl implements Plan, Serializable {
-	private static final long serialVersionUID = 1L;
-	private String tA__sub_mode;
+
+    private String tA__sub_mode;
     private Integer tA__root_ngroups;
     private Integer tA__sub_block_index;
     private String tA__sub_par_set_index;
@@ -17,7 +17,6 @@ public class PlanImpl implements Plan, Serializable {
     private Goal isFulfilled = null;
     private String mode;
     private String attribute;
-    private String selectRetry;
     private String creationProperty;
     private String invariantProperty;
     private String fulfillmentProperty;
@@ -25,10 +24,6 @@ public class PlanImpl implements Plan, Serializable {
     private List<Plan> endPlans = new ArrayList<>();
     private boolean isAndDecomposition = false;
     private boolean isOrDecomposition = false;
-    private boolean isAndParalelDecomposition = false;
-    private boolean isOrParalelDecomposition = false;
-    private boolean isTryDecomposition = false;
-    private boolean isRetryDecomposition = false;
 
     public PlanImpl(PistarNode pistarPlan) {
         this.name = pistarPlan.getText();
@@ -37,10 +32,6 @@ public class PlanImpl implements Plan, Serializable {
                 switch (key) {
                     case "attribute":
                         attribute = value;
-                        break;
-                    case "selectRetry":
-                    	setSelectRetry(value);
-                        isRetryDecomposition = true;
                         break;
                     case "creationProperty":
                         creationProperty = value;
@@ -85,6 +76,26 @@ public class PlanImpl implements Plan, Serializable {
     @Override
     public List<Plan> getEndPlans() {
         return endPlans;
+    }
+
+    @Override
+    public boolean isAndDecomposition() {
+        return isAndDecomposition;
+    }
+
+    @Override
+    public boolean isOrDecomposition() {
+        return isOrDecomposition;
+    }
+
+    @Override
+    public void setAndDecomposition(boolean andDecomposition) {
+        isAndDecomposition = andDecomposition;
+    }
+
+    @Override
+    public void setOrDecomposition(boolean orDecomposition) {
+        isOrDecomposition = orDecomposition;
     }
 
     public String getNamePrefix() {
@@ -209,73 +220,4 @@ public class PlanImpl implements Plan, Serializable {
     public void setFulfillmentProperty(String fulfillmentProperty) {
         this.fulfillmentProperty = fulfillmentProperty;
     }
-
-
-	@Override
-	public boolean isAndDecomposition() {
-		return this.isAndDecomposition;
-	}
-
-	@Override
-	public boolean isOrDecomposition() {
-		return this.isOrDecomposition;
-	}
-
-	@Override
-	public boolean isAndParalelDecomposition() {
-		return this.isAndParalelDecomposition;
-	}
-
-	@Override
-	public boolean isOrParalelDecomposition() {
-		return this.isOrParalelDecomposition;
-	}
-
-	@Override
-	public boolean isTryDecomposition() {
-		return this.isTryDecomposition;
-	}
-
-	@Override
-	public boolean isRetryDecomposition() {
-		return this.isRetryDecomposition;
-	}
-
-	@Override
-	public void setAndDecomposition(boolean andDecomposition) {
-		this.isAndDecomposition = andDecomposition;
-	}
-
-	@Override
-	public void setOrDecomposition(boolean orDecomposition) {
-		this.isOrDecomposition = orDecomposition;
-	}
-
-	@Override
-	public void setAndParalelDecomposition(boolean andPDecomposition) {
-		this.isAndParalelDecomposition = andPDecomposition;
-	}
-
-	@Override
-	public void setOrParalelDecomposition(boolean orPDecomposition) {
-		this.isOrParalelDecomposition = orPDecomposition;
-	}
-
-	@Override
-	public void setTryDecomposition(boolean tryDecomposition) {
-		this.isTryDecomposition = tryDecomposition;
-	}
-
-	@Override
-	public void setRetryDecomposition(boolean retryDecomposition) {
-		this.isRetryDecomposition = retryDecomposition;
-	}
-
-	public String getSelectRetry() {
-		return selectRetry;
-	}
-
-	public void setSelectRetry(String selectRetry) {
-		this.selectRetry = selectRetry;
-	}
 }

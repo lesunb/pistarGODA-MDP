@@ -38,6 +38,7 @@ package br.unb.cic.goda.rtgoretoprism.generator;
  */
 public class CodeGenerationException extends Exception {
 	/**
+	 * 
 	 */
 	private static final long serialVersionUID = 1988959113899019142L;
 

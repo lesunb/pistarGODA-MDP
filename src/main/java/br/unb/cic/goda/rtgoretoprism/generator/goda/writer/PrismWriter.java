@@ -1,29 +1,26 @@
 package br.unb.cic.goda.rtgoretoprism.generator.goda.writer;
 
-import java.io.File;
-import java.io.IOException;
-import java.io.PrintWriter;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
-import java.util.TreeMap;
-
-import org.antlr.v4.runtime.misc.ParseCancellationException;
-
-import br.unb.cic.goda.model.ModelTypeEnum;
 import br.unb.cic.goda.model.Plan;
 import br.unb.cic.goda.rtgoretoprism.generator.CodeGenerationException;
 import br.unb.cic.goda.rtgoretoprism.generator.goda.parser.CtxParser;
 import br.unb.cic.goda.rtgoretoprism.generator.kl.AgentDefinition;
+import br.unb.cic.goda.rtgoretoprism.model.ctx.ContextCondition;
+import br.unb.cic.goda.rtgoretoprism.model.ctx.CtxSymbols;
 import br.unb.cic.goda.rtgoretoprism.model.kl.Const;
 import br.unb.cic.goda.rtgoretoprism.model.kl.GoalContainer;
 import br.unb.cic.goda.rtgoretoprism.model.kl.PlanContainer;
 import br.unb.cic.goda.rtgoretoprism.model.kl.RTContainer;
-import br.unb.cic.goda.rtgoretoprism.paramformula.GenerateCombination;
 import br.unb.cic.goda.rtgoretoprism.util.PathLocation;
+import br.unb.cic.goda.rtgoretoprism.generator.goda.writer.ManageWriter;
+import br.unb.cic.goda.rtgoretoprism.paramformula.GenerateCombination;
+
+import java.io.File;
+import java.io.IOException;
+import java.io.PrintWriter;
+import java.util.*;
+import java.util.Map.Entry;
+
+import org.antlr.v4.runtime.misc.ParseCancellationException;
 
 public class PrismWriter {
 	/** the set of placeholder founded into template files that are 
@@ -125,20 +122,20 @@ public class PrismWriter {
 	 * @throws CodeGenerationException 
 	 * @throws IOException 
 	 */
-	public void writeModel(String typeModel) throws CodeGenerationException, IOException {
+	public void writeModel() throws CodeGenerationException, IOException {
 		
 		String utilPkgName = basicAgentPackage + PathLocation.UTIL_KL_PKG;
 		String prismInputFolder = inputPRISMFolder;
 		String planOutputFolder = basicOutputFolder + "plans" + "/";
 		String planPkgName = basicAgentPackage + ".plans";
-		header = ManageWriter.readFileAsString( prismInputFolder + typeModel.toUpperCase() + "_modelheader.nm" );
+		header = ManageWriter.readFileAsString( prismInputFolder + "modelheader.nm" );
 		body = ManageWriter.readFileAsString( prismInputFolder + "modelbody.nm" );
 		reward = ManageWriter.readFileAsString( prismInputFolder + "modelreward.nm" );
 		/*evalBash = ManageWriter.readFileAsString( prismInputFolder + "eval_formula.sh" );*/
 		writeAnOutputDir(basicOutputFolder);
 		PrintWriter modelFile = ManageWriter.createFile(ad.getAgentName() + ".nm", basicOutputFolder);
 		/*PrintWriter evalBashFile = ManageWriter.createFile("eval_formula.sh", basicOutputFolder);*/
-		writePrismModel(prismInputFolder, ad.rootlist, planOutputFolder, basicAgentPackage, utilPkgName, planPkgName, typeModel);
+		writePrismModel(prismInputFolder, ad.rootlist, planOutputFolder, basicAgentPackage, utilPkgName, planPkgName);
 		printModel(modelFile);
 		/*printEvalBash(evalBashFile);*/
 	}
@@ -157,9 +154,9 @@ public class PrismWriter {
 	 * 
 	 * @throws CodeGenerationException 
 	 * @throws IOException 
-	 */	
+	 */
 	private void writePrismModel( String input, LinkedList<GoalContainer> rootGoals, 
-			String planOutputFolder, String pkgName, String utilPkgName, String planPkgName, String typeModel ) throws CodeGenerationException, IOException {
+			String planOutputFolder, String pkgName, String utilPkgName, String planPkgName ) throws CodeGenerationException, IOException {
 
 		leafGoalPattern 				= ManageWriter.readFileAsString(input + "pattern_leafgoal.nm");
 		andDecPattern 					= ManageWriter.readFileAsString(input + "pattern_and.nm");
@@ -185,8 +182,7 @@ public class PrismWriter {
 			writeElement(
 					root, 
 					leafGoalPattern,							
-					null,
-					typeModel);
+					null);
 			planModules = planModules.append("label \"success\" = " + root.getClearElId() + ";");
 		}
 	}
@@ -201,10 +197,9 @@ public class PrismWriter {
 	private String[] writeElement(
 			RTContainer root, 
 			String pattern, 							 
-			String prevFormula, 
-			String typeModel) throws IOException {
+			String prevFormula) throws IOException {
 		
-		if (root.isDecisionMaking() && isMDP(typeModel)) {
+		if (root.isDecisionMaking()) {
 			writeNondeterministicModule(root);
 		}
 		
@@ -232,7 +227,7 @@ public class PrismWriter {
 					currentFormula = prevGoalFormula;
 				else
 					currentFormula = prevFormula;
-				writeElement(gc, pattern, currentFormula, typeModel);												
+				writeElement(gc, pattern, currentFormula);												
 				if(gc.isIncluded())
 					prevGoalFormula = gc.getClearElId();
 				if(prevGoalFormula != null)
@@ -249,7 +244,7 @@ public class PrismWriter {
 			String prevTaskFormula = prevFormula;
 			
 			for(PlanContainer pc : root.getDecompPlans()){
-				String childFormula = writeElement(pc, pattern, prevTaskFormula, typeModel)[1];
+				String childFormula = writeElement(pc, pattern, prevTaskFormula)[1];
 				if(!childFormula.isEmpty())
 					taskFormula.append("(" + childFormula + ")" + operator);
 			}
@@ -813,10 +808,5 @@ public class PrismWriter {
 			variables.append("\nconst double " + var + ";");
 		}
 		return variables.toString();
-	}
-	
-	private boolean isMDP(String typeModel) {
-		ModelTypeEnum enumn = ModelTypeEnum.valueOf(typeModel);
-		return enumn.equals(ModelTypeEnum.MDP);
 	}
 }

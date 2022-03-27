@@ -36,7 +36,6 @@ public class PARAMProducer {
 	private AgentDefinition ad;
 	private boolean isParam;
 
-	private String typeModel;
 	private String agentName;
 	private List<String> leavesId = new ArrayList<String>();
 	private Map<String, String> ctxInformation = new HashMap<String, String>();
@@ -55,7 +54,7 @@ public class PARAMProducer {
 	}
 	
 	public PARAMProducer(Set<Actor> allActors, Set<Goal> allGoals, boolean isParam, String in, String out,
-			String tools, String typeModel) {
+			String tools) {
 
 		this.sourceFolder = in;
 		this.targetFolder = out;
@@ -63,11 +62,10 @@ public class PARAMProducer {
 		this.allActors = allActors;
 		this.allGoals = allGoals;
 		this.isParam = isParam;
-		this.typeModel = typeModel;
 	}
 
 	public PARAMProducer(AgentDefinition ad, Set<Actor> selectedActors, Set<Goal> selectedGoals, String sourceFolder,
-			String targetFolder, String toolsFolder, String typeModel) {
+			String targetFolder, String toolsFolder) {
 		this.sourceFolder = sourceFolder;
 		this.targetFolder = targetFolder;
 		this.toolsFolder = toolsFolder;
@@ -75,7 +73,6 @@ public class PARAMProducer {
 		this.allGoals = selectedGoals;
 		this.ad = ad;
 		this.agentName = "EvaluationActor";
-		this.typeModel = typeModel;
 	}
 
 	public void run() throws Exception {
@@ -99,7 +96,7 @@ public class PARAMProducer {
 	public Formulas generateFormulas(Actor actor) throws Exception {
 		
 		if (this.ad == null) {
-			RTGoreProducer producer = new RTGoreProducer(allActors, allGoals, sourceFolder, targetFolder, this.typeModel);
+			RTGoreProducer producer = new RTGoreProducer(allActors, allGoals, sourceFolder, targetFolder);
 			AgentDefinition ad = producer.run();
 
 			this.ad = ad;
@@ -261,7 +258,6 @@ public class PARAMProducer {
 
 			if (reliability) {
 				// Create DTMC model (param)
-				//Comentando esse trecho baseado no codigo da branch master do Gabriel Rodrigues
 				ParamWriter writer = new ParamWriter(sourceFolder, nodeId);
 				String model = writer.writeModel();
 
@@ -296,19 +292,17 @@ public class PARAMProducer {
 
 	private String getNodeForm(Const decType, String rtAnnot, String nodeId, boolean reliability, RTContainer rootNode)
 			throws Exception {
-		StringBuilder formula = new StringBuilder();	
-		SymbolicParamGenerator symbolic = new SymbolicParamGenerator();	
-		String[] ids = getChildrenId(rootNode);	
-			
-		if (ids == null) {	
-			return nodeId;	
-		}	
-		
-		if (rtAnnot == null) {
+		String[] ids = getChildrenId(rootNode);
+
+		if (ids == null) {
 			return nodeId;
 		}
 
-		if (rtAnnot.contains(";")) { // Sequential
+		StringBuilder formula = new StringBuilder();
+		SymbolicParamGenerator symbolic = new SymbolicParamGenerator();
+
+		if (rtAnnot == null || rtAnnot.contains(";")) { // Sequential
+
 			if (reliability) {
 				// Reliability formula
 				if (decType.equals(Const.AND) || decType.equals(Const.ME)) { // Sequential AND
@@ -326,7 +320,8 @@ public class PARAMProducer {
 			}
 
 			return formula.toString();
-		} else if (rtAnnot.contains("#")) { // Parallel
+		} else if (rtAnnot == null || rtAnnot.contains("#")) { // Parallel
+
 			if (reliability) {
 				// Reliability formula
 				if (decType.equals(Const.AND) || decType.equals(Const.ME)) { // Parallel AND
@@ -344,13 +339,13 @@ public class PARAMProducer {
 			}
 
 			return formula.toString();
-		} else if (rtAnnot.contains("DM")) {
+		} else if (rtAnnot == null || rtAnnot.contains("DM")) {
 			if (reliability) {
 				formula = symbolic.getDMReliability(ids, this.ctxInformation);
 			} else {
 				formula = symbolic.getDMCost(ids, ctxInformation, this.isParam);
 			}
-		} else if (rtAnnot.contains("@")) {
+		} else if (rtAnnot == null || rtAnnot.contains("@")) {
 			int retryNum = Integer.parseInt(rtAnnot.substring(rtAnnot.indexOf("@") + 1));
 
 			if (reliability) {
@@ -359,7 +354,8 @@ public class PARAMProducer {
 				formula = symbolic.getRetryCost(ids, nodeId, this.ctxInformation, this.isParam, retryNum);
 			}
 			return formula.toString();
-		} else if (rtAnnot.contains("try")) {
+		} else if (rtAnnot == null || rtAnnot.contains("try")) {
+			
 			if(rtAnnot.contains("?skip:")) { //try(a)?b:skip
 				ids = new String[] {ids[0], "skip", ids[1]};
 			}else if(rtAnnot.contains(":skip")) {//try(a)?skip:b

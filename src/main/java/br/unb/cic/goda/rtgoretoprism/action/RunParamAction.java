@@ -13,64 +13,29 @@ public class RunParamAction {
     private Set<Actor> selectedActors;
     private Set<Goal> selectedGoals;
     private boolean isParam;
-    private String typeModel;
 
-    public RunParamAction() {
-    }
-
-    public RunParamAction(boolean isParam) {
-        this.isParam = isParam;
-    }
-    
-    public RunParamAction(Set<Actor> selectedActors, Set<Goal> selectedGoals, boolean isParam, String typeModel) {
+    public RunParamAction(Set<Actor> selectedActors, Set<Goal> selectedGoals, boolean isParam) {
         this.selectedActors = selectedActors;
         this.selectedGoals = selectedGoals;
         this.isParam = isParam;
-        this.typeModel = typeModel;
     }
 
     public void run() throws Exception {
         if (selectedActors.isEmpty())
             return;
         String sourceFolder = "src/main/resources/TemplateInput";
-        String targetFolder = typeModel.toLowerCase();
+        String targetFolder = "dtmc";
         String toolsFolder = "tools";
-        PARAMProducer producer = new PARAMProducer(selectedActors, selectedGoals, isParam, sourceFolder, targetFolder, toolsFolder, this.typeModel);
+        PARAMProducer producer = new PARAMProducer(selectedActors, selectedGoals, isParam, sourceFolder, targetFolder, toolsFolder);
         try {
             producer.run();
-        } catch (CodeGenerationException | IOException ex) {
-			ex.printStackTrace();
-//			throw new RuntimeException(ex.getMessage());
-        } catch (Exception ex) {
-			ex.printStackTrace();
+        } catch (CodeGenerationException | IOException e) {
+            e.printStackTrace();
+        } catch (Exception e) {
 			// TODO Auto-generated catch block
-//			throw new RuntimeException(ex.getMessage());
+			e.printStackTrace();
+			throw e;
 		}
     }
-
-	public Set<Actor> getSelectedActors() {
-		return selectedActors;
-	}
-
-	public void setSelectedActors(Set<Actor> selectedActors) {
-		this.selectedActors = selectedActors;
-	}
-
-	public Set<Goal> getSelectedGoals() {
-		return selectedGoals;
-	}
-
-	public void setSelectedGoals(Set<Goal> selectedGoals) {
-		this.selectedGoals = selectedGoals;
-	}
-
-	public boolean isParam() {
-		return isParam;
-	}
-
-	public void setParam(boolean isParam) {
-		this.isParam = isParam;
-	}
-
 
 }

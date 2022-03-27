@@ -3,8 +3,8 @@ package br.unb.cic.pistar.model;
 public abstract class BasicEntity extends BaseEntity {
 
     private String text;
-    private Double x;
-    private Double y;
+    private Integer x;
+    private Integer y;
 
     public String getText() {
         return text;
@@ -14,19 +14,19 @@ public abstract class BasicEntity extends BaseEntity {
         this.text = text;
     }
 
-    public Double getX() {
+    public Integer getX() {
         return x;
     }
 
-    public void setX(Double x) {
+    public void setX(Integer x) {
         this.x = x;
     }
 
-    public Double getY() {
+    public Integer getY() {
         return y;
     }
 
-    public void setY(Double y) {
+    public void setY(Integer y) {
         this.y = y;
     }
 }
