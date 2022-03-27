@@ -1,5 +1,16 @@
 package br.unb.cic.goda.rtgoretoprism.generator.goda.producer;
 
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.Date;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.TreeMap;
+
 import br.unb.cic.goda.model.Actor;
 import br.unb.cic.goda.model.GeneralEntity;
 import br.unb.cic.goda.model.Goal;
@@ -15,9 +26,6 @@ import br.unb.cic.goda.rtgoretoprism.model.kl.PlanContainer;
 import br.unb.cic.goda.rtgoretoprism.model.kl.RTContainer;
 import br.unb.cic.goda.rtgoretoprism.util.FileUtility;
 import br.unb.cic.goda.rtgoretoprism.util.kl.TroposNavigator;
-
-import java.io.IOException;
-import java.util.*;
 
 public class RTGoreProducer {
 
@@ -35,9 +43,9 @@ public class RTGoreProducer {
 	private Map<String, Object[]> rtRetryGoals;
 	private Map<String, String[]> rtTryGoals;
 	private Map<String, Boolean[]> rtSortedGoals;
-	
+	private String typeModel;
 
-	public RTGoreProducer(Set<Actor> allActors, Set<Goal> allGoals, String in, String out) {
+	public RTGoreProducer(Set<Actor> allActors, Set<Goal> allGoals, String in, String out, String typeModel) {
 
 		tn = new TroposNavigator();
 
@@ -51,6 +59,7 @@ public class RTGoreProducer {
 		this.rtRetryGoals = new TreeMap<>();
 		this.rtSortedGoals = new TreeMap<>();
         this.rtTryGoals = new TreeMap<>();
+        this.typeModel = typeModel;
 	}
 
 	/**
@@ -69,7 +78,7 @@ public class RTGoreProducer {
 		AgentDefinition ad = null;
 
 		for( Actor a : allActors ) {
-			System.out.println( "Generating MDP model for: " + a.getName() );
+			System.out.println( "Generating " + this.typeModel + " model for: " + a.getName() );
 
 			//generate the AgentDefinition object for the current actor
 			ad = new AgentDefinition( a );
@@ -81,6 +90,7 @@ public class RTGoreProducer {
 				
 				//create the goalcontainer for this one
 				GoalContainer gc = ad.createGoal(rootgoal, type);
+				String name = gc.getName();
 				gc.setRequest(request);
 
 				//add to the root goal list
@@ -90,12 +100,12 @@ public class RTGoreProducer {
 			List<Plan> planList = a.getPlanList();
 
 			PrismWriter writer = new PrismWriter(ad, planList, inputFolder, outputFolder, false);
-			writer.writeModel();
+			writer.writeModel(typeModel);
 
 			//Generate pctl formulas
 			generatePctlFormulas(ad);
 		}
-		System.out.println( "MDP model created in " + (new Date().getTime() - startTime) + "ms.");
+		System.out.println( typeModel + " model created in " + (new Date().getTime() - startTime) + "ms.");
 		return ad;
 	}
 
@@ -118,6 +128,7 @@ public class RTGoreProducer {
 		gc.setIncluded(included);
 		
 		String rtRegex = gc.getRtRegex();
+		String name = gc.getName();
 		boolean dmRT = false;
 		dmRT = storeRegexResults(gc.getUid(), rtRegex, gc.getDecomposition());
 
@@ -125,9 +136,18 @@ public class RTGoreProducer {
 		sortIntentionalElements(declist);
 		if (g.isAndDecomposition())
 			gc.createDecomposition(Const.AND);			
-		else if (g.isOrDecomposition())
-			gc.createDecomposition(Const.OR);	
-
+		if (g.isOrDecomposition())
+			gc.createDecomposition(Const.OR);			
+		if (g.isOrParalelDecomposition())
+			gc.createDecomposition(Const.OR_P);			
+		if (g.isAndParalelDecomposition())
+			gc.createDecomposition(Const.AND_P);			
+		if (g.isTryDecomposition())
+			gc.createDecomposition(Const.TRY);			
+		if (g.isRetryDecomposition())
+			gc.createDecomposition(Const.RTRY);	
+		
+//		verifyModel(rtRegex, this);
 		if (dmRT) gc.setDecisionMaking(this.rtDMGoals);
 
         iterateGoals(ad, gc, declist, included);
@@ -212,10 +232,18 @@ public class RTGoreProducer {
 
 		List<Plan> decList = p.getEndPlans();
         sortIntentionalElements(decList);
-        if (p.isAndDecomposition())
-        	pc.createDecomposition(Const.AND);
-        else
-        	pc.createDecomposition(Const.OR);
+		if (p.isAndDecomposition())
+			pc.createDecomposition(Const.AND);			
+		if (p.isOrDecomposition())
+			pc.createDecomposition(Const.OR);			
+		if (p.isOrParalelDecomposition())
+			pc.createDecomposition(Const.OR_P);			
+		if (p.isAndParalelDecomposition())
+			pc.createDecomposition(Const.AND_P);			
+		if (p.isTryDecomposition())
+			pc.createDecomposition(Const.TRY);			
+		if (p.isRetryDecomposition())
+			pc.createDecomposition(Const.RTRY);
 		
 		boolean dmRT = false;
 		if (!decList.isEmpty()){
@@ -227,6 +255,7 @@ public class RTGoreProducer {
 			storeCostResults(pc);
 		}
 
+//		verifyModel(pc.getRtRegex(), this);
 		if (dmRT) pc.setDecisionMaking(this.rtDMGoals);
 
         iteratePlans(ad, pc, decList);
@@ -421,7 +450,7 @@ public class RTGoreProducer {
 	@SuppressWarnings("unchecked")
 	private boolean storeRegexResults(String uid, String rtRegex, Const decType) throws IOException {
 		if(rtRegex != null){
-			Object [] res = RTParser.parseRegex(uid, rtRegex + '\n', decType, false);
+ 			Object [] res = RTParser.parseRegex(uid, rtRegex + '\n', decType, false);
 			rtDMGoals.addAll((List<String>) res [2]);
 			rtRetryGoals.putAll((Map<String, Object[]>) res[3]);
 			rtTryGoals.putAll((Map<String, String[]>) res[4]);
@@ -463,5 +492,53 @@ public class RTGoreProducer {
 	int extractInt(String s) {
 		String num = s.replaceAll("\\D", "");
 		return num.isEmpty() ? 0 : Integer.parseInt(num);
+	}
+
+	public List<String> getSuccessTry() {
+		return successTry;
+	}
+
+	public void setSuccessTry(List<String> successTry) {
+		this.successTry = successTry;
+	}
+
+	public List<String> getRtDMGoals() {
+		return rtDMGoals;
+	}
+
+	public void setRtDMGoals(List<String> rtDMGoals) {
+		this.rtDMGoals = rtDMGoals;
+	}
+
+	public Map<String, Object[]> getRtRetryGoals() {
+		return rtRetryGoals;
+	}
+
+	public void setRtRetryGoals(Map<String, Object[]> rtRetryGoals) {
+		this.rtRetryGoals = rtRetryGoals;
+	}
+
+	public Map<String, String[]> getRtTryGoals() {
+		return rtTryGoals;
+	}
+
+	public void setRtTryGoals(Map<String, String[]> rtTryGoals) {
+		this.rtTryGoals = rtTryGoals;
+	}
+
+	public Map<String, Boolean[]> getRtSortedGoals() {
+		return rtSortedGoals;
+	}
+
+	public void setRtSortedGoals(Map<String, Boolean[]> rtSortedGoals) {
+		this.rtSortedGoals = rtSortedGoals;
+	}
+
+	public String getTypeModel() {
+		return typeModel;
+	}
+
+	public void setTypeModel(String typeModel) {
+		this.typeModel = typeModel;
 	}
 }

@@ -1,0 +1,319 @@
+{
+  "actors": [
+    {
+      "id": "6282610c-48f8-4ed5-a78e-4b0d06aa78ca",
+      "text": "M1: Room Preparation",
+      "type": "istar.Actor",
+      "x": 175,
+      "y": 80,
+      "customProperties": {
+        "Description": ""
+      },
+      "nodes": [
+        {
+          "id": "64f076a2-d1e4-4ae1-a739-2f0406edf1a0",
+          "text": "G1: Rooms Are Prepared For New Patients [G2;G3;G11]",
+          "type": "istar.Goal",
+          "x": 543,
+          "y": 103,
+          "customProperties": {
+            "Description": ""
+          }
+        },
+        {
+          "id": "f942813f-cc19-456b-bed4-7e56c17f7bd4",
+          "text": "G2: Rooms To Be Prepared Are Fetched",
+          "type": "istar.Goal",
+          "x": 175,
+          "y": 222,
+          "customProperties": {
+            "Description": "",
+            "GoalType": "Query",
+            "Controls": "rooms : Sequence(Room)",
+            "QueriedProperty": "location_db->select(r:Room|!r.is_prepared)"
+          }
+        },
+        {
+          "id": "9000a40a-d897-4441-9fff-5cc4c6512a0f",
+          "text": "AT2: RobotSanitization",
+          "type": "istar.Task",
+          "x": 551,
+          "y": 821,
+          "customProperties": {
+            "Description": "",
+            "Location": "sanitization_room"
+          }
+        },
+        {
+          "id": "4ba74b3c-1ef2-4ac3-8b0b-2bc35cbdef98",
+          "text": "G3: Rooms Are Prepared",
+          "type": "istar.Goal",
+          "x": 534,
+          "y": 256,
+          "customProperties": {
+            "Description": "",
+            "GoalType": "Achieve",
+            "AchieveCondition": "rooms->forAll(current_room | current_room.is_prepared)",
+            "Monitors": "rooms : Sequence(Room)",
+            "Controls": "current_room : Room"
+          }
+        },
+        {
+          "id": "bd666ee4-dd65-4809-8df9-1232d85c304c",
+          "text": "G4: Current Room Is Prepared [G5#G10]",
+          "type": "istar.Goal",
+          "x": 523,
+          "y": 357,
+          "customProperties": {
+            "Description": "",
+            "Monitors": "current_room",
+            "CreationCondition": "assertion trigger \"E2\""
+          }
+        },
+        {
+          "id": "73773dc7-52fd-4a2b-94db-0814bc75b9ef",
+          "text": "G5: Cleaning Process Is Performed [G6;G7]",
+          "type": "istar.Goal",
+          "x": 418,
+          "y": 447,
+          "customProperties": {
+            "Description": "",
+            "CreationCondition": "assertion trigger \"E1\"",
+            "Group": "False"
+          }
+        },
+        {
+          "id": "620832f2-63a9-4f6e-93f0-703f15571008",
+          "text": "G10: Furniture Is Rearranged",
+          "type": "istar.Goal",
+          "x": 644,
+          "y": 473,
+          "customProperties": {
+            "Description": "",
+            "CreationCondition": "assertion condition \"current_room.is_clean\"",
+            "Monitors": "current_room"
+          }
+        },
+        {
+          "id": "b3c82c9a-9069-4c82-ab7c-aad4bf39599d",
+          "text": "AT1: RoomCleaning",
+          "type": "istar.Task",
+          "x": 251,
+          "y": 753,
+          "customProperties": {
+            "Description": "",
+            "Location": "current_room"
+          }
+        },
+        {
+          "id": "cb523437-82ac-42f5-bd64-7fd8cac9ed9b",
+          "text": "G6: Room Is Cleaned",
+          "type": "istar.Goal",
+          "x": 295,
+          "y": 633,
+          "customProperties": {
+            "Description": "",
+            "Monitors": "current_room"
+          }
+        },
+        {
+          "id": "0b94f467-df7b-4706-84ee-542c9ffef5bf",
+          "text": "G7: Robot Sanitization Process Is Performed [G8;G9]",
+          "type": "istar.Goal",
+          "x": 492,
+          "y": 603,
+          "customProperties": {
+            "Description": "",
+            "Monitors": "current_room"
+          }
+        },
+        {
+          "id": "2a10298a-f717-4831-8d1d-c87647f416e1",
+          "text": "G8: Fetch Sanitization Room",
+          "type": "istar.Goal",
+          "x": 434,
+          "y": 722,
+          "customProperties": {
+            "Description": "",
+            "GoalType": "Query",
+            "Controls": "sanitization_room : Room",
+            "QueriedProperty": "location_db->select(r:Room|r.name = \"SanitizationRoom\")"
+          }
+        },
+        {
+          "id": "4be61642-c0fa-4321-a484-59b6eec5a289",
+          "text": "G9: Robot Is Sanitized",
+          "type": "istar.Goal",
+          "x": 572,
+          "y": 725,
+          "customProperties": {
+            "Description": "",
+            "Monitors": "sanitization_room"
+          }
+        },
+        {
+          "id": "71ad3d44-eceb-4b40-bdea-d88f619f2c30",
+          "text": "AT3: FurnitureMoving",
+          "type": "istar.Task",
+          "x": 652,
+          "y": 550,
+          "customProperties": {
+            "Description": "",
+            "Location": "current_room",
+            "RobotNumber": "[2,4]"
+          }
+        },
+        {
+          "id": "9c0e9890-b557-4ed4-ba03-cd2e3bb5d078",
+          "text": "G11: Assert Cleaning",
+          "type": "istar.Goal",
+          "x": 1162,
+          "y": 232,
+          "customProperties": {
+            "Description": ""
+          }
+        },
+        {
+          "id": "4aa6540b-6291-4ab3-8f66-ff0470a70e53",
+          "text": "AT4: CheckCleanRooms",
+          "type": "istar.Task",
+          "x": 1184,
+          "y": 332,
+          "customProperties": {
+            "Description": "",
+            "Location": "rooms"
+          }
+        }
+      ]
+    }
+  ],
+  "orphans": [],
+  "dependencies": [],
+  "links": [
+    {
+      "id": "ceb69626-06ac-48f2-915b-e8210bbebb68",
+      "type": "istar.AndRefinementLink",
+      "source": "f942813f-cc19-456b-bed4-7e56c17f7bd4",
+      "target": "64f076a2-d1e4-4ae1-a739-2f0406edf1a0"
+    },
+    {
+      "id": "076411ac-953c-4e4f-b2f7-10c2446cae55",
+      "type": "istar.AndRefinementLink",
+      "source": "4ba74b3c-1ef2-4ac3-8b0b-2bc35cbdef98",
+      "target": "64f076a2-d1e4-4ae1-a739-2f0406edf1a0"
+    },
+    {
+      "id": "8f97c38c-2459-4d0e-a163-324809d6707f",
+      "type": "istar.AndRefinementLink",
+      "source": "bd666ee4-dd65-4809-8df9-1232d85c304c",
+      "target": "4ba74b3c-1ef2-4ac3-8b0b-2bc35cbdef98"
+    },
+    {
+      "id": "d28d2416-c524-4fa5-bb54-56f28f98957a",
+      "type": "istar.AndRefinementLink",
+      "source": "cb523437-82ac-42f5-bd64-7fd8cac9ed9b",
+      "target": "73773dc7-52fd-4a2b-94db-0814bc75b9ef"
+    },
+    {
+      "id": "77525b49-0b2d-4122-9f55-8fc34cd4c97f",
+      "type": "istar.AndRefinementLink",
+      "source": "b3c82c9a-9069-4c82-ab7c-aad4bf39599d",
+      "target": "cb523437-82ac-42f5-bd64-7fd8cac9ed9b"
+    },
+    {
+      "id": "4e64802a-0f2d-4770-8a48-67cb5c0548a1",
+      "type": "istar.AndRefinementLink",
+      "source": "0b94f467-df7b-4706-84ee-542c9ffef5bf",
+      "target": "73773dc7-52fd-4a2b-94db-0814bc75b9ef"
+    },
+    {
+      "id": "f9d29702-190c-41ba-89ce-ad944dd7fc4a",
+      "type": "istar.AndRefinementLink",
+      "source": "2a10298a-f717-4831-8d1d-c87647f416e1",
+      "target": "0b94f467-df7b-4706-84ee-542c9ffef5bf"
+    },
+    {
+      "id": "e8b4e853-521d-4471-9ad0-139156d999ad",
+      "type": "istar.AndRefinementLink",
+      "source": "4be61642-c0fa-4321-a484-59b6eec5a289",
+      "target": "0b94f467-df7b-4706-84ee-542c9ffef5bf"
+    },
+    {
+      "id": "1dbf9987-468f-4845-a82c-2514dcd241c2",
+      "type": "istar.AndRefinementLink",
+      "source": "9000a40a-d897-4441-9fff-5cc4c6512a0f",
+      "target": "4be61642-c0fa-4321-a484-59b6eec5a289"
+    },
+    {
+      "id": "d31a6ea9-7047-4f36-92aa-a890c0663943",
+      "type": "istar.AndRefinementLink",
+      "source": "73773dc7-52fd-4a2b-94db-0814bc75b9ef",
+      "target": "bd666ee4-dd65-4809-8df9-1232d85c304c"
+    },
+    {
+      "id": "6f8886da-a7ce-44c0-bf15-1235119eb16e",
+      "type": "istar.AndRefinementLink",
+      "source": "71ad3d44-eceb-4b40-bdea-d88f619f2c30",
+      "target": "620832f2-63a9-4f6e-93f0-703f15571008"
+    },
+    {
+      "id": "f169c273-d709-4877-90a5-55cd517b9994",
+      "type": "istar.AndRefinementLink",
+      "source": "9c0e9890-b557-4ed4-ba03-cd2e3bb5d078",
+      "target": "64f076a2-d1e4-4ae1-a739-2f0406edf1a0"
+    },
+    {
+      "id": "afd01d0e-bf84-4fc2-ae71-3d34ad58fce4",
+      "type": "istar.AndRefinementLink",
+      "source": "4aa6540b-6291-4ab3-8f66-ff0470a70e53",
+      "target": "9c0e9890-b557-4ed4-ba03-cd2e3bb5d078"
+    },
+    {
+      "id": "b45f7d41-f5e1-4b34-b019-06930dc1e514",
+      "type": "istar.AndRefinementLink",
+      "source": "620832f2-63a9-4f6e-93f0-703f15571008",
+      "target": "bd666ee4-dd65-4809-8df9-1232d85c304c"
+    }
+  ],
+  "display": {
+    "64f076a2-d1e4-4ae1-a739-2f0406edf1a0": {
+      "width": 115.79998779296875,
+      "height": 68.31666564941406
+    },
+    "f942813f-cc19-456b-bed4-7e56c17f7bd4": {
+      "width": 112.79998779296875,
+      "height": 59.399993896484375
+    },
+    "9000a40a-d897-4441-9fff-5cc4c6512a0f": {
+      "width": 138.79998779296875,
+      "height": 57.399993896484375
+    },
+    "bd666ee4-dd65-4809-8df9-1232d85c304c": {
+      "width": 99.79998779296875,
+      "height": 46.01667785644531
+    },
+    "73773dc7-52fd-4a2b-94db-0814bc75b9ef": {
+      "width": 108.79998779296875,
+      "height": 57.399993896484375
+    },
+    "b3c82c9a-9069-4c82-ab7c-aad4bf39599d": {
+      "width": 138.79998779296875,
+      "height": 43.399993896484375
+    },
+    "0b94f467-df7b-4706-84ee-542c9ffef5bf": {
+      "width": 112.79998779296875,
+      "height": 64.31666564941406
+    }
+  },
+  "tool": "pistar.2.0.0",
+  "istar": "2.0",
+  "saveDate": "Fri, 30 Apr 2021 12:42:20 GMT",
+  "diagram": {
+    "width": 2142,
+    "height": 1300,
+    "name": "Welcome Model",
+    "customProperties": {
+      "Description": "Welcome to the piStar tool! This model describe some of the recent improvements in the tool.\n\nFor help using this tool, please check the Help menu above"
+    }
+  }
+}

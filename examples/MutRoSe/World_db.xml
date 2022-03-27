@@ -1,0 +1,114 @@
+<!--COMMENT:
+This info is taken from the DSL
+The assignation of the cell is related to the physical world (image of the hospital in this case)
+-->
+
+<world_db>
+    <location>
+	<grid cell="c1"/>
+    </location>
+    <location>
+            <grid cell="c0"/>
+    </location>
+    <location>
+            <grid cell="c1"/>
+    </location>
+    <location>
+            <grid cell="c2"/>
+    </location>
+    <location>
+            <grid cell="c3"/>
+    </location>
+    <location>
+            <grid cell="c4"/>
+    </location>
+    <location>
+            <grid cell="c5"/>
+    </location>
+    <location>
+            <grid cell="c6"/>
+    </location>
+    <location>
+            <grid cell="c7"/>
+    </location>
+    <location>
+            <grid cell="c8"/>
+    </location>
+    <location>
+            <grid cell="c9"/>
+    </location>
+    <location>
+            <grid cell="c10"/>
+    </location>
+    <location>
+            <grid cell="c11"/>
+    </location>
+    <location>
+            <grid cell="c12"/>
+    </location>
+    <location>
+            <grid cell="c13"/>
+    </location>
+    <location>
+            <grid cell="c14"/>
+    </location>
+    <location>
+            <grid cell="c15"/>
+    </location>
+    <location>
+            <grid cell="c16"/>
+    </location>
+    <location>
+            <grid cell="c17"/>
+    </location>
+    <location>
+            <grid cell="c18"/>
+    </location>
+    <location>
+            <grid cell="c19"/>
+    </location>
+    <location>
+            <grid cell="c20"/>
+    </location>
+    <location>
+            <grid cell="c21"/>
+    </location>
+    <location>
+            <grid cell="c22"/>
+    </location>
+    <location>
+            <grid cell="c23"/>
+    </location>
+    <Room>
+    	<id>R1</id>
+        <name>RoomA</name>
+        <location>c3</location>
+        <is_clean>False</is_clean>
+        <is_prepared>False</is_prepared>
+        <door_open>False</door_open>
+    </Room>
+    <Room>
+    	<id>R2</id>
+        <name>RoomB</name>
+	<location>c6</location>
+        <is_clean>False</is_clean>
+        <is_prepared>False</is_prepared>
+        <door_open>True</door_open>
+    </Room>
+    <Room>
+    	<id>R3</id>
+        <name>RoomC</name>
+	<location>c8</location>
+        <is_clean>True</is_clean>
+        <is_prepared>True</is_prepared>
+        <door_open>True</door_open>
+    </Room>
+    <Room>
+    	<id>SR</id>
+        <name>SanitizationRoom</name>
+	<location>c10</location>
+        <is_clean>True</is_clean>
+        <is_prepared>True</is_prepared>
+        <door_open>True</door_open>
+    </Room>
+</world_db>

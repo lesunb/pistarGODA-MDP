@@ -35,15 +35,19 @@ public interface Goal extends GeneralEntity {
     List<Plan> getMeansToAnEndPlans();
 
     void addToMeansToAnEndPlans(Plan plan);
-
-    boolean isAndDecomposition();
-
-    boolean isOrDecomposition();
-
-    void setAndDecomposition(boolean andDecomposition);
-
-    void setOrDecomposition(boolean orDecomposition);
-
+    
     boolean isSelected();
-
+    
+    boolean isAndDecomposition();
+	boolean isOrDecomposition();
+	boolean isAndParalelDecomposition();
+	boolean isOrParalelDecomposition();
+	boolean isTryDecomposition();
+	boolean isRetryDecomposition();
+	void setAndDecomposition(boolean andDecomposition);
+	void setOrDecomposition(boolean orDecomposition);
+	void setAndParalelDecomposition(boolean andPDecomposition);
+	void setOrParalelDecomposition(boolean orPDecomposition);
+	void setTryDecomposition(boolean tryDecomposition);
+	void setRetryDecomposition(boolean retryDecomposition);
 }
