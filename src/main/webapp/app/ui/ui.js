@@ -2347,27 +2347,6 @@ $('#menu-button-toggle-contributions-display').click(function() {
 	}
 });
 
-
-function setRootCell() {
-	var checked = $('#MNE_rootNode').prop("checked");
-		console.log(checked)
-
-	if (checked) {
-		ui.setPropertyCell('selected', checked);
-	} else {
-		ui.removePropertyCell('selected');
-	}
-}
-
-function setDMCell() {
-	var checked = $('#MNE_dmCheck').prop("checked");
-	if (checked != true) {
-		ui.removeSelectDM();
-	} else {
-		ui.loadSelectDM();
-	}
-}
-
 function closeModalEditionNode() {
 	$('#modalNodeEdition').hide();
 }
@@ -2384,6 +2363,23 @@ function changeValueInputEditionNode() {
 }
 
 
+function setRootCell() {
+	var checked = $('#MNE_rootNode').prop("checked");
+	if (checked == true || checked == 'true') {
+		ui.setPropertyCell('selected', checked);
+	} else {
+		ui.removePropertyCell('selected');
+	}
+}
+
+function setDMCell() {
+	var checked = $('#MNE_dmCheck').prop("checked");
+	if (checked != true) {
+		ui.removeSelectDM();
+	} else {
+		ui.loadSelectDM();
+	}
+}
 
 class Model {
 	constructor(content) {
