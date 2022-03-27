@@ -21,8 +21,12 @@ public class PRISMCodeGenerationAction {
     }
 
     public void run() {
-        if (selectedActors.isEmpty())
-            return;
+        if (selectedActors.isEmpty()) {
+			throw new RuntimeException("Invalid Model. Actors not selected.");
+//        	return;
+        }
+        
+        
         String sourceFolder = "src/main/resources/TemplateInput";
         String targetFolder = typeModel.toLowerCase();
         RTGoreProducer producer = new RTGoreProducer(selectedActors, selectedGoals, sourceFolder, targetFolder, typeModel);

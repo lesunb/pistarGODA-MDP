@@ -1,5 +1,16 @@
 package br.unb.cic.goda.rtgoretoprism.generator.goda.producer;
 
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.Date;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.TreeMap;
+
 import br.unb.cic.goda.model.Actor;
 import br.unb.cic.goda.model.GeneralEntity;
 import br.unb.cic.goda.model.Goal;
@@ -15,10 +26,6 @@ import br.unb.cic.goda.rtgoretoprism.model.kl.PlanContainer;
 import br.unb.cic.goda.rtgoretoprism.model.kl.RTContainer;
 import br.unb.cic.goda.rtgoretoprism.util.FileUtility;
 import br.unb.cic.goda.rtgoretoprism.util.kl.TroposNavigator;
-import static br.unb.cic.goda.rtgoretoprism.util.SintaticAnaliser.verifySintaxModel;
-
-import java.io.IOException;
-import java.util.*;
 
 public class RTGoreProducer {
 

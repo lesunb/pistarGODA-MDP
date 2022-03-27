@@ -1,15 +1,27 @@
-package br.unb.cic.goda.rtgoretoprism.util;
+package br.unb.cic.goda.rtgoretoprism.generator.analiser;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import br.unb.cic.goda.model.ModelTypeEnum;
 
-public class SintaticAnaliser {
+public class SintaticAnaliserGODA implements SintaticAnaliserInterface{
 
+	@Override
+	public String recoverLogsError() {
+		return null;
+	}
+
+
+	@Override
+	public String recoverLogs() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+	
 	public static String verifySintaxModel(String rtRegex, String typeModel) {
 		if (rtRegex != null) {
-			//Removes os espaços em branco dentro dos colchetes
+			// Removes os espaços em branco dentro dos colchetes
 			rtRegex = removeBlankSpaceInBrackets(rtRegex);
 			String regexAux = rtRegex;
 			if (isMDP(typeModel)) {
@@ -28,21 +40,21 @@ public class SintaticAnaliser {
 				generateMessageError(RegexDecompositionEnum.RETRY, regexAux);
 			}
 		}
-		
+
 		return rtRegex;
 	}
 
 	private static String removeBlankSpaceInBrackets(String rtRegex) {
 		Matcher bracketsMatcher = Pattern.compile("\\[.*\\]").matcher(rtRegex);
-		if(bracketsMatcher.find()) {
+		if (bracketsMatcher.find()) {
 			String regexStart = rtRegex.substring(0, bracketsMatcher.start());
 			String regexEnd = rtRegex.substring(bracketsMatcher.start(), bracketsMatcher.end());
 			return regexStart + regexEnd.replaceAll(" ", "");
 		}
-		
+
 		return rtRegex;
 	}
-	
+
 	private static void generateMessageError(RegexDecompositionEnum enm, String rtRegex) {
 		Matcher bracketsMatcher = Pattern.compile("\\[.*\\]").matcher(rtRegex);
 		String reg1 = enm.getPrimary();
@@ -54,9 +66,9 @@ public class SintaticAnaliser {
 		if (find1) {
 			rtRegex = rtRegex.substring(matcherDM1.start(), matcherDM1.end());
 		} else {
-			if(!bracketsMatcher.find()) {
-				throw new RuntimeException("Invalid sintax " + rtRegex + ". The correct sintax to " + enm.getName() + " is "
-						+ enm.getCorrectSintax() + ".");
+			if (!bracketsMatcher.find()) {
+				throw new RuntimeException("Invalid sintax " + rtRegex + ". The correct sintax to " + enm.getName()
+						+ " is " + enm.getCorrectSintax() + ".");
 			}
 			rtRegex = rtRegex.substring(bracketsMatcher.start(), bracketsMatcher.end());
 		}
@@ -69,8 +81,8 @@ public class SintaticAnaliser {
 			}
 		} else {
 			if (!find1) {
-				throw new RuntimeException("Invalid sintax " + rtRegex + ". The correct sintax to " + enm.getName() + " is "
-					+ enm.getCorrectSintax() + ".");
+				throw new RuntimeException("Invalid sintax " + rtRegex + ". The correct sintax to " + enm.getName()
+						+ " is " + enm.getCorrectSintax() + ".");
 			}
 		}
 
@@ -89,10 +101,10 @@ public class SintaticAnaliser {
 
 	@SuppressWarnings("unused")
 	private enum RegexDecompositionEnum {
-		RETRY(0,"RETRY", "x@x", "\\[.*\\@[0-9].*\\]", ""),
+		RETRY(0, "RETRY", "x@x", "\\[.*\\@[0-9].*\\]", ""),
 		TRY(1, "TRY", "[try(x)?(x | skip):(x | skip)]", "\\[try\\(.*\\)\\?.*\\:.*\\]", ""),
 		DM(2, "DM", "[DM(x,x)]", "\\[DM\\(.*?\\)\\]", "[^0-9A-Za-z\\.\\_\\-\\(\\,\\)\\[\\]]"),
-		OR_AND_PARALEL(3,"OR_AND_PARALEL", "x#x", "\\[.*\\#.*\\]", "");
+		OR_AND_PARALEL(3, "OR_AND_PARALEL", "x#x", "\\[.*\\#.*\\]", "");
 
 		private final String name;
 		private final Integer code;
@@ -129,4 +141,5 @@ public class SintaticAnaliser {
 		}
 
 	}
+	
 }

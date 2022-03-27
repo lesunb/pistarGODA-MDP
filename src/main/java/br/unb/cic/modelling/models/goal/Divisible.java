@@ -11,9 +11,10 @@ import br.unb.cic.modelling.models.PropertyModel;
 public class Divisible extends PropertyModel {
 
 	public Divisible() {
+		this.setChecked(true);
 		this.setName("Divisible");
 		this.setType(TypesAttributesEnum.CHECKBOX);
 		this.setValue("true");
-		
+		this.setHide(false);
 	}
 }

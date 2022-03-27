@@ -10,10 +10,22 @@
 const regexDM = /\[DM\(.*?\)\]/g;
 const regexBrackets = /\[.*?\]/g;
 const regexExpression = /\$.*?\$/g;
+const TypesAttributesEnum = {
+	BOOLEAN: "BOOLEAN",
+	CHECKBOX: "CHECKBOX",
+	RADIO_BUTTON: "RADIO_BUTTON",
+	EXPRESSION: "EXPRESSION",
+	LIST: "LIST",
+	OBJECT: "OBJECT",
+	OBJECT_NULLABLE: "OBJECT_NULLABLE",
+	OBJECT_SELECTABLE: "OBJECT_SELECTABLE",
+	TEXT: "TEXT"
+}
 
 var ui = function() {
 	'use strict';
 
+	var lastSelectedCell = null;
 	var selectedCell = null;
 	var selectedProperties = null;
 
@@ -135,7 +147,7 @@ var ui = function() {
 		verifyIfTaskIsIncludedInNameCell: function(name, nameTask) {
 			var start = name.indexOf(nameTask);
 			var regex = /\,|\;|\(|\)/;
-			if (start > 0)  {
+			if (start > 0) {
 				//Verificar se os caracteres anterior e posterior ao nome encontrado corresponde a um caracter de limitaçao
 				if (name[start - 1] != null && name[start - 1].search(regex) >= 0) {
 					var end = start + nameTask.length;
@@ -148,16 +160,24 @@ var ui = function() {
 			return '!checked';
 		},
 		setNameCell: function(name) {
+			event.preventDefault();
 			this.getSelectedCells()[0].prop('name', name);
 		},
 		removePropertyCell: function(key) {
-			this.getSelectedCells()[0].removeProp('customProperties/' + key);
+			event.preventDefault();
+			if (this.getPropertyCell(key)) {
+				this.getSelectedCells()[0].removeProp('customProperties/' + key);
+			}
 		},
 		setPropertyCell: function(key, name) {
+			event.preventDefault();
 			this.getSelectedCells()[0].prop('customProperties/' + key, name);
 		},
 		getPropertyCell: function(key) {
-			return this.getSelectedCells()[0].prop('customProperties/' + key);
+			event.preventDefault();
+			if (this.getSelectedCells() && this.getSelectedCells()[0]) {
+				return this.getSelectedCells()[0].prop('customProperties/' + key);
+			}
 		},
 		removeBlankSpacesInNotation: function(cell) {
 			var mainName = cell.prop('name');
@@ -179,221 +199,410 @@ var ui = function() {
 			ui.verifyIsRootCell(cellView);
 			ui.verifyIsDMCell(cellView);
 		},
+		getPropertiesInSelectedCell: function(){
+			if(this.getSelectedCells() && this.getSelectedCells().length > 0){
+				var settedProperties = this.getSelectedCells()[0]["attributes"]['customProperties'];
+				var settedPropertiesValues = Object.values(settedProperties);
+				var settedPropertiesKeys = Object.keys(settedProperties);
+				var propAssigned = [];
+				
+				for(var i = 0; i < settedPropertiesKeys.length; i++){
+					propAssigned.push({	
+						name: settedPropertiesKeys[i],
+						value: settedPropertiesValues[i],
+						childrens: [],
+						placeholder: "",
+						list: [],
+						checked: false,
+						hide: false,
+						type: "TEXT"
+					});
+				}
+				return propAssigned;
+			}
+			
+			return [];
+		},
+		//Essa funcao recupera os valores salvos no model e atualiza a property que irá gerar o html de configuracao do ROS dentro da modal de ediçao
+		setValuesPropByCell(props, properties, value = null) {
+			for (var j = 0; j < properties.length; j++) {
+				var name = properties[j].name;
+				var childrens = properties[j].childrens;
+				if (props[name] != null && props[name] != "" && props[name] != undefined) {
+					properties[j].value = props[name];
+					if (props[name] == "true" || props[name] == true) {
+						properties[j].checked = true;
+					}
+					if (props[name] == "false" || props[name] == false) {
+						properties[j].checked = false;
+					}
+				}
+
+				if (value != null && value != "" && value != undefined) {
+					if (value == properties[j].name) {
+						properties[j].checked = true;
+					} else {
+						properties[j].checked = false;
+					}
+				}
+
+				if (childrens && childrens.length > 0) {
+					ui.setValuesPropByCell(props, childrens, properties[j].value);
+				}
+			}
+		},
 		getProperties() {
 			var type = this.selectedCell.prop('type').toUpperCase();
 			$.ajax({
 				type: "GET",
-				url: "/getProperties?attribute=" + type,
+				url: "/load/properties?attribute=" + type,
 				success: function(properties) {
-					$( "#MNE_properties" ).empty();
-					var htmlGen = ui.generatePropertiesModalHtml(properties, false, null);
-					$( "#MNE_properties").append($(htmlGen));
+					var htmlGen = $("#MNE_properties");
+					htmlGen.empty();
+
+					if(properties && properties.length >= 0){
+						var propAssigned = ui.getPropertiesInSelectedCell();
+						properties.push(...propAssigned);
+					}
 					
-					var elementsProp = document.getElementsByClassName("element_property");
-					ui.generateProperties(elementsProp);
+					var propsCell = ui.getSelectedCells()[0].attributes.customProperties;
+					ui.setValuesPropByCell(propsCell, properties);
+					ui.generatePropertiesModalHtml(htmlGen, properties, false, null);
 				},
 				error: function(request) {
-					ui.handleException(request.responseText);
+					ui.handleException(request.responseText, status);
 				}
-		
+
 			});
 		},
-		generatePropertiesModalHtml(properties, isChildren, nameFather) {
-			var html = "";
-			this.selectedProperties = properties;
-			for(var i = 0; i < properties.length; i++){
-				var div = document.createElement("div"); 
-				var div1 = document.createElement("div"); 
-				var div2 = document.createElement("div"); 
-				var id = properties[i].name;
-				var typeInput ="";
-				var checked = "";
-				
-				// recuperar properties ja settadas 
-				var propVal = ui.getPropertyCell(id);
-				if(propVal){
-					properties[i].value = propVal;	
-				 	checked = "checked";
+		loadPropertiesJson() {
+			var elements = document.querySelectorAll("div[propertyElement=true]");
+			for (var i = 0; i < elements.length; i++) {
+				var input = elements[i].querySelector("input[propertyInput=true],textarea[propertyInput=true]");
+				//ui.removePropObject(input.id);
+				ui.setPropObject(input);
+			}/**/
+		},
+		setPropObject(input) {
+			var type = input.getAttribute("propertyType");
+			var hide = input.getAttribute("propertyHide");
+			var nameChild = "#" + input.id + "_childrens";
+			var objChild = $(nameChild);
+
+			if (TypesAttributesEnum.BOOLEAN == type || TypesAttributesEnum.CHECKBOX == type) {
+				if (hide == "false" || hide == false) {
+					ui.setPropertyCell(input.id, input.checked);
 				}
-				
-				if(isChildren){
-					typeInput = "radio";
-				}else{
-					nameFather = "";
-					typeInput = "checkbox";
-					div.className = "element_property";
-				}
-				
-				if(properties[i].type == "CHECKBOX"){
-				 	checked = (properties[i].value == "true" ? "checked" : "");
-				}
-				
-				var parentInputs = properties[i].name + "_parent_inputs";
-				div1.innerHTML = "<input id='" + id  + "' type='" + typeInput + "'" +
-						"class='form-check-input' " + checked +  " name='" + nameFather + "' " + 
-						"onclick='ui.showChildrens(this)' value='" + properties[i].value + "'>" +
-						"<label class='form-check-label' for='" + id  + "'>" + properties[i].name + "</label>" +
-						"<div id='"+ parentInputs + "'></div>" ;
-						
-				div1.id = properties[i].name + "_parent";
-				
-				var input = div1.children[0];
-				var elInputs = div1.children[2];
-				input.setAttribute("propertyType", properties[i].type);
-				ui.generateByTypeProperty(input, elInputs);	
-				
-				if(properties[i].childrens.length > 0){
-					var htmlChildrens = ""; 
-					htmlChildrens += "<div style='margin-left: 20px;'>";
-					htmlChildrens += ui.generatePropertiesModalHtml(properties[i].childrens, true, properties[i].name);
-					htmlChildrens += "</div>";
-					
-					div2.innerHTML = htmlChildrens;
-					div2.id = properties[i].name + "_childrens";
-					if( checked ){
-						div2.style.display = "block";
-					}else{
-						div2.style.display = "none";
+
+				input.value = input.checked;
+				if (input.name != "undefined" && input.name != "null" && input.name != null && input.name != "" && input.name != undefined) {
+					if (!ui.getPropertyCell(input.name)) {
+						ui.removePropObject(input.id);
 					}
-					div.setAttribute("hasChildren", true);	
-				}else{
-					div.setAttribute("hasChildren", false);	
 				}
-				
-				div.setAttribute("element_property", id);
-				div.id = properties[i].name + "_group";
-				div.appendChild(div1);
-				div.appendChild(div2);
-				html += div.outerHTML;
+			} else if (TypesAttributesEnum.OBJECT_SELECTABLE == type || TypesAttributesEnum.OBJECT_NULLABLE == type || TypesAttributesEnum.OBJECT == type || TypesAttributesEnum.RADIO_BUTTON == type) {
+				if (input.checked == "true" || input.checked == true) {
+					objChild.show();
+					var childrensDivAux = document.querySelectorAll("input[name=" + input.id + "]");
+					if (childrensDivAux.length > 0) {
+						for (var i = 0; i < childrensDivAux.length; i++) {
+							if (childrensDivAux[i].checked && childrensDivAux[i].value) {
+								//if(TypesAttributesEnum.OBJECT_SELECTABLE == type){
+								//	ui.setPropertyCell(input.id, input.checked);
+								//}else{
+								if (hide == "false" || hide == false) {
+									ui.setPropertyCell(input.id, childrensDivAux[i].id);
+								}
+								//}
+								input.value = childrensDivAux[i].id;
+							}
+							ui.setPropObject(childrensDivAux[i]);
+						}
+					} else {
+						if (hide == "false" || hide == false) {
+							ui.setPropertyCell(input.id, input.value);
+						}
+					}
+				} else {
+					objChild.hide();
+					ui.removePropObject(input.id);
+					if (TypesAttributesEnum.OBJECT_SELECTABLE == type) {
+						if (hide == "false" || hide == false) {
+							ui.setPropertyCell(input.id, input.checked);
+						}
+					} else if (TypesAttributesEnum.OBJECT_NULLABLE == type) {
+						if (hide == "false" || hide == false) {
+							ui.setPropertyCell(input.id, "");
+						}
+					}
+				}
+			} else if (TypesAttributesEnum.LIST == type || TypesAttributesEnum.TEXT == type || TypesAttributesEnum.EXPRESSION == type) {
+				nameChild = "#" + input.id + "_text";
+				objChild = $(nameChild);
+				if (input.type == "radio") {
+					if (input.checked == "true" || input.checked == true) {
+						if (objChild.length > 0) {
+							objChild.show();
+							if (hide == "false" || hide == false) {
+								ui.setPropertyCell(input.id, objChild[0].value);
+							}
+							input.value = objChild[0].value;
+						}
+					} else {
+						objChild.hide();
+						ui.removePropObject(input.id);
+					}
+				} else {
+					if (hide == "false" || hide == false) {
+						ui.setPropertyCell(input.id, input.value);
+					}
+				}
+
+				if (!input.value) {
+					ui.removePropObject(input.id);
+				}
 			}
-			
-			return html;
 		},
-		showChildrens(el){
-			var display = "";
-			var childrens = el.id + "_childrens";
-			var parentInputs = el.id + "_parent_inputs";
-			var childrensEl = document.getElementById(childrens);
-			var inputsEl = document.getElementById(parentInputs);
-			
-			if( el.checked){
-				display = "block";
-				//el.setAttribute("checked", true);
-				ui.generateByTypeProperty(el, inputsEl);
-			}else{
-				el.value = "";
-				display = "none";
-				inputsEl.innerHTML = "";
-				//el.setAttribute("checked", false);
+		removePropObject(name) {
+			var elements = document.getElementById(name + "_childrens");
+			if (elements) {
+				var childrens = elements.querySelectorAll("input[propertyInput=true],textarea[propertyInput=true]");
+				for (var i = 0; i < childrens.length; i++) {
+					ui.removePropertyCell(childrens[i].id);
+				}/**/
+			} else {
+				var propVal = ui.getPropertyCell(name);
+				while (propVal) {
+					var auxPropVal = propVal;
+					propVal = ui.getPropertyCell(auxPropVal);
+					ui.removePropertyCell(auxPropVal);
+				}
 			}
-			
-			if(childrensEl){
-				childrensEl.style.display = display;
-			}
-			
-			ui.clearPropertiesUnused(el);
-			var elementsProp = document.getElementsByClassName("element_property");
-			ui.generateProperties(elementsProp);
+
+			ui.removePropertyCell(name);
 		},
-		clearPropertiesUnused(el){
-			var childrens = el.name + "_childrens";
-			var childrensEl = document.getElementById(childrens);
-			
-			if(childrensEl){
-				childrensEl = childrensEl.children[0].children;
-				for(var i = 0; i < childrensEl.length; i++){
-					var input = childrensEl[i].firstElementChild.children[0];
-					var inputsDiv = childrensEl[i].firstElementChild.children[2];
-					if(!input.checked){
-						var childrensProp = input.id + "_childrens";
-						var childrensPropEl = document.getElementById(childrensProp);
-						inputsDiv.innerHTML = "";
-						
-						if(childrensPropEl){
-							childrensPropEl.style.display = "none";
+		invertBoolean(bool) {
+			if (bool == true || bool == "true") {
+				return "false";
+			}
+			if (bool == false || bool == "false") {
+				return "true";
+			}
+
+			return bool;
+		},
+		//Essa funcao recupera os valores salvos no model e atualiza a property que irá gerar o html de configuracao do ROS dentro da modal de ediçao
+		setValuesPropByCell(props, properties, value = null) {
+			for (var j = 0; j < properties.length; j++) {
+				var name = properties[j].name;
+				var childrens = properties[j].childrens;
+				if (props && props[name] != null && props[name] != "" && props[name] != undefined) {
+					properties[j].value = props[name];
+					if (props[name] == "true" || props[name] == true) {
+						properties[j].checked = true;
+					}
+					if (props[name] == "false" || props[name] == false) {
+						properties[j].checked = false;
+					}
+				}
+
+				if (value != null && value != "" && value != undefined) {
+					if (value == properties[j].name) {
+						properties[j].checked = true;
+					} else {
+						properties[j].checked = false;
+					}
+				}
+
+				if (childrens && childrens.length > 0) {
+					ui.setValuesPropByCell(props, childrens, properties[j].value);
+				}
+			}
+		},
+		setValuesProp(properties) {
+
+			for (var i = 0; i < properties.length; i++) {
+				var id = properties[i].name;
+				var propVal = ui.getPropertyCell(id);
+				if (propVal) {
+					var inp = document.getElementById(id);
+					var inpChild = document.getElementById(propVal);
+					if (inp) {
+						inp.value = propVal;
+						if (inp.type == "radio" || inp.type == "checkbox") {
+							inp.checked = true;
+						}
+					}
+					if (inpChild) {
+						if (inpChild.type == "radio" || inpChild.type == "checkbox") {
+							inpChild.checked = true;
 						}
 					}
 				}
 			}
 		},
-		generateByTypeProperty(el, inputsEl){
-			var propertytype = el.getAttribute("propertytype");
-			var value = el.value;
-			
-			if(el.checked ){
-				if(propertytype == "TEXT"){
-					inputsEl.innerHTML = "<input style='width: 80%; margin-left: 20px' type='text' class='form-check-input' " +
-					"placeholder='" + el.id + "' onkeyup='ui.updateProperty(this)' value='" + value + "'>";
+		generatePropertiesModalHtml(htmlEl, properties, isChildren, nameFather) {
+			this.selectedProperties = properties;
+			for (var i = 0; i < properties.length; i++) {
+				var divInput = document.createElement("div");
+				var input = document.createElement("input");
+				var label = document.createElement("label");
+				var br = document.createElement("br");
+				var id = properties[i].name;
+				var valueP = "";
+				var inputText;
+
+				var cid = ui.getSelectedCells()[0].cid;
+				var propVal = ui.getPropertyCell(id);
+				if (propVal) {
+					properties[i].value = propVal;
+					if (propVal == "true" || propVal == true) {
+						properties[i].checked = true;
+					} else if (propVal == "false" || propVal == false) {
+						properties[i].checked = false;
+					}
 				}
-				if(propertytype == "EXPRESSION"){
-					var found;
-			        while(value.search(regexExpression) >= 0){
-				        found = value.match(regexExpression);
-				        found = found[0].replaceAll("$", "");
-	
-						value = value.replace(regexExpression, "");
-						inputsEl.innerHTML = "<input id='"+ el.id + "_" +found +"' style='width: 80%; margin-left: 20px' type='text' class='form-check-input' " +
-						"placeholder='" + found + "' onkeyup='ui.applyExpression(this)' value='" + found + "'>";
-			        }
+
+				valueP = properties[i].value;
+				input.id = id;
+				input.value = valueP;
+				input.name = nameFather;
+				input.className = 'form-check-input';
+				input.checked = properties[i].checked;
+				input.setAttribute("propertyType", properties[i].type);
+				input.setAttribute("propertyInput", true);
+				input.setAttribute("propertyHide", properties[i].hide);
+
+				label.className = 'form-check-label';
+				label.style = 'margin-left: 5px';
+				label.for = id;
+				label.textContent = id;
+
+				//divInput.className = "form-group";
+				if (isChildren) {
+					input.setAttribute("propertyHide", properties[i].hide);
+					if (TypesAttributesEnum.CHECKBOX == properties[i].type) {
+						input.type = "checkbox";
+					} else {
+						input.type = "radio";
+					}
+
+					divInput.appendChild(input);
+					divInput.appendChild(label);
+					if (TypesAttributesEnum.TEXT == properties[i].type ||
+						TypesAttributesEnum.EXPRESSION == properties[i].type ||
+						TypesAttributesEnum.LIST == properties[i].type) {
+
+						var listProp = properties[i].list;
+						if (listProp && listProp.length > 0) {
+							var newDiv = document.createElement("div");
+							newDiv.style = 'width: 90%; display: flex; flex-direction: row;';
+							for (var m = 0; m < listProp.length; m++) {
+								inputText = document.createElement("input");
+								inputText.style = "margin-left: 20px; width: 90%";
+								input.className = 'form-check-input';
+								inputText.className = 'col';
+								inputText.id = input.id + "_text";
+								inputText.placeholder = listProp[m].placeholder;
+								//inputText.value = input.value;	
+								//inputText.type = "text";
+
+								inputText.value = input.value;
+								inputText.name = input.id;
+								inputText.setAttribute("propertyType", properties[i].type);
+								newDiv.appendChild(br);
+								newDiv.appendChild(inputText);
+							}
+							divInput.appendChild(newDiv);
+						} else {
+							inputText = document.createElement("textarea");
+							inputText.style = "margin-left: 20px; width: 90%";
+							input.className = 'form-check-input';
+							inputText.id = input.id + "_text";
+							inputText.placeholder = properties[i].placeholder;
+							//inputText.value = input.value;	
+							//inputText.type = "text";
+
+							inputText.value = input.value;
+							inputText.name = input.id;
+							inputText.setAttribute("propertyType", properties[i].type);
+							divInput.appendChild(br);
+							divInput.appendChild(inputText);
+						}
+					}
+				} else {
+					if (TypesAttributesEnum.BOOLEAN == properties[i].type ||
+						TypesAttributesEnum.CHECKBOX == properties[i].type ||
+						TypesAttributesEnum.OBJECT_SELECTABLE == properties[i].type ||
+						TypesAttributesEnum.OBJECT_NULLABLE == properties[i].type ||
+						TypesAttributesEnum.OBJECT == properties[i].type) {
+						input.setAttribute("propertyHide", properties[i].hide);
+						input.type = "checkbox";
+						divInput.appendChild(input);
+						divInput.appendChild(label);
+					} else if (TypesAttributesEnum.RADIO_BUTTON == properties[i].type) {
+						input.type = "radio";
+						input.setAttribute("propertyHide", properties[i].hide);
+						divInput.appendChild(input);
+						divInput.appendChild(label);
+					}
+					else if (TypesAttributesEnum.TEXT == properties[i].type ||
+						TypesAttributesEnum.EXPRESSION == properties[i].type ||
+						TypesAttributesEnum.LIST == properties[i].type) {
+
+						inputText = document.createElement("textarea");
+						inputText.style = "margin-left: 20px; width: 90%";
+						input.className = 'form-check-input';
+						inputText.id = input.id;
+						inputText.value = input.value;
+						inputText.name = nameFather;
+						inputText.placeholder = input.placeholder;
+						inputText.setAttribute("propertyType", properties[i].type);
+						inputText.setAttribute("propertyHide", properties[i].hide);
+						inputText.setAttribute("propertyInput", true);
+
+						//input.type = "text";	
+						divInput.appendChild(label);
+						divInput.appendChild(br);
+						divInput.appendChild(inputText);
+					}
 				}
-			}else{
-				inputsEl.innerHTML = "";
+
+
+				divInput.setAttribute("cid", cid);
+				if (properties[i].childrens.length > 0) {
+					var divChildrens = document.createElement("div");
+					divChildrens.style = "margin-left: 20px;";
+					divChildrens.id = properties[i].name + "_childrens";
+					divInput.setAttribute("hasChildren", true);
+					ui.generatePropertiesModalHtml(divChildrens, properties[i].childrens, true, properties[i].name);
+					divInput.appendChild(divChildrens);
+				} else {
+					divInput.setAttribute("hasChildren", false);
+				}
+
+				if (nameFather == null || nameFather == "") {
+					divInput.setAttribute("propertyElement", true);
+				} else {
+					divInput.setAttribute("propertyElement", false);
+				}
+
+				htmlEl.append(divInput);
+				input.addEventListener((input.type == "text" ? "keyup" : "change"), function() { ui.loadPropertiesJson() }, false);
+
+				if (inputText) {
+					inputText.addEventListener("keyup", function() { ui.loadPropertiesJson() }, false);
+				}
 			}
+			ui.loadPropertiesJson();
 		},
 		applyExpression(input) {
-			var id = input.id.replace("_"+ input.placeholder, "");
+			var id = input.id.replace("_" + input.placeholder, "");
 			var element = document.getElementById(id);
 			var elementsProp = document.getElementsByClassName("element_property");
-			
+
 			element.value = element.value.replace(regexExpression, input.value);
 			ui.generateProperties(elementsProp);
-		},
-		updateProperty(input){
-			var element = document.getElementById(input.placeholder);
-			element.value = input.value;
-			
-			var elementsProp = document.getElementsByClassName("element_property");
-			ui.generateProperties(elementsProp);
-		},
-		generateProperties(elementsProp){
-			for(var i = 0; i < elementsProp.length; i++){
-				var nameElement = elementsProp[i].getAttribute("element_property");
-				var input = null;
-				
-				if(elementsProp[i].getAttribute("hasChildren") == "true"){
-					input = elementsProp[i].children[0].firstElementChild;
-					if(input.checked){
-						var childrens = elementsProp[i].children[1].firstElementChild.children;
-						for(var j = 0; j < childrens.length; j++){
-							input = childrens[j].firstElementChild.firstElementChild;
-							if(input.checked){
-								ui.setInputProperty(nameElement, input.checked, input.id);
-								break;
-							}
-						}
-						ui.generateProperties(childrens);
-					}else{
-						var childrens = elementsProp[i].children[1].firstElementChild.children;
-						for(var j = 0; j < childrens.length; j++){
-							input = childrens[j].firstElementChild.firstElementChild;
-							input.checked = false;
-							ui.setInputProperty(nameElement, input.checked, input.id);
-						}
-						ui.removePropertyCell(nameElement);
-						ui.generateProperties(childrens);
-					}
-				}else{
-					input = elementsProp[i].children[0].firstElementChild;
-					ui.setInputProperty(nameElement, input.checked, input.value);
-				}
-			}
-		},
-		setInputProperty(nameElement, checked, value){
-			if(checked){
-				ui.setPropertyCell(nameElement, value);
-			}else{
-				ui.removePropertyCell(nameElement);
-			}
 		},
 		selectDMCheckbox: function() {
 			var cell = this.getSelectedCells()[0];
@@ -513,12 +722,20 @@ var ui = function() {
 			$('#resize-handle').hide();
 			$('.cell-selection').hide();
 		},
-		handleException: function(error = "") {
-			var objError = JSON.parse(error);
-			if (objError["message"]) {
-				error = "Error: " + objError["message"];
+		handleException: function(error = "", statusError) {
+			try {
+				var objError = JSON.parse(error);
+				if (objError && objError["message"]) {
+					error = "Error: " + objError["message"];
+					alert(error);
+				}}
+			catch (e) {
+				if(statusError){
+					alert("Failed to execute action: " + statusError);
+				}else{
+					alert(e);
+				}
 			}
-			alert(error);
 		},
 		showSelection: function(_cell) {
 			var cell = _cell || this.selectedCell;
@@ -1174,19 +1391,39 @@ ui.connectLinksToShape = function() {
 	}, 100);
 };
 
+ui.getFileInput = function(fileInput, callback) {
+	if (fileInput.files.length === 0) {
+		ui.alert('You must select a file to load', 'No file selected');
+	}
+	else {
+		//else, load model from file
+		var file = fileInput.files[0];
+		//if (file.type === 'text/plain') {
+		var fileReader = new FileReader();
+		fileReader.onload = function(e) {
+			callback(e.target.result);
+		};
+		fileReader.readAsText(file);
+
+		//}
+	}
+}
+
 $('#runPrismMDPButton').click(function() {
 	var model = istar.fileManager.saveModel();
+	var content = JSON.stringify(new Model(model));
 	$.ajax({
 		type: "POST",
 		url: '/prism/MDP',
-		data: {
-			"content": model
-		},
+		data: content,
+		contentType: "application/json; charset=utf-8",
+		dataType: "json",
 		success: function() {
-			window.location.href = 'prism.zip';
+			//window.location.href = 'prism.zip';
+			window.open('prism.zip', '_blank');
 		},
 		error: function(request, status, error) {
-			ui.handleException(request.responseText);
+			ui.handleException(request.responseText, status);
 		}
 
 	});
@@ -1194,53 +1431,90 @@ $('#runPrismMDPButton').click(function() {
 
 $('#runPrismDTMCButton').click(function() {
 	var model = istar.fileManager.saveModel();
+	var content = JSON.stringify(new Model(model));
 	$.ajax({
 		type: "POST",
 		url: '/prism/DTMC',
-		data: {
-			"content": model
-		},
+		data: content,
+		contentType: "application/json; charset=utf-8",
+		dataType: "json",
 		success: function() {
-			window.location.href = 'prism.zip';
+			//window.location.href = 'prism.zip';
+			window.open('prism.zip', '_blank');
 		},
 		error: function(request, status, error) {
-			ui.handleException(request.responseText);
+			ui.handleException(request.responseText, status);
 		}
 	});
 });
 
 $('#runPARAMButton').click(function() {
 	var model = istar.fileManager.saveModel();
+	var content = JSON.stringify(new Model(model));
 	$.ajax({
 		type: "POST",
-		url: '/param/DTMC',
-		data: {
-			"content": model
-		},
+		url: '/param',
+		data: content,
+		contentType: "application/json; charset=utf-8",
+		dataType: "json",
 		success: function() {
-			window.location.href = 'param.zip';
+			//window.location.href = 'param.zip';
+			window.open('param.zip', '_blank');
 		},
 		error: function(request, status, error) {
-			ui.handleException(request.responseText);
+			ui.handleException(request.responseText, status);
 		}
 	});
 });
 
 $('#runEPMCButton').click(function() {
 	var model = istar.fileManager.saveModel();
+	var content = JSON.stringify(new Model(model));
 	$.ajax({
 		type: "POST",
-		url: '/epmc/DTMC',
-		data: {
-			"content": model
-		},
+		url: '/epmc',
+		data: content,
+		contentType: "application/json; charset=utf-8",
+		dataType: "json",
 		success: function() {
-			window.location.href = 'epmc.zip';
+			//window.location.href = 'epmc.zip';
+			window.open('epmc.zip', '_blank');
 		},
 		error: function(request, status, error) {
-			ui.handleException(request.responseText);
+			ui.handleException(request.responseText, status);
 		}
 	});
+});
+
+
+$('#showError').click(function() {
+	'use strict';
+	$.ajax({
+		type: "GET",
+		url: '/load/terminal',
+		success: function(errors) {
+			$('#terminal-body').empty();
+			for (let i = 0; i < errors.length; i++) {
+				$('#terminal-body').append("<p>$ " + errors[i] + "</p>");
+			}
+		},
+		error: function(request, status, error) {
+			ui.handleException(request.responseText, status);
+		}
+	});
+});
+
+$('#minimizeTerminal').click(function() {
+	'use strict';
+	$('#terminal').height("40px");
+	$('#terminal').css("overflow-y", "hidden");
+});
+
+$('#maximizeTerminal').click(function() {
+	'use strict';
+	/*$(window).height()*/
+	$('#terminal').height("200px");
+	$('#terminal').scroll();
 });
 
 $('#menu-button-save-model').click(function() {
@@ -1249,6 +1523,87 @@ $('#menu-button-save-model').click(function() {
 	var model = istar.fileManager.saveModel();
 	var csvData = 'data:text/json;charset=utf-8,' + (encodeURI(model));
 	joint.util.downloadDataUri(csvData, 'goalModel.txt');
+});
+
+
+
+$('#modal-button-mutrose-save').click(function() {
+	'use strict';
+	/*var fileInputModel = $('#input-mutrose-model');*/
+	var fileInputModel = $('#input-file-to-load');
+	var fileInputHddl = $('#input-mutrose-hddl');
+	var fileInputConfig = $('#input-mutrose-config');
+	var fileInputWorld = $('#input-mutrose-world');
+
+
+	var resultModel = (istar.fileManager.saveModel());
+	if (/*!fileInputModel.val()*/ !resultModel) {
+		ui.alert('You must select all a input file to load', 'No Model file selected');
+		$('#modal-load-mutrose').modal('hide');
+		return;
+	}
+	if (!fileInputHddl.val() ) {
+		ui.alert('You must select all a input file to load', 'No HDDL file  selected');
+		$('#modal-load-mutrose').modal('hide');
+		return;
+	}
+	if (!fileInputConfig.val()) {
+		ui.alert('You must select all a input file to load', 'No Configuration file selected');
+		$('#modal-load-mutrose').modal('hide');
+		return;
+	}
+	if (!fileInputWorld.val()) {
+		ui.alert('You must select all a input file to load', 'No World Knowledge file selected');
+		$('#modal-load-mutrose').modal('hide');
+		return;
+	}
+
+	try {
+		//ui.getFileInput(fileInputModel[0], function(resultModel){
+
+		ui.getFileInput(fileInputHddl[0], function(resultHddl) {
+			ui.getFileInput(fileInputConfig[0], function(resultConfig) {
+				ui.getFileInput(fileInputWorld[0], function(resultWorld) {
+					var content = new MutRoSe(resultModel, resultHddl, (resultConfig), resultWorld);
+					console.log({ mutrose: content });
+					$.ajax({
+						type: "POST",
+						url: '/load/mutrose',
+						data: JSON.stringify(content),
+						contentType: "application/json; charset=utf-8",
+						dataType: "json",
+						success: function(urlZip) {
+							$('#modal-load-mutrose').modal('hide');
+							fileInputHddl.val(null);
+							fileInputConfig.val(null);
+			
+							fileInputWorld.val(null);
+							window.open('mrs.zip', '_blank');
+							// JSON.parse(urlZip);
+						},
+						error: function(request, status, error) {
+							if(request.status && request.status == 200){
+							//window.location.href = "mrs.zip";
+							window.open('mrs.zip', '_blank');
+							}
+							
+							ui.handleException(request.responseText, status);
+						}
+					});
+
+				});
+			});
+		});
+		//});
+	}
+	catch (error) {
+		//fileInputModel.val(null);
+		fileInputHddl.val(null);
+		fileInputConfig.val(null);
+		fileInputWorld.val(null);
+		$('#modal-load-mutrose').modal('hide');
+		ui.alert('Sorry, the input model is not valid.', 'Error loading file');
+	}
 });
 
 $('#modal-button-load-model').click(function() {
@@ -1599,13 +1954,16 @@ $(document).keyup(function(e) {
 
 	if (ui.getSelectedCells()[0] !== null) {
 		if (ui.states.editor.isViewing()) {
-			if (e.which === 8 || e.which === 46) {
-				// 8: backspace
-				// 46: delete
-				// The use of the 'backspace' key, in addition to the 'delete', key aims to improve support for Mac users,
-				//    since in that system the key named 'delete' actually is a 'backspace' key
-				ui.getSelectedCells()[0].remove();
-				ui.selectPaper();
+			var modalEdition = $('#modalNodeEdition');
+			if (modalEdition.css('display') == "none") {
+				if (e.which === 8 || e.which === 46) {
+					// 8: backspace
+					// 46: delete
+					// The use of the 'backspace' key, in addition to the 'delete', key aims to improve support for Mac users,
+					//    since in that system the key named 'delete' actually is a 'backspace' key
+					ui.getSelectedCells()[0].remove();
+					ui.selectPaper();
+				}
 			}
 			if (e.which === 27) {  //esc
 				ui.selectPaper();
@@ -1999,17 +2357,11 @@ function changeValueInputEditionNode() {
 		ui.setNameCell(inputNodeEdition.val());
 	}
 
+	var resultModel = (istar.fileManager.saveModel());
+	console.log({model: resultModel});
 	closeModalEditionNode();
 }
 
-function changeValueInputEditionNode() {
-	var inputNodeEdition = $('#MNE_nameNode');
-	if (inputNodeEdition.val() !== null) {
-		ui.setNameCell(inputNodeEdition.val());
-	}
-
-	closeModalEditionNode();
-}
 
 function setRootCell() {
 	var checked = $('#MNE_rootNode').prop("checked");
@@ -2028,6 +2380,22 @@ function setDMCell() {
 		ui.loadSelectDM();
 	}
 }
+
+class Model {
+	constructor(content) {
+		this.content = content;
+	}
+}
+
+class MutRoSe {
+	constructor(modelFile, hddlFile, configFile, worldFile) {
+		this.modelFile = modelFile;
+		this.hddlFile = hddlFile;
+		this.configFile = configFile;
+		this.worldFile = worldFile;
+	}
+}
+
 
 /*definition of globals to prevent undue JSHint warnings*/
 /*globals istar:false, console:false, $:false, _:false, joint:false, uiC:false, bootbox:false */

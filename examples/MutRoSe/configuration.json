@@ -1,0 +1,125 @@
+{
+    "world_db": {
+        "type": "file",
+        "file_type": "xml",
+        "path": "knowledge/World_db.xml",
+        "xml_root": "world_db"
+    },
+
+    "output": {
+        "output_type": "file",
+        "file_path": "output/task_output.json",
+        "file_type": "json"
+    },
+
+    "location_types": ["Room"],
+    
+    "type_mapping": [
+        {
+            "hddl_type": "room",
+            "ocl_type": "Room"
+        },
+        {
+            "hddl_type": "rooms",
+            "ocl_type": "Sequence(Room)"
+        }
+    ],
+
+    "var_mapping": [
+        {
+            "task_id": "AT1",
+            "map": [
+                {
+                    "gm_var": "current_room",
+                    "hddl_var": "?rm"
+                }
+            ]
+        },
+        {
+            "task_id": "AT2",
+            "map": [
+                {
+                    "gm_var": "sanitization_room",
+                    "hddl_var": "?srm"
+                }
+            ]
+        },
+        {
+            "task_id": "AT3",
+            "map": [
+                {
+                    "gm_var": "current_room",
+                    "hddl_var": "?rm"
+                }
+            ]
+        },
+        {
+            "task_id": "AT4",
+            "map": [
+                {
+                    "gm_var": "rooms",
+                    "hddl_var": "?rms"
+                }
+            ]
+        }
+    ],
+
+    "semantic_mapping": [
+        {
+            "type": "attribute",
+            "name": "is_clean",
+            "relates_to": "Room",
+            "belongs_to": "world_db",
+            "mapped_type": "predicate",
+            "map": {
+                "pred": "clean",
+                "arg_sorts": ["room"]
+            }
+        },
+        {
+            "type": "attribute",
+            "name": "is_prepared",
+            "relates_to": "Room",
+            "belongs_to": "world_db",
+            "mapped_type": "predicate",
+            "map": {
+                "pred": "prepared",
+                "arg_sorts": ["room"]
+            }
+        },
+        {
+            "type": "attribute",
+            "name": "is_sanitized",
+            "relates_to": "robot",
+            "belongs_to": "robots_db",
+            "mapped_type": "predicate",
+            "map": {
+                "pred": "sanitized",
+                "arg_sorts": ["robot"]
+            }
+        },
+        {
+            "type": "attribute",
+            "name": "door_open",
+            "relates_to": "Room",
+            "belongs_to": "world_db",
+            "mapped_type": "predicate",
+            "map": {
+                "pred": "door-open",
+                "arg_sorts": ["room"]
+            }
+        },
+        {
+            "type": "attribute",
+            "name": "is_clean",
+            "relates_to": "Sequence(Room)",
+            "belongs_to": "world_db",
+            "mapped_type": "predicate",
+            "predicate_type": "Universal",
+            "map": {
+                "pred": "clean",
+                "arg_sorts": ["rooms"]
+            }
+        }
+    ]
+}

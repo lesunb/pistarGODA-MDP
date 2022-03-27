@@ -309,7 +309,6 @@ public class PARAMProducer {
 		}
 
 		if (rtAnnot.contains(";")) { // Sequential
-
 			if (reliability) {
 				// Reliability formula
 				if (decType.equals(Const.AND) || decType.equals(Const.ME)) { // Sequential AND
@@ -328,7 +327,6 @@ public class PARAMProducer {
 
 			return formula.toString();
 		} else if (rtAnnot.contains("#")) { // Parallel
-
 			if (reliability) {
 				// Reliability formula
 				if (decType.equals(Const.AND) || decType.equals(Const.ME)) { // Parallel AND
@@ -362,7 +360,6 @@ public class PARAMProducer {
 			}
 			return formula.toString();
 		} else if (rtAnnot.contains("try")) {
-			
 			if(rtAnnot.contains("?skip:")) { //try(a)?b:skip
 				ids = new String[] {ids[0], "skip", ids[1]};
 			}else if(rtAnnot.contains(":skip")) {//try(a)?skip:b
