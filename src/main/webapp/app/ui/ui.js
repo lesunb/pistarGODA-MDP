@@ -2350,6 +2350,8 @@ $('#menu-button-toggle-contributions-display').click(function() {
 
 function setRootCell() {
 	var checked = $('#MNE_rootNode').prop("checked");
+		console.log(checked)
+
 	if (checked) {
 		ui.setPropertyCell('selected', checked);
 	} else {
