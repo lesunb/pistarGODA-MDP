@@ -2347,6 +2347,25 @@ $('#menu-button-toggle-contributions-display').click(function() {
 	}
 });
 
+
+$('#MNE_rootNode').click(function setRootCell() {
+	var checked = $('#MNE_rootNode').prop("checked");
+	if (checked) {
+		ui.setPropertyCell('selected', checked);
+	} else {
+		ui.removePropertyCell('selected');
+	}
+});
+
+$('#MNE_dmCheck').click(function setDMCell() {
+	var checked = $('#MNE_dmCheck').prop("checked");
+	if (checked != true) {
+		ui.removeSelectDM();
+	} else {
+		ui.loadSelectDM();
+	}
+});
+
 function closeModalEditionNode() {
 	$('#modalNodeEdition').hide();
 }
@@ -2363,23 +2382,6 @@ function changeValueInputEditionNode() {
 }
 
 
-function setRootCell() {
-	var checked = $('#MNE_rootNode').prop("checked");
-	if (checked) {
-		ui.setPropertyCell('selected', checked);
-	} else {
-		ui.removePropertyCell('selected');
-	}
-}
-
-function setDMCell() {
-	var checked = $('#MNE_dmCheck').prop("checked");
-	if (checked != true) {
-		ui.removeSelectDM();
-	} else {
-		ui.loadSelectDM();
-	}
-}
 
 class Model {
 	constructor(content) {
