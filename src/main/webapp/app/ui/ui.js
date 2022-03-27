@@ -199,6 +199,30 @@ var ui = function() {
 			ui.verifyIsRootCell(cellView);
 			ui.verifyIsDMCell(cellView);
 		},
+		getPropertiesInSelectedCell: function(){
+			if(this.getSelectedCells() && this.getSelectedCells().length > 0){
+				var settedProperties = this.getSelectedCells()[0]["attributes"]['customProperties'];
+				var settedPropertiesValues = Object.values(settedProperties);
+				var settedPropertiesKeys = Object.keys(settedProperties);
+				var propAssigned = [];
+				
+				for(var i = 0; i < settedPropertiesKeys.length; i++){
+					propAssigned.push({	
+						name: settedPropertiesKeys[i],
+						value: settedPropertiesValues[i],
+						childrens: [],
+						placeholder: "",
+						list: [],
+						checked: false,
+						hide: false,
+						type: "TEXT"
+					});
+				}
+				return propAssigned;
+			}
+			
+			return [];
+		},
 		//Essa funcao recupera os valores salvos no model e atualiza a property que irá gerar o html de configuracao do ROS dentro da modal de ediçao
 		setValuesPropByCell(props, properties, value = null) {
 			for (var j = 0; j < properties.length; j++) {
@@ -236,7 +260,11 @@ var ui = function() {
 					var htmlGen = $("#MNE_properties");
 					htmlGen.empty();
 
-
+					if(properties && properties.length >= 0){
+						var propAssigned = ui.getPropertiesInSelectedCell();
+						properties.push(...propAssigned);
+					}
+					
 					var propsCell = ui.getSelectedCells()[0].attributes.customProperties;
 					ui.setValuesPropByCell(propsCell, properties);
 					ui.generatePropertiesModalHtml(htmlGen, properties, false, null);

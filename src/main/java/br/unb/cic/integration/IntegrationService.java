@@ -64,11 +64,11 @@ public class IntegrationService {
 	public List<PropertyModel> getProperties(String typeAttr) {
 		List<PropertyModel> properties = new ArrayList<PropertyModel>();
 
-		if (AttributesEnum.GOAL.equals(typeAttr)) {
-			properties = Properties.getGoalsProperties();
-		} else if (AttributesEnum.TASK.equals(typeAttr)) {
-			properties = Properties.getTasksProperties();
-		}
+//		if (AttributesEnum.GOAL.equals(typeAttr)) {
+//			properties = Properties.getGoalsProperties();
+//		} else if (AttributesEnum.TASK.equals(typeAttr)) {
+//			properties = Properties.getTasksProperties();
+//		}
 
 		return properties;
 	}
@@ -126,10 +126,6 @@ public class IntegrationService {
 				zos.closeEntry();
 			}
 			zos.close();
-			
-			if(results.isEmpty()) {
-				throw new ResponseException("Fails when trying to generate zip file.");
-			}
 		}  catch (Exception ex) {
 			throw new ResponseException(ex.getMessage());
 		}
