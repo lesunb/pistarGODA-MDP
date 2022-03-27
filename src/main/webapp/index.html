@@ -698,19 +698,18 @@ https://github.com/jhcp/pistar
 						<!-- -->
 						
 						<div class="form-check mt-md">
-							<input id="MNE_rootNode" type="checkbox"
+							<input id="MNE_rootNode" type="checkbox" onclick="setRootCell()"
 								class="form-check-input" id="rootNode"> <label
 								class="form-check-label" for="rootNode">Is Root</label>
 						</div>
 						<div id="MNE_dmNodeCheck"  class="form-check" >
-							<input id="MNE_dmCheck" type="checkbox"
+							<input id="MNE_dmCheck" type="checkbox" onclick="setDMCell()"
 								class="form-check-input" id="dmCheck"> <label
 								class="form-check-label" for="dmCheck">Is Decision
 								Making</label>
 							<div id="MNE_dmSelect" class="form-check container" onclick="ui.selectDMCheckbox()">
 							</div>
 						</div>
-
 						<div id="MNE_properties" class="form-check"></div>
 					</div>
 					<div class="modal-footer">
