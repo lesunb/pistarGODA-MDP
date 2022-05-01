@@ -128,7 +128,6 @@ public class FileUtility {
 		
 		try {
 			reader = new BufferedReader(new FileReader(filePath));
-			
 			char[] buf = new char[1024];
 			int numRead = 0;
 			
@@ -137,13 +136,11 @@ public class FileUtility {
 				fileData.append(readData);
 				buf = new char[1024];
 			}
-		} catch( IOException ioe ) {
-			throw ioe;
-		}
-		finally {
 			reader.close();
+		} catch( Exception ioe ) {
+			throw new RuntimeException("Failed to read file: " + filePath);
 		}
-		
+
 		return fileData.toString();
 	}
 

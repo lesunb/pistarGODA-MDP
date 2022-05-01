@@ -28,7 +28,7 @@ public class ManageWriter {
 		try {
 			PrintWriter adfFile = new PrintWriter(new BufferedWriter(new FileWriter(outputFolder + adf)));
 			return adfFile;
-		} catch (IOException e) {
+		} catch (Exception e) {
 			String msg = "Error: Can't create output model file.";
 			System.out.println(msg);
 			throw new CodeGenerationException(msg);
@@ -54,10 +54,8 @@ public class ManageWriter {
 		String res = null;
 		try {
 			res = FileUtility.readFileAsString(filePath);
-		} catch (IOException e) {
-			String msg = "Error: file " + filePath + " not found.";
-			System.out.println(msg);
-			throw new CodeGenerationException(msg);
+		} catch (Exception e) {
+			throw new RuntimeException(e.getMessage());
 		}
 		return res;
 	}
@@ -84,7 +82,7 @@ public class ManageWriter {
 			arq.close();
 
 			return file;
-		} catch (IOException e) {
+		} catch (Exception e) {
 			throw new RuntimeException("Error: Can't create file.");
 		}
 	}
@@ -113,7 +111,7 @@ public class ManageWriter {
 			}
 			origem.close();
 			saida.close();
-		} catch (IOException e) {
+		} catch (Exception e) {
 			throw new IOException(e.getMessage());
 		}
 	}

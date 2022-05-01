@@ -3,6 +3,7 @@ package br.unb.cic.goda.rtgoretoprism.generator.mutrose;
 import java.io.File;
 import java.util.logging.Logger;
 
+import br.unb.cic.goda.rtgoretoprism.generator.ManageCMD;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
@@ -35,6 +36,7 @@ public class MutRoSeProducer {
 			String dirOutput = dir + "results/";
 			String dirOutputZIP = "src/main/webapp/mrs.zip";
 			JSONObject jsonObject = this.updatePathConfigurationFile(configuration, dirOutput);
+			ManageWriter.cleanFolder(dirConfig);
 
 			// gerar arquivos
 			File modelFile = ManageWriter.generateFile(dirConfig, "model.txt", model);
@@ -45,27 +47,30 @@ public class MutRoSeProducer {
 			JSONObject outputConfig = (JSONObject) jsonObject.get("output");
 			String output = (String) outputConfig.get("file_path");
 
-			//ManageWriter.createFolder(dirOutput);
+			ManageWriter.createFolder(dirOutput);
 			//ManageWriter.generateFile(output, "");
 			StringBuilder command = new StringBuilder().append("./").append(dir).append("MutroseMissionDecomposer").append(" ")
 					.append(dirConfig).append("configHddl.hddl").append(" ").append(dirConfig).append("model.txt").append(" ")
 					.append(dirConfig).append("configFile.json").append(" ").append(dirConfig).append("worldKnowledge.xml")
 					.append(" ").append("");
 
-			Runtime.getRuntime().exec(command.toString());
-			String result = ManageWriter.readFileAsString(output);
-			if (result == null) {
-				LOGGER.warning("Fail to execute Mutrose");
-				throw new ResponseException("Fail to execute MutRoSe.");
-			}else {
-				ManageWriter.toCompact(output, dirOutputZIP);
-				ManageWriter.cleanFolder(output);
-				ManageWriter.cleanFolder(dirConfig);
-				return result;
+			ManageCMD.ResultCMD resultCMD = ManageCMD.executeCommand(command.toString());
+			if(resultCMD.getError().isEmpty()){
+				String result = ManageWriter.readFileAsString(output);
+				if (result == null) {
+					throw new ResponseException("Fail to execute MutRoSe.");
+				}else {
+					ManageWriter.toCompact(output, dirOutputZIP);
+					ManageWriter.cleanFolder(output);
+					ManageWriter.cleanFolder(dirConfig);
+					return result;
+				}
+			}else{
+				LOGGER.warning("Fail to execute Mutrose: " + resultCMD.getError());
+				throw new ResponseException(resultCMD.getError());
 			}
 		} catch (Exception error) {
 			throw new ResponseException(error);
-
 		}
 	}
 

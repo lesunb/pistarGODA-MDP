@@ -27,12 +27,12 @@ public class ResponseException extends RuntimeException {
 	}
 
 	public ResponseException(Throwable cause, HttpStatus status) {
-		super(cause);
+		super(cause.getMessage());
 		this.status = status;
 	}
 
 	public ResponseException(Throwable cause) {
-		super(cause);
+		super(cause.getMessage());
 	}
 
 	public HttpStatus getStatus() {

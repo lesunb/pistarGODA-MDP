@@ -1,0 +1,472 @@
+<?xml version="1.0" encoding="utf-8"?>
+<actions>
+    <action0>
+        <name>clean-room</name>
+        <capabilities number="1">
+            <capability0>cleaning</capability0>
+        </capabilities>
+    </action0>
+    <action1>
+        <name>clean-rooms-check</name>
+        <capabilities number="0"/>
+    </action1>
+    <action2>
+        <name>move-furniture</name>
+        <capabilities number="1">
+            <capability0>moveobject</capability0>
+        </capabilities>
+    </action2>
+    <action3>
+        <name>open-door</name>
+        <capabilities number="1">
+            <capability0>door-opening</capability0>
+        </capabilities>
+    </action3>
+    <action4>
+        <name>sanitize-robot</name>
+        <capabilities number="1">
+            <capability0>sanitize</capability0>
+        </capabilities>
+    </action4>
+</actions>
+<tasks>
+    <task0>
+        <id>AT1_1|1</id>
+        <name>RoomCleaning</name>
+        <arguments>
+            <arg0>
+                <name>?r</name>
+                <type>CleanerRobot</type>
+                <value/>
+            </arg0>
+            <arg1>
+                <name>?rm</name>
+                <type>room</type>
+                <value>R1</value>
+            </arg1>
+        </arguments>
+        <locations>
+            <t0>R1</t0>
+        </locations>
+        <robots_num fixed="True" num="1"/>
+        <preconditions>
+            <prec0 vars="R1" var_types="room">R1.door_open</prec0>
+            <prec1 vars="R1" var_types="room">not R1.is_clean</prec1>
+        </preconditions>
+        <effects>
+            <eff0 vars="R1" var_types="room">R1.is_clean</eff0>
+            <eff1 vars="?r" var_types="robot">not ?r.is_sanitized</eff1>
+        </effects>
+        <triggering_events>
+            <event0>E1</event0>
+        </triggering_events>
+        <decomposition>
+            <action0>clean-room</action0>
+        </decomposition>
+        <group>True</group>
+        <divisible>True</divisible>
+    </task0>
+    <task1>
+        <id>AT1_1|2</id>
+        <name>RoomCleaning</name>
+        <arguments>
+            <arg0>
+                <name>?r</name>
+                <type>CleanerRobot</type>
+                <value/>
+            </arg0>
+            <arg1>
+                <name>?rm</name>
+                <type>room</type>
+                <value>R1</value>
+            </arg1>
+        </arguments>
+        <locations>
+            <t0>R1</t0>
+        </locations>
+        <robots_num fixed="True" num="1"/>
+        <preconditions>
+            <prec0 vars="R1" var_types="room">not R1.door_open</prec0>
+            <prec1 vars="R1" var_types="room">not R1.door_open</prec1>
+            <prec2 vars="R1" var_types="room">not R1.is_clean</prec2>
+        </preconditions>
+        <effects>
+            <eff0 vars="R1" var_types="room">R1.door_open</eff0>
+            <eff1 vars="R1" var_types="room">R1.is_clean</eff1>
+            <eff2 vars="?r" var_types="robot">not ?r.is_sanitized</eff2>
+        </effects>
+        <triggering_events>
+            <event0>E1</event0>
+        </triggering_events>
+        <decomposition>
+            <action0>open-door</action0>
+            <action1>clean-room</action1>
+        </decomposition>
+        <group>True</group>
+        <divisible>True</divisible>
+    </task1>
+    <task2>
+        <id>AT2_1|1</id>
+        <name>RobotSanitization</name>
+        <arguments>
+            <arg0>
+                <name>?r</name>
+                <type>CleanerRobot</type>
+                <value/>
+            </arg0>
+            <arg1>
+                <name>?srm</name>
+                <type>room</type>
+                <value>SR</value>
+            </arg1>
+        </arguments>
+        <locations>
+            <t0>SR</t0>
+        </locations>
+        <robots_num fixed="True" num="1"/>
+        <preconditions>
+            <prec0 vars="?r" var_types="robot">not ?r.is_sanitized</prec0>
+        </preconditions>
+        <effects>
+            <eff0 vars="?r" var_types="robot">?r.is_sanitized</eff0>
+        </effects>
+        <triggering_events>
+            <event0>E1</event0>
+        </triggering_events>
+        <decomposition>
+            <action0>sanitize-robot</action0>
+        </decomposition>
+        <group>True</group>
+        <divisible>True</divisible>
+    </task2>
+    <task3>
+        <id>AT3_1|1</id>
+        <name>FurnitureMoving</name>
+        <arguments>
+            <arg0>
+                <name>?rt</name>
+                <type>robotteam</type>
+                <value/>
+            </arg0>
+            <arg1>
+                <name>?rm</name>
+                <type>room</type>
+                <value>R1</value>
+            </arg1>
+        </arguments>
+        <locations>
+            <t0>R1</t0>
+        </locations>
+        <robots_num fixed="False" min="2" max="4"/>
+        <effects>
+            <eff0 vars="R1" var_types="room">R1.is_prepared</eff0>
+        </effects>
+        <decomposition>
+            <action0>move-furniture</action0>
+        </decomposition>
+        <group>True</group>
+        <divisible>True</divisible>
+    </task3>
+    <task4>
+        <id>AT1_2|1</id>
+        <name>RoomCleaning</name>
+        <arguments>
+            <arg0>
+                <name>?r</name>
+                <type>CleanerRobot</type>
+                <value/>
+            </arg0>
+            <arg1>
+                <name>?rm</name>
+                <type>room</type>
+                <value>R2</value>
+            </arg1>
+        </arguments>
+        <locations>
+            <t0>R2</t0>
+        </locations>
+        <robots_num fixed="True" num="1"/>
+        <preconditions>
+            <prec0 vars="R2" var_types="room">R2.door_open</prec0>
+            <prec1 vars="R2" var_types="room">not R2.is_clean</prec1>
+        </preconditions>
+        <effects>
+            <eff0 vars="R2" var_types="room">R2.is_clean</eff0>
+            <eff1 vars="?r" var_types="robot">not ?r.is_sanitized</eff1>
+        </effects>
+        <triggering_events>
+            <event0>E1</event0>
+        </triggering_events>
+        <decomposition>
+            <action0>clean-room</action0>
+        </decomposition>
+        <group>True</group>
+        <divisible>True</divisible>
+    </task4>
+    <task5>
+        <id>AT1_2|2</id>
+        <name>RoomCleaning</name>
+        <arguments>
+            <arg0>
+                <name>?r</name>
+                <type>CleanerRobot</type>
+                <value/>
+            </arg0>
+            <arg1>
+                <name>?rm</name>
+                <type>room</type>
+                <value>R2</value>
+            </arg1>
+        </arguments>
+        <locations>
+            <t0>R2</t0>
+        </locations>
+        <robots_num fixed="True" num="1"/>
+        <preconditions>
+            <prec0 vars="R2" var_types="room">not R2.door_open</prec0>
+            <prec1 vars="R2" var_types="room">not R2.door_open</prec1>
+            <prec2 vars="R2" var_types="room">not R2.is_clean</prec2>
+        </preconditions>
+        <effects>
+            <eff0 vars="R2" var_types="room">R2.door_open</eff0>
+            <eff1 vars="R2" var_types="room">R2.is_clean</eff1>
+            <eff2 vars="?r" var_types="robot">not ?r.is_sanitized</eff2>
+        </effects>
+        <triggering_events>
+            <event0>E1</event0>
+        </triggering_events>
+        <decomposition>
+            <action0>open-door</action0>
+            <action1>clean-room</action1>
+        </decomposition>
+        <group>True</group>
+        <divisible>True</divisible>
+    </task5>
+    <task6>
+        <id>AT2_2|1</id>
+        <name>RobotSanitization</name>
+        <arguments>
+            <arg0>
+                <name>?r</name>
+                <type>CleanerRobot</type>
+                <value/>
+            </arg0>
+            <arg1>
+                <name>?srm</name>
+                <type>room</type>
+                <value>SR</value>
+            </arg1>
+        </arguments>
+        <locations>
+            <t0>SR</t0>
+        </locations>
+        <robots_num fixed="True" num="1"/>
+        <preconditions>
+            <prec0 vars="?r" var_types="robot">not ?r.is_sanitized</prec0>
+        </preconditions>
+        <effects>
+            <eff0 vars="?r" var_types="robot">?r.is_sanitized</eff0>
+        </effects>
+        <triggering_events>
+            <event0>E1</event0>
+        </triggering_events>
+        <decomposition>
+            <action0>sanitize-robot</action0>
+        </decomposition>
+        <group>True</group>
+        <divisible>True</divisible>
+    </task6>
+    <task7>
+        <id>AT3_2|1</id>
+        <name>FurnitureMoving</name>
+        <arguments>
+            <arg0>
+                <name>?rt</name>
+                <type>robotteam</type>
+                <value/>
+            </arg0>
+            <arg1>
+                <name>?rm</name>
+                <type>room</type>
+                <value>R2</value>
+            </arg1>
+        </arguments>
+        <locations>
+            <t0>R2</t0>
+        </locations>
+        <robots_num fixed="False" min="2" max="4"/>
+        <effects>
+            <eff0 vars="R2" var_types="room">R2.is_prepared</eff0>
+        </effects>
+        <decomposition>
+            <action0>move-furniture</action0>
+        </decomposition>
+        <group>True</group>
+        <divisible>True</divisible>
+    </task7>
+    <task8>
+        <id>AT4_1|1</id>
+        <name>CheckCleanRooms</name>
+        <arguments>
+            <arg0>
+                <name>?r</name>
+                <type>robot</type>
+                <value/>
+            </arg0>
+            <arg1>
+                <name>?rms</name>
+                <type>rooms</type>
+                <value>R1 R2</value>
+            </arg1>
+        </arguments>
+        <locations>
+            <t0>R1</t0>
+            <t1>R2</t1>
+        </locations>
+        <robots_num fixed="True" num="1"/>
+        <preconditions>
+            <prec0 vars="R1" var_types="room">R1.is_clean</prec0>
+            <prec1 vars="R2" var_types="room">R2.is_clean</prec1>
+        </preconditions>
+        <decomposition>
+            <action0>clean-rooms-check</action0>
+        </decomposition>
+        <group>True</group>
+        <divisible>True</divisible>
+    </task8>
+</tasks>
+<constraints>
+    <constraint0>
+        <type>SEQ</type>
+        <task_instances>
+            <id0>task7</id0>
+            <id1>task8</id1>
+        </task_instances>
+    </constraint0>
+    <constraint1>
+        <type>SEQ</type>
+        <task_instances>
+            <id0>task3</id0>
+            <id1>task8</id1>
+        </task_instances>
+    </constraint1>
+    <constraint2>
+        <type>SEQ</type>
+        <task_instances>
+            <id0>task6</id0>
+            <id1>task8</id1>
+        </task_instances>
+    </constraint2>
+    <constraint3>
+        <type>SEQ</type>
+        <task_instances>
+            <id0>task2</id0>
+            <id1>task8</id1>
+        </task_instances>
+    </constraint3>
+    <constraint4>
+        <type>SEQ</type>
+        <task_instances>
+            <id0>task0</id0>
+            <id1>task3</id1>
+        </task_instances>
+    </constraint4>
+    <constraint5>
+        <type>SEQ</type>
+        <task_instances>
+            <id0>task1</id0>
+            <id1>task3</id1>
+        </task_instances>
+    </constraint5>
+    <constraint6>
+        <type>SEQ</type>
+        <task_instances>
+            <id0>task0</id0>
+            <id1>task2</id1>
+        </task_instances>
+    </constraint6>
+    <constraint7>
+        <type>SEQ</type>
+        <task_instances>
+            <id0>task1</id0>
+            <id1>task2</id1>
+        </task_instances>
+    </constraint7>
+    <constraint8>
+        <type>SEQ</type>
+        <task_instances>
+            <id0>task4</id0>
+            <id1>task7</id1>
+        </task_instances>
+    </constraint8>
+    <constraint9>
+        <type>SEQ</type>
+        <task_instances>
+            <id0>task5</id0>
+            <id1>task7</id1>
+        </task_instances>
+    </constraint9>
+    <constraint10>
+        <type>SEQ</type>
+        <task_instances>
+            <id0>task4</id0>
+            <id1>task6</id1>
+        </task_instances>
+    </constraint10>
+    <constraint11>
+        <type>SEQ</type>
+        <task_instances>
+            <id0>task5</id0>
+            <id1>task6</id1>
+        </task_instances>
+    </constraint11>
+    <constraint12>
+        <type>EC</type>
+        <task_instances>
+            <id0>task0</id0>
+            <id1>task2</id1>
+        </task_instances>
+        <group>False</group>
+        <divisible>True</divisible>
+    </constraint12>
+    <constraint13>
+        <type>EC</type>
+        <task_instances>
+            <id0>task1</id0>
+            <id1>task2</id1>
+        </task_instances>
+        <group>False</group>
+        <divisible>True</divisible>
+    </constraint13>
+    <constraint14>
+        <type>EC</type>
+        <task_instances>
+            <id0>task4</id0>
+            <id1>task6</id1>
+        </task_instances>
+        <group>False</group>
+        <divisible>True</divisible>
+    </constraint14>
+    <constraint15>
+        <type>EC</type>
+        <task_instances>
+            <id0>task5</id0>
+            <id1>task6</id1>
+        </task_instances>
+        <group>False</group>
+        <divisible>True</divisible>
+    </constraint15>
+</constraints>
+<mission_decompositions>
+    <decomposition0>
+        <tasks>
+            <t0>task1</t0>
+            <t1>task2</t1>
+            <t2>task3</t2>
+            <t3>task4</t3>
+            <t4>task6</t4>
+            <t5>task7</t5>
+            <t6>task8</t6>
+        </tasks>
+    </decomposition0>
+</mission_decompositions>
