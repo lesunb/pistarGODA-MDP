@@ -260,9 +260,9 @@ public class PARAMProducer {
 			this.leavesId.add(nodeId);
 
 			if (reliability) {
+				// todo: default sequencial dos filhos
 				// todo: mudar header do prism quando for epmc
 				// todo: adicionar formula do or no DM (reliability)
-				// todo: corrigir formula do opt: ((CTX_G3_T1_3*R_G3_T1_X*OPT_G3_T1_X)+(1-OPT_G3_T1_X))
 				// Create DTMC model (param)
 				//Comentando esse trecho baseado no codigo da branch master do Gabriel Rodrigues
 				ParamWriter writer = new ParamWriter(sourceFolder, nodeId);
@@ -278,15 +278,16 @@ public class PARAMProducer {
 //					System.out.println("Formula for node " + nodeId + " was not resolved. Using nodeId");
 				}
 					
-
-				this.varReliabilityInformation.put(nodeId, "//R_" + nodeId + " = reliability of node " + nodeId + "\n");
-				nodeForm = "R_"+nodeId;
-				// todo: checar como está sendo feita a checagem de opcional
 				if (rootNode.isOptional()) {
-					nodeForm += "*OPT_" + nodeId;
+					nodeForm = "((R_"+nodeId+"*OPT_" + nodeId+")+(1-OPT_"+nodeId+"))";
 					this.varReliabilityInformation.put(nodeId,
 							"//OPT_" + nodeId + " = optionality of node " + nodeId + "\n");
+				} else {
+					this.varReliabilityInformation.put(nodeId, "//R_" + nodeId + " = reliability of node " + nodeId + "\n");
+					nodeForm = "R_"+nodeId;
 				}
+
+				// todo: checar como está sendo feita a checagem de opcional
 			} else {
 				// Cost
 				nodeForm = getCostFormula(rootNode);

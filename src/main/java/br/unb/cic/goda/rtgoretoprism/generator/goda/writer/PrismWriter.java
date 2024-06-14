@@ -136,7 +136,11 @@ public class PrismWriter {
 		reward = ManageWriter.readFileAsString( prismInputFolder + "modelreward.nm" );
 		/*evalBash = ManageWriter.readFileAsString( prismInputFolder + "eval_formula.sh" );*/
 		writeAnOutputDir(basicOutputFolder);
-		PrintWriter modelFile = ManageWriter.createFile(ad.getAgentName() + ".nm", basicOutputFolder);
+		String fileExtension = ".nm";
+		if(typeModel == "DTMC"){ 
+			fileExtension = ".pm";
+		}
+		PrintWriter modelFile = ManageWriter.createFile(ad.getAgentName() + fileExtension, basicOutputFolder);
 		/*PrintWriter evalBashFile = ManageWriter.createFile("eval_formula.sh", basicOutputFolder);*/
 		writePrismModel(prismInputFolder, ad.rootlist, planOutputFolder, basicAgentPackage, utilPkgName, planPkgName, typeModel);
 		printModel(modelFile);

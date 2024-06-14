@@ -103,16 +103,24 @@ public class RTGoreProducer {
 	}
 
 	private void generatePctlFormulas(AgentDefinition ad) throws IOException {
-
-		StringBuilder pmax = new StringBuilder("Pmax=? [ F \"success\" ]");
-		StringBuilder pmin = new StringBuilder("Pmin=? [ F \"success\" ]");
-		StringBuilder rmax = new StringBuilder("R{\"cost\"}max=? [ F \"success\" ]");
-		StringBuilder rmin = new StringBuilder("R{\"cost\"}min=? [ F \"success\" ]");
-
-		FileUtility.writeFile(pmax.toString(), outputFolder + "/ReachabilityMax.pctl");
-		FileUtility.writeFile(pmin.toString(), outputFolder + "/ReachabilityMin.pctl");
-		FileUtility.writeFile(rmax.toString(), outputFolder + "/CostMax.pctl");
-		FileUtility.writeFile(rmin.toString(), outputFolder + "/CostMin.pctl");
+		
+		if(this.typeModel=="MDP") {			
+			StringBuilder pmax = new StringBuilder("Pmax=? [ F \"success\" ]");
+			StringBuilder pmin = new StringBuilder("Pmin=? [ F \"success\" ]");
+			StringBuilder rmax = new StringBuilder("R{\"cost\"}max=? [ F \"success\" ]");
+			StringBuilder rmin = new StringBuilder("R{\"cost\"}min=? [ F \"success\" ]");
+			
+			FileUtility.writeFile(pmax.toString(), outputFolder + "/ReachabilityMax.pctl");
+			FileUtility.writeFile(pmin.toString(), outputFolder + "/ReachabilityMin.pctl");
+			FileUtility.writeFile(rmax.toString(), outputFolder + "/CostMax.pctl");
+			FileUtility.writeFile(rmin.toString(), outputFolder + "/CostMin.pctl");
+		}else {
+			StringBuilder p = new StringBuilder("P=? [ F \"success\" ]");
+			StringBuilder r = new StringBuilder("R{\"cost\"}=? [ F \"success\" ]");
+			
+			FileUtility.writeFile(p.toString(), outputFolder + "/Reachability.pctl");
+			FileUtility.writeFile(r.toString(), outputFolder + "/Cost.pctl");	
+		}
 	}
 
 	private void addGoal(Goal g, GoalContainer gc, final AgentDefinition ad, boolean included) throws IOException {
