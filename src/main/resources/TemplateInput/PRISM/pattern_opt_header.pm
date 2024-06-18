@@ -1,0 +1,1 @@
+$CONST_PARAM$ int OPT_$GID$;

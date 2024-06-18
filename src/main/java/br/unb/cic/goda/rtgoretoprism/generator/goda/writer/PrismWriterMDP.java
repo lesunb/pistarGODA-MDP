@@ -25,7 +25,7 @@ import br.unb.cic.goda.rtgoretoprism.model.kl.RTContainer;
 import br.unb.cic.goda.rtgoretoprism.paramformula.GenerateCombination;
 import br.unb.cic.goda.rtgoretoprism.util.PathLocation;
 
-public class PrismWriter {
+public class PrismWriterMDP {
 	/** the set of placeholder founded into template files that are 
 	 * substituted with the proper values during the code generation
 	 * process. */
@@ -108,7 +108,7 @@ public class PrismWriter {
 	 * @param outputFolder generated code target folder
 	 */
 
-	public PrismWriter(AgentDefinition ad, List<Plan> capPlan, String input, String output, Boolean parametric) {
+	public PrismWriterMDP(AgentDefinition ad, List<Plan> capPlan, String input, String output, Boolean parametric) {
 		this.ad = ad;
 		this.capabilityPlanList = capPlan;
 		this.templateInputBaseFolder = input + "/";

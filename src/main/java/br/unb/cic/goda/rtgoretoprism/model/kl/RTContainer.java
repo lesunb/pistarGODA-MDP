@@ -19,9 +19,9 @@ public abstract class RTContainer extends ElementContainer /*implements Comparab
 	private Integer timeSlot = 1;
 	private Integer prevTimeSlot = 0;
 	private Integer rootTimeSlot = 0;
-	/*private Integer timePath = 0;
+	private Integer timePath = 0;
 	private Integer prevTimePath = 0;
-	private Integer futTimePath = 0;*/
+	private Integer futTimePath = 0;
 	private Integer cardNumber = 0;
 	private Const cardType = Const.SEQ;
 	private Map <RTContainer, LinkedList<RTContainer>> alternatives;
@@ -244,7 +244,7 @@ public abstract class RTContainer extends ElementContainer /*implements Comparab
 		this.rootTimeSlot = rootTimeSlot;
 	}
 
-	/*public Integer getPrevTimePath() {
+	public Integer getPrevTimePath() {
 		return prevTimePath;
 	}
 
@@ -258,7 +258,7 @@ public abstract class RTContainer extends ElementContainer /*implements Comparab
 
 	public void setFutTimePath(Integer futTimePath) {
 		this.futTimePath = futTimePath;
-	}*/
+	}
 
 	public LinkedList<RTContainer> getFirstAlternatives() {
 		return firstAlternatives;
@@ -331,13 +331,13 @@ public abstract class RTContainer extends ElementContainer /*implements Comparab
 		this.successTry = successTry;
 	}
 
-	/*public Integer getTimePath() {
+	public Integer getTimePath() {
 		return timePath;
 	}
 
 	public void setTimePath(Integer timePath) {
 		this.timePath = timePath;
-	}*/
+	}
 	
 	public boolean isOptional() {
 		return optional;
