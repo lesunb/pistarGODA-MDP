@@ -390,7 +390,7 @@ public class PrismWriterDTMC {
 
     private void addCtxVar(List<ContextCondition> ctxs) {
         for (ContextCondition ctxCondition : ctxs)
-            ctxVars.put(ctxCondition.getVar(), ctxCondition.getOp() == CtxSymbols.BOOL ? "bool" :
+            ctxVars.put(ctxCondition.getVar(), ctxCondition.getType() == CtxSymbols.BOOL ? "bool" :
                     ctxCondition.getOp() == CtxSymbols.DOUBLE ? "double" : "int");
     }
 
