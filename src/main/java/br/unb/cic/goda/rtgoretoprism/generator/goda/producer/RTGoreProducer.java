@@ -376,18 +376,9 @@ public class RTGoreProducer {
 					if (rtTryGoals.containsKey(id)) {
 						Object[] rtTry = rtTryGoals.get(id);
 						this.successTry.add((String) rtTry[0]);
-						
-						pc.setPrevTimeSlot(deccont.getPrevTimeSlot()+1);
-						pc.setTimeSlot(deccont.getTimeSlot()+1);
 					}
-					else if (this.successTry.contains(id)) {
-						pc.setPrevTimeSlot(deccont.getPrevTimeSlot()+1);
-						pc.setTimeSlot(deccont.getTimeSlot()+1);
-					}
-					else {
-						pc.setPrevTimeSlot(deccont.getPrevTimeSlot()+1);
-						pc.setTimeSlot(deccont.getTimeSlot()+1);	
-					}
+					pc.setPrevTimeSlot(deccont.getPrevTimeSlot()+1);
+					pc.setTimeSlot(deccont.getTimeSlot()+1);
 				}
 				else if (!parDec){
 					pc.setPrevTimeSlot(deccont.getPrevTimeSlot());
