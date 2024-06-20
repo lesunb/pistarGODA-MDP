@@ -457,7 +457,7 @@ public class PrismWriterDTMC {
             case TRY_S:
                 return plan != null ? "s" + plan.getClearElId() + "=" + (!inv ? "2" : "3") : (!inv ? "true" : "true");
             case TRY_F:
-                return plan != null ? "s" + plan.getClearElId() + "=2" : "false";
+                return plan != null ? "s" + plan.getClearElId() + "=2" : "true";
             default:
                 return "";
         }
