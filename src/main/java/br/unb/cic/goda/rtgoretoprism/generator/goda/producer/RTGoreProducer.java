@@ -1,13 +1,11 @@
 package br.unb.cic.goda.rtgoretoprism.generator.goda.producer;
 
-import br.unb.cic.goda.model.Actor;
-import br.unb.cic.goda.model.GeneralEntity;
-import br.unb.cic.goda.model.Goal;
-import br.unb.cic.goda.model.Plan;
+import br.unb.cic.goda.model.*;
 import br.unb.cic.goda.rtgoretoprism.generator.CodeGenerationException;
 import br.unb.cic.goda.rtgoretoprism.generator.goda.parser.CostParser;
 import br.unb.cic.goda.rtgoretoprism.generator.goda.parser.RTParser;
-import br.unb.cic.goda.rtgoretoprism.generator.goda.writer.PrismWriter;
+import br.unb.cic.goda.rtgoretoprism.generator.goda.writer.PrismWriterDTMC;
+import br.unb.cic.goda.rtgoretoprism.generator.goda.writer.PrismWriterMDP;
 import br.unb.cic.goda.rtgoretoprism.generator.kl.AgentDefinition;
 import br.unb.cic.goda.rtgoretoprism.model.kl.Const;
 import br.unb.cic.goda.rtgoretoprism.model.kl.GoalContainer;
@@ -15,7 +13,6 @@ import br.unb.cic.goda.rtgoretoprism.model.kl.PlanContainer;
 import br.unb.cic.goda.rtgoretoprism.model.kl.RTContainer;
 import br.unb.cic.goda.rtgoretoprism.util.FileUtility;
 import br.unb.cic.goda.rtgoretoprism.util.kl.TroposNavigator;
-import static br.unb.cic.goda.rtgoretoprism.util.SintaticAnaliser.verifySintaxModel;
 
 import java.io.IOException;
 import java.util.*;
@@ -83,17 +80,21 @@ public class RTGoreProducer {
 				
 				//create the goalcontainer for this one
 				GoalContainer gc = ad.createGoal(rootgoal, type);
-				String name = gc.getName();
 				gc.setRequest(request);
-
-				//add to the root goal list
 				ad.addRootGoal(gc);
+
 				addGoal(rootgoal, gc, ad, false);
 			}		
 			List<Plan> planList = a.getPlanList();
 
-			PrismWriter writer = new PrismWriter(ad, planList, inputFolder, outputFolder, false);
-			writer.writeModel(typeModel);
+			if(Objects.equals(typeModel, ModelTypeEnum.MDP.getTipo())){
+				PrismWriterMDP writer = new PrismWriterMDP(ad, planList, inputFolder, outputFolder, false);
+				writer.writeModel(typeModel);
+			} else {
+				PrismWriterDTMC writer = new PrismWriterDTMC(ad, planList, inputFolder, outputFolder);
+				writer.writeModel();
+			}
+
 
 			//Generate pctl formulas
 			generatePctlFormulas(ad);
@@ -103,16 +104,24 @@ public class RTGoreProducer {
 	}
 
 	private void generatePctlFormulas(AgentDefinition ad) throws IOException {
-
-		StringBuilder pmax = new StringBuilder("Pmax=? [ F \"success\" ]");
-		StringBuilder pmin = new StringBuilder("Pmin=? [ F \"success\" ]");
-		StringBuilder rmax = new StringBuilder("R{\"cost\"}max=? [ F \"success\" ]");
-		StringBuilder rmin = new StringBuilder("R{\"cost\"}min=? [ F \"success\" ]");
-
-		FileUtility.writeFile(pmax.toString(), outputFolder + "/ReachabilityMax.pctl");
-		FileUtility.writeFile(pmin.toString(), outputFolder + "/ReachabilityMin.pctl");
-		FileUtility.writeFile(rmax.toString(), outputFolder + "/CostMax.pctl");
-		FileUtility.writeFile(rmin.toString(), outputFolder + "/CostMin.pctl");
+		
+		if(Objects.equals(this.typeModel, ModelTypeEnum.MDP.getTipo())) {
+			StringBuilder pmax = new StringBuilder("Pmax=? [ F \"success\" ]");
+			StringBuilder pmin = new StringBuilder("Pmin=? [ F \"success\" ]");
+			StringBuilder rmax = new StringBuilder("R{\"cost\"}max=? [ F \"success\" ]");
+			StringBuilder rmin = new StringBuilder("R{\"cost\"}min=? [ F \"success\" ]");
+			
+			FileUtility.writeFile(pmax.toString(), outputFolder + "/ReachabilityMax.pctl");
+			FileUtility.writeFile(pmin.toString(), outputFolder + "/ReachabilityMin.pctl");
+			FileUtility.writeFile(rmax.toString(), outputFolder + "/CostMax.pctl");
+			FileUtility.writeFile(rmin.toString(), outputFolder + "/CostMin.pctl");
+		}else {
+			StringBuilder p = new StringBuilder("P=? [ F \"success\" ]");
+			StringBuilder r = new StringBuilder("R{\"cost\"}=? [ F \"success\" ]");
+			
+			FileUtility.writeFile(p.toString(), outputFolder + "/Reachability.pctl");
+			FileUtility.writeFile(r.toString(), outputFolder + "/Cost.pctl");	
+		}
 	}
 
 	private void addGoal(Goal g, GoalContainer gc, final AgentDefinition ad, boolean included) throws IOException {
@@ -200,8 +209,8 @@ public class RTGoreProducer {
                 Const cardType = (Const) retry[0];
                 deccont.setCardType(cardType);
             }
-			
-			//deccont.addFulfillmentConditions(gc.getFulfillmentConditions());
+			if(Objects.equals(typeModel, ModelTypeEnum.DTMC.getTipo()))
+				deccont.addFulfillmentConditions(gc.getFulfillmentConditions());
 			if (newgoal){
 				addGoal(dec, deccont, ad, include);	
 				
@@ -348,8 +357,8 @@ public class RTGoreProducer {
                 Const cardType = (Const) retry[0];
                 deccont.setCardType(cardType);
             }
-			
-			//deccont.addFulfillmentConditions(pc.getFulfillmentConditions());
+			if(Objects.equals(typeModel, ModelTypeEnum.DTMC.getTipo()))
+				deccont.addFulfillmentConditions(pc.getFulfillmentConditions());
 			if (newplan){
 				addPlan(dec, deccont, ad);
 				if (pc.isDecisionMaking()) {
@@ -368,12 +377,12 @@ public class RTGoreProducer {
 						Object[] rtTry = rtTryGoals.get(id);
 						this.successTry.add((String) rtTry[0]);
 						
-						pc.setPrevTimeSlot(deccont.getPrevTimeSlot());
-						pc.setTimeSlot(deccont.getTimeSlot());
+						pc.setPrevTimeSlot(deccont.getPrevTimeSlot()+1);
+						pc.setTimeSlot(deccont.getTimeSlot()+1);
 					}
 					else if (this.successTry.contains(id)) {
-						pc.setPrevTimeSlot(deccont.getPrevTimeSlot());
-						pc.setTimeSlot(deccont.getTimeSlot());
+						pc.setPrevTimeSlot(deccont.getPrevTimeSlot()+1);
+						pc.setTimeSlot(deccont.getTimeSlot()+1);
 					}
 					else {
 						pc.setPrevTimeSlot(deccont.getPrevTimeSlot()+1);
@@ -419,7 +428,8 @@ public class RTGoreProducer {
 	                Const cardType = (Const) retry[0];
 	                pc.setCardType(cardType);
 	            }
-				//pc.addFulfillmentConditions(gc.getFulfillmentConditions());
+				if(Objects.equals(typeModel, ModelTypeEnum.DTMC.getTipo()))
+					pc.addFulfillmentConditions(gc.getFulfillmentConditions());
 				
 				if (newplan){
 					addPlan(p, pc, ad);					
