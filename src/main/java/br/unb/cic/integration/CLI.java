@@ -9,7 +9,7 @@ import picocli.CommandLine.Parameters;
 import java.util.concurrent.Callable;
 import java.io.File;
 
-@Command(name = "goda", mixinStandardHelpOptions = true, version = "goda 3.0.0",
+@Command(name = "goda", mixinStandardHelpOptions = true, version = "3.0.0",
         description = "Run the goda framework of an Goal Model file to STDOUT.")
 public class CLI implements Callable<Integer> {
 
