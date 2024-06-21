@@ -39,13 +39,13 @@ import br.unb.cic.goda.rtgoretoprism.model.ctx.CtxSymbols;
 
 public class CtxParser{
 	
-	public static void main (String [] args){
-		try {
-			System.out.println(CtxParser.parseRegex("assertion condition MEMORY<30&PROCESSOR<=80\n"));
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-	}
+//	public static void main (String [] args){
+//		try {
+//			System.out.println(CtxParser.parseRegex("assertion condition MEMORY<30&PROCESSOR<=80\n"));
+//		} catch (IOException e) {
+//			e.printStackTrace();
+//		}
+//	}
 	
 	public static Object[] parseRegex(String regex) throws IOException, ParseCancellationException {
 		//Reading the DSL script

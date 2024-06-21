@@ -1,0 +1,501 @@
+/*!
+ * This is open-source. Which means that you can contribute to it, and help
+ * make it better! Also, feel free to use, modify, redistribute, and so on.
+ *
+ * If you are going to edit the code, always work from the source-code available for download at
+ * https://github.com/jhcp/pistar
+ */
+
+body {
+  font-family: -apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,'Helvetica Neue',Arial,sans-serif,'Apple Color Emoji',
+  'Segoe UI Emoji','Segoe UI Symbol'; /* based on Bootstrap 4 font*/
+}
+
+#tool {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  overflow: auto;
+  width: 100vw;
+}
+
+#workspace {
+  display: flex;
+  flex-direction: row;
+  flex-grow: 1;
+  flex-wrap: wrap;
+  height:100%;
+  overflow: auto;
+  min-height: 1px;
+}
+
+#out {
+  background-color: lightgray;
+  flex-grow: 1;
+  overflow: auto;
+  min-height: 1px;
+  width: 70vw;
+  position: relative;
+  height: 100%;
+}
+
+#diagram {
+  overflow: auto;
+  min-height: 1px;
+  flex-shrink: 0;
+}
+
+.joint-marker-vertex {
+  fill: white;
+  r: 5;
+  stroke: #1C5052;
+}
+
+/* Hack to display scrollbars on Mac OS */
+/* based on
+https://stackoverflow.com/questions/7492062/css-overflow-scroll-always-show-vertical-scroll-bar
+*/
+::-webkit-scrollbar {
+  -webkit-appearance: none;
+  width: 10px;
+  height: 10px;
+}
+
+::-webkit-scrollbar-thumb {
+  border-radius: 1px;
+  background-color: #999;
+  border: 1px solid white;
+}
+
+::-webkit-scrollbar-track {
+  background-color: white;
+}
+
+
+/*  Main Menu */
+
+.menu-bar {
+  align-items: stretch;
+  background-color: #246B29;
+  color: rgb(252, 255, 239);
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+}
+
+.plugged {
+  background-color: #c27800;
+}
+
+#logo {
+  align-self: center;
+  cursor: default;
+  font-weight: bolder;
+  font-size: 1.1em;
+  padding: 0 50px;
+}
+
+#logo a, #logo a:hover {
+  color: rgb(252, 255, 239);
+  text-decoration: none;
+}
+
+#star {
+  margin-left: -5px;
+  margin-top: -10px;
+  transition-duration: .6s;
+  transition-property: transform;
+  transition-timing-function: ease-out;
+}
+
+nav {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  justify-content: space-around;
+}
+
+nav a,
+nav a:active,
+nav a:hover,
+nav a:link,
+nav a:visited {
+  color: rgb(252, 255, 239);
+  text-decoration: none;
+}
+
+.menu-item {
+  border: solid 2px #246B29;
+  color: rgb(252, 255, 239);
+  display: inline-block;
+  font-size: .97em;
+  padding: 2px 20px;
+}
+
+.menu-item.plugged {
+  border: solid 2px #c27800;
+  color: rgb(252, 255, 239);
+  display: inline-block;
+  font-size: .97em;
+  padding: 2px 20px;
+}
+
+#menu-item-plugin {
+  display: none;
+}
+
+.menu-item:hover {
+  border-top: solid 2px white;
+}
+
+.menu-item.active {
+  background-color: rgb(21, 26, 30);
+  border-bottom: 2px solid rgb(21, 26, 30);
+}
+
+.menu-body {
+  align-items: stretch;
+  background-color: rgb(21, 26, 30);
+  color: rgb(252, 255, 239);
+  display: flex;
+  flex-direction: row;
+  font-size: .8em;
+  padding: 6px 3px;
+}
+
+.menu-group {
+  border-left: dashed 1px lightgrey;
+  display: flex;
+  flex-direction: column;
+  margin: 0 2px;
+  padding: 0 0 0 3px;
+  text-align: center;
+}
+
+.menu-group:first-child {
+  border: none;
+}
+
+.menu-group .title {
+  padding: 0;
+  text-align: center;
+}
+
+.button-horizontal {
+  align-items: center;
+  display: inline-flex;
+  padding: 0 4px 0 0;
+}
+
+.button-horizontal .glyphicon {
+  font-size: 1.2em;
+  margin: 1px 3px 3px;
+}
+
+.button-horizontal:active:focus {
+  margin-bottom: -2px;
+  margin-right: -2px;
+}
+
+.button-vertical {
+  padding: 4px 4px 0px 4px;
+  font-size: 1.1em;
+}
+
+.button-vertical .glyphicon {
+  font-size: 1.8em;
+}
+
+input,
+button {
+  color: black;
+}
+
+.btn {
+  border-radius: 0;
+}
+
+.btn-default.active,
+.btn-default.active.focus,
+.btn-default:active,
+.btn-default.active:hover,
+.btn-default.active.focus:hover,
+.btn-default:active:hover {
+  background-color: #b1b1b1;
+  box-shadow: none;
+  color: black;
+}
+
+.menu-line {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  padding: 2px;
+}
+
+.add-button.btn {
+  font-size: 1.1em;
+  margin: 0;
+  padding: 3px;
+}
+
+.add-button,
+.add-dropdown-button {
+  display: inline-block;
+  margin: 0;
+  padding: 0;
+}
+
+#menu-add {
+  flex-wrap: wrap;
+}
+
+.line-break {
+  width: 100%;
+}
+
+#status {
+  font-size: 1.2em;
+  margin-left: 3em;
+}
+
+.jscolor {
+  border: 1px solid darkgrey;
+}
+
+#placeholder-save-model a {
+  color: black;
+  text-decoration: none;
+}
+
+kbd {
+  /* based on Bootstrap's style */
+  background-color: #333;
+  border-radius: 3px;
+  color: white;
+  font-size: 90%;
+  padding: 2px 4px;
+}
+
+.waiting {
+  cursor: wait !important;
+}
+
+/* JointJS markup */
+
+.boundary, .element, .content {
+  transition: fill 0.3s ease-out;
+}
+
+svg * {
+  transition: opacity 0.3s ease-out;
+}
+
+.c-connection-wrap {
+  transition: stroke 0.2s ease-out;
+}
+
+.remove-element {
+  cursor: pointer;
+}
+
+.remove-element circle {
+  fill: grey;
+}
+
+.remove-element path {
+  fill: white;
+}
+
+.link-tools .tool-remove circle {
+  fill: grey;
+}
+
+.tool-options {
+  display: none;
+}
+
+/* Sidepanel */
+
+#sidepanel {
+  background-color: white;
+  box-shadow: 0 4px 10px rgb(100,100,100);
+  font-size: 1.2rem;
+  min-height: 1px;
+  overflow-x: auto;
+  overflow-y: auto; /* Scrollable contents if viewport is shorter than content. */
+  transition: width 0.5s, height 0.3s ease-in-out;
+  z-index: 1;
+  height: 100%;
+}
+
+#sidepanel.size1 {
+  width: 2vw;
+}
+
+#sidepanel.size2 {
+  width: 17vw;
+}
+
+#sidepanel.size3 {
+  width: 30vw;
+}
+
+#sidepanel .nav {
+  background-color: #f5f5f5;
+}
+
+.nav li a {
+  /* inside of the tabs menu */
+  color: #555;
+  margin-top: 5px;
+  padding: 2px 5px;
+}
+
+.sidepanel-content {
+  padding: 5px;
+}
+
+#properties-table {
+  margin-bottom: 0;
+}
+
+.editable-click, a.editable-click {
+  border: none;
+}
+
+.property-name {
+  width: 20%;
+}
+
+#properties-table textarea {
+  font-size: 1.2rem;
+  padding: 3px; /* sets the padding inside the textarea */
+  width: 100%!important;
+}
+
+#properties-table .editable-container, .editable-container div{
+  width: 100%;
+}
+
+#properties-table .form-control {
+  height: auto;
+  padding: 0;
+}
+
+.sidepanel-title {
+  background-color: #f0f0f0;
+  margin-top: 10px;
+}
+
+#properties-table tr {
+  border: solid 2px white; /* hack to hide the table lines */
+}
+
+#properties-table td {
+  padding: 0;
+}
+
+#properties-table th {
+  padding: 0 5px 0 0;
+}
+
+#cell-actions a {
+  margin-top: 3px;
+}
+
+/*   Sidepanel resizing  */
+#regular-size-options {
+  float: right;
+  font-size: 1.7rem;
+  font-weight: 900;
+  padding: 0 5px;
+  transition: opacity 0.25s ease-in-out;
+}
+
+#sidepanel:not(.collapsed) #regular-size-options {
+  opacity: 0.0;
+}
+
+#regular-size-options a {
+  color: #246B29;
+  text-decoration: none;
+}
+
+.collapsed #regular-size-options {
+  display: none;
+}
+#sidepanel.collapsed #regular-size-options {
+  padding: 0;
+}
+
+#sidepanel.collapsed {
+  overflow: hidden;
+}
+
+
+.collapsed .collapsed-size-options-area {
+  display: block;
+  min-height: 1500px; /* hack to make the button fill the entire sidepanel */
+  min-width: 500px;   /* hack to make the button fill the entire sidepanel */
+  text-align: left;
+}
+
+#sidepanel:not(.collapsed) #collapsed-size-options {
+  display: none;
+}
+
+#collapsed-size-options-button {
+  display: block;
+  font-size: 1.7rem;
+  font-weight: 900;
+  text-align: center;
+  width: 2vw;
+}
+
+#collapsed-size-options-button a{
+  color: #246B29;
+  text-decoration: none;
+}
+
+.full .uncollapsed-expand-sidepanel-button {
+  display: none;
+}
+
+.collapsed .sidepanel-content, .collapsed  ul {
+  display: none;
+}
+#sidepanel:hover #regular-size-options {
+  opacity: 1.0;
+}
+
+
+
+/*   Element resizing */
+#resize-handle {
+  background: white;
+  border: 2px solid #1C5052;
+  border-radius: 50%;
+  cursor: nwse-resize;
+  height: 12px;
+  position: absolute;
+  width: 12px;
+  z-index: 2;
+}
+
+.cell-selection {
+  border: 3px dashed dimgrey;
+  /*border: 4px dashed #1C5052;*/
+  height: 0;
+  pointer-events: none;  /* based on https://stackoverflow.com/questions/3538489/html-css-make-a-div-invisible-to-clicks */
+  position: absolute;
+  width: 0;
+  z-index: 1;
+}
+
+.flash-on {
+  background-color: #246B29;
+}
+.flash-off {
+  transition: background-color .3s ease-out;
+}
